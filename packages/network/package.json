@@ -1,0 +1,20 @@
+{
+  "name": "@chain-web/network",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "module": "./src/index",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "scc",
+  "license": "ISC",
+  "dependencies": {
+    "@chainsafe/libp2p-noise": "^10.2.0",
+    "@multiformats/multiaddr": "^11.1.0",
+    "libp2p": "^0.41.0",
+    "uint8arrays": "^4.0.2"
+  }
+}

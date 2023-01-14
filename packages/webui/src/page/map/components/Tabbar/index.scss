@@ -1,0 +1,11 @@
+.tabbar-box {
+  .ant-tabs-nav {
+    margin-top: 0px;
+    padding: 10px 36px;
+  }
+  .tabbar-item-box {
+    height: calc(100vh - 80px);
+    position: relative;
+     overflow: hidden
+  }
+}
