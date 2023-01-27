@@ -13,7 +13,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
+    
+    - name: Install pnpm
+      uses: pnpm/action-setup@v2.2.4
+      
+    - name: Set node version to 18
+      uses: actions/setup-node@v3
       with:
-        node-version: lts/*
-    - run: npm run --if-present lint
+        node-version: 18
+        cache: "pnpm"
+
+    - name: Install deps
+      run: pnpm install
+      
+    - name: Lint
+      run: pnpm run --if-present lint
