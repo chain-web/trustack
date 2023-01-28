@@ -185,7 +185,7 @@ export default function GridDrawer() {
                   <Select
                     value={elementtype}
                     onChange={(e) => {
-                      console.log(e)
+                      console.log(e);
                       setelementtype(e);
                     }}
                   >
@@ -210,7 +210,7 @@ export default function GridDrawer() {
                     <Button
                       loading={buildingElem}
                       onClick={async () => {
-                        console.log(elementtype)
+                        console.log(elementtype);
                         const { trans } = await mapContract.changeElementType(
                           activeHex.hexid,
                           elementtype,

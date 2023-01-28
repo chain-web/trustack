@@ -12,7 +12,7 @@ import { WebRTCStar } from '@libp2p/webrtc-star';
 import * as wrtc from 'wrtc';
 import { Libp2pFactoryFn } from 'ipfs-core';
 import { RecursivePartial } from '@libp2p/interfaces';
-import type { Transport } from '@libp2p/interface-transport'
+import type { Transport } from '@libp2p/interface-transport';
 
 class Network {
   private libp2p: any;

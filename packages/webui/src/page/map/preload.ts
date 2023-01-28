@@ -5,7 +5,7 @@ export const gridTypeColor = {
   [GridType.empty]: '#565656',
   [GridType.factoryL0]: '#f1f1f1',
 };
-  
+
 export const preLoadMapSource = async (map: Map) => {
   const imgMap: any = {
     farmIcon: { url: 'skchain/farm.png' },

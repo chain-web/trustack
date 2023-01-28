@@ -1,3 +1,1 @@
-export class SKFSNetwork {
-  
-}
+export class SKFSNetwork {}

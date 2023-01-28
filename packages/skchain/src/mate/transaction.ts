@@ -74,8 +74,8 @@ export class Transaction {
     return new Transaction({
       accountNonce: new BigNumber(transData[0]),
       amount: new BigNumber(transData[1]),
-      cu: new BigNumber (transData[2]),
-      cuLimit: new BigNumber (transData[3]),
+      cu: new BigNumber(transData[2]),
+      cuLimit: new BigNumber(transData[3]),
       from: transData[4],
       hash: transData[5],
       payload: transData[6],
