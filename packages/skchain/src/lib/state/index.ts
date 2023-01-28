@@ -1,14 +1,14 @@
-import { message } from 'utils/message.js';
 import { assign, createMachine, interpret } from 'xstate';
+import { message } from '../../utils/message.js';
 
-type ChainEvents =
+export type ChainEvents =
   | { type: 'CHANGE'; event: string }
   | { type: 'INITIALIZE' }
   | { type: 'START' }
   | { type: 'ERROR' }
   | { type: 'STARTED' };
 
-interface ChainContext {
+export interface ChainContext {
   event: string;
 }
 
@@ -22,30 +22,36 @@ const chainMachine = createMachine<ChainContext, ChainEvents>({
   },
   states: {
     inactive: {
+      initial: 'uncreated',
       states: {
         initializing: {
           on: {
             START: {
               target: '..starting',
-              actions: () => {
-                message.info('to starting');
+              actions: [
+                () => {
+                  message.info('to starting');
+                },
                 assign({
                   event: 'START',
-                });
-              },
+                }),
+              ],
             },
           },
         },
+        uncreated: {},
       },
       on: {
         INITIALIZE: {
           target: 'inactive.initializing',
-          actions: () => {
-            message.info('to initializing');
+          actions: [
+            () => {
+              message.info('to initializing');
+            },
             assign({
               event: 'INITIALIZE',
-            });
-          },
+            }),
+          ],
         },
       },
     },
@@ -56,10 +62,10 @@ const chainMachine = createMachine<ChainContext, ChainEvents>({
           actions: [
             (_, e) => {
               message.info('starting: ', e.event);
-              assign({
-                event: e.event,
-              });
             },
+            assign({
+              event: (_ctx, e) => e.event,
+            }),
           ],
         },
       },

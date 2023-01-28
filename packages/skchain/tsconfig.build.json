@@ -1,21 +1,22 @@
 {
   "compilerOptions": {
+    "strictNullChecks": true,
     "module": "ESNext",
     "target": "esnext",
     "sourceMap": true,
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "nodenext",
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "strict": true,
     "declaration": true,
-    "isolatedModules": true,
+    "isolatedModules": false,
     "esModuleInterop": true,
-    "types": ["node"],
+    "types": ["node", "jest"],
     "lib": ["ESNext", "DOM"],
     "outDir": "./dist",
     "baseUrl": "./src"
   },
-  "include": ["./src/**/*.ts"],
+  "include": ["src", "tests"],
   "esm": true
 }
