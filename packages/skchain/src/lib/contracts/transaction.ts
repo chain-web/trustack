@@ -7,7 +7,14 @@ export interface TransactionContractParam {
   amount: BigNumber;
 }
 
-export const transContract = (trans: TransactionContractParam) => {
+export const transContract = (
+  trans: TransactionContractParam,
+): {
+  account: string;
+  opCode: skSdk.accountOpCodes;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  value: any;
+}[] => {
   const fromAccount = skSdk.getAccount(trans.from);
   if (fromAccount.getBlance().minus(trans.amount).isLessThan(0)) {
     return [

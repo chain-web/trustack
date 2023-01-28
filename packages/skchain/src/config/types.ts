@@ -1,5 +1,3 @@
-import { CID } from 'multiformats/cid';
-
 export type networkidType = 'mainnet' | 'testnet';
 
 export interface GenesisConfig {

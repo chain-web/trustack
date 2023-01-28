@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import type { PBNode } from '@ipld/dag-pb';
 import { createLink } from '@ipld/dag-pb';
 import type BigNumber from 'bignumber.js';
@@ -7,6 +8,7 @@ import { message } from '../../../utils/message';
 import type { SKDB } from '../../ipfs/ipfs.interface';
 
 // 块数据索引数据结构
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface BlockIndex {
   // PBNode
   name: 'block-index';

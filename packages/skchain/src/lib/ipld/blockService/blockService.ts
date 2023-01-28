@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import BigNumber from 'bignumber.js';
-import { CID } from 'multiformats';
 import { Block } from '../../../mate/block';
 import { createEmptyNode } from '../util';
 import type { SKChain } from '../../../skChain';
@@ -7,7 +7,6 @@ import { SKChainLibBase } from '../../base';
 import { LifecycleStap, lifecycleEvents } from '../../events/lifecycle';
 import { skCacheKeys } from '../../ipfs/key';
 import { message } from '../../../utils/message';
-import { Mpt } from '../mpt';
 import { BlockRoot } from './blockRoot';
 import { isTxInBlock } from './util';
 
@@ -90,6 +89,7 @@ export class BlockService extends SKChainLibBase {
         this.checkedBlockHeight.plus(1),
       );
       if (this.checkOneBlock(checkBlock, prevBlock)) {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-non-null-asserted-optional-chain
         this.checkedBlockHeight = checkBlock?.header.number!; // 过了check，必不为空
       } else {
         checked = true;

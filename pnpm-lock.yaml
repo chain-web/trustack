@@ -44,8 +44,11 @@ importers:
     specifiers:
       '@chain-web/network': workspace:*
       '@ipld/dag-cbor': ^8.0.0
+      '@ipld/dag-pb': ^4.0.0
       '@types/libsodium-wrappers-sumo': ^0.7.5
       '@types/node': ^18.11.13
+      cac: ^6.7.14
+      chalk: ^5.2.0
       datastore-level: ^9.0.4
       libsodium-wrappers-sumo: ^0.7.10
       multiformats: ^10.0.2
@@ -58,6 +61,9 @@ importers:
     dependencies:
       '@chain-web/network': link:../network
       '@ipld/dag-cbor': 8.0.0
+      '@ipld/dag-pb': 4.0.0
+      cac: 6.7.14
+      chalk: 5.2.0
       datastore-level: 9.0.4
       libsodium-wrappers-sumo: 0.7.10
       multiformats: 10.0.2
@@ -713,6 +719,13 @@ packages:
     dependencies:
       cborg: 1.9.6
       multiformats: 10.0.2
+    dev: false
+
+  /@ipld/dag-pb/4.0.0:
+    resolution: {integrity: sha512-8FB/qTlNowCiszL9Sek8xH6xIQxIioXuzZ5B1jVPknQMVkd08nZUHzDjrn1Y6MqJ5PrXWLrBwNghGMWPPpvNVw==}
+    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
+    dependencies:
+      multiformats: 11.0.1
     dev: false
 
   /@jridgewell/gen-mapping/0.1.1:
@@ -1969,6 +1982,11 @@ packages:
       uint8arraylist: 2.4.2
     dev: false
 
+  /cac/6.7.14:
+    resolution: {integrity: sha512-b6Ilus+c3RrdDk+JhLKUAQfzzgLEPy6wcXqS7f/xe1EETvsDP6GORG7SFuOs6cID5YkqchW/LXZbX5bc8j7ZcQ==}
+    engines: {node: '>=8'}
+    dev: false
+
   /call-bind/1.0.2:
     resolution: {integrity: sha512-7O+FbCihrB5WGbFYesctwmTKae6rOiIzmz1icreWJ+0aA7LJfuqhEso2T9ncpcFtzMQtzXf2QGGueWJGTYsqrA==}
     dependencies:
@@ -2010,6 +2028,11 @@ packages:
     dependencies:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
+
+  /chalk/5.2.0:
+    resolution: {integrity: sha512-ree3Gqw/nazQAPuJJEy+avdl7QfZMcUvmHIKgEZkGL+xOBzRvup5Hxo6LHuMceSxOabuJLJm5Yp/92R9eMmMvA==}
+    engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
+    dev: false
 
   /chokidar/3.5.3:
     resolution: {integrity: sha512-Dr3sfKRP6oTcjf2JmUmFJfeVMvXBdegxB0iVQ5eb2V10uFJUCAS8OByZdVAyVb8xXNz3GjjTgj9kLWsZTqE6kw==}
@@ -3678,6 +3701,11 @@ packages:
 
   /multiformats/10.0.2:
     resolution: {integrity: sha512-nJEHLFOYhO4L+aNApHhCnWqa31FyqAHv9Q77AhmwU3KsM2f1j7tuJpCk5ByZ33smzycNCpSG5klNIejIyfFx2A==}
+    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
+    dev: false
+
+  /multiformats/11.0.1:
+    resolution: {integrity: sha512-atWruyH34YiknSdL5yeIir00EDlJRpHzELYQxG7Iy29eCyL+VrZHpPrX5yqlik3jnuqpLpRKVZ0SGVb9UzKaSA==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dev: false
 

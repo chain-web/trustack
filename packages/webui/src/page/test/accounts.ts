@@ -1,4 +1,4 @@
-import type { DidJson } from 'sk-chain';
+import type { DidJson } from 'skchain';
 
 export const accounts: DidJson[] = [
   {

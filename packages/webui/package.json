@@ -8,6 +8,9 @@
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "dependencies": {
     "@xstate/react": "^3.0.1",
     "antd": "^5.1.4",

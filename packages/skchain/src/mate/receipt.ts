@@ -1,13 +1,12 @@
-import type BigNumber from 'bignumber.js';
-import type { SKDB } from '../lib/ipfs/ipfs.interface';
-import type { UpdateAccountI } from '../lib/ipld';
-import type { Address } from './address';
-import type { BlockHeaderData } from './block';
+import type { SKDB } from '../lib/ipfs/ipfs.interface.js';
+import type { UpdateAccountI } from '../lib/ipld/index.js';
+import type { Address } from './address.js';
+import type { BlockHeaderData } from './block.js';
 
 interface ReceiptData {
   blockNumber: BlockHeaderData['number'];
   status: 1 | 0; // 交易状态，成功1，失败0
-  cuUsed: BigNumber; // 处理这笔交易消耗的计算量
+  cuUsed: bigint; // 处理这笔交易消耗的计算量
   from: Address; // 付款方
   to: Address; // 收款方
   transaction: string; // 当前交易的hash
@@ -23,9 +22,9 @@ export class Receipt {
   }
   receiptData: ReceiptData;
 
-  fromCid = async (db: SKDB) => {};
+  fromCid = async (_db: SKDB): Promise<void> => {};
 
-  commit = async (db: SKDB) => {
+  commit = async (db: SKDB): Promise<void> => {
     return await db.dag.put([this.receiptData]);
   };
 }

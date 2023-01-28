@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { create, createFromB58String, createFromPrivKey } from 'peer-id';
 import { bytes } from 'multiformats';
 import { randomBytes, secretbox } from 'tweetnacl';
@@ -33,7 +34,10 @@ export const genetateDid = async (): Promise<DidJson> => {
 
 // 签名
 // 使用ED25519，参考 libp2p-crypto/src/keys
-export const signById = async (priv: string, data: Uint8Array) => {
+export const signById = async (
+  priv: string,
+  data: Uint8Array,
+): Promise<string> => {
   const PeerId = await createFromPrivKey(priv);
   const signature = new Uint8Array(await PeerId.privKey.sign(data));
   // message.info(signature);
@@ -47,7 +51,7 @@ export const verifyById = async (
   id: string,
   signature: string,
   data: Uint8Array,
-) => {
+): Promise<boolean> => {
   // message.info(signature);
   const PeerId = await createFromB58String(id);
   const verifyed = await PeerId.pubKey.verify(data, bytes.fromHex(signature));
@@ -55,13 +59,13 @@ export const verifyById = async (
 };
 
 // 从libp2p私钥中解出ed priv
-export const privKeyToEdPriv = (priv: string) => {
+export const privKeyToEdPriv = (priv: string): Uint8Array => {
   const byte = uint8ArrayFromString(priv, 'base64pad');
   return byte.slice(4);
 };
 
 // 解析出nacl public key
-export const parseBoxPubKey = (did: string) => {
+export const parseBoxPubKey = (did: string): Uint8Array => {
   const byte = base58btc.decode(`z${did}`);
   const pku8 = byte.slice(6);
   const xpk = lsm.crypto_sign_ed25519_pk_to_curve25519(pku8);
@@ -69,12 +73,12 @@ export const parseBoxPubKey = (did: string) => {
 };
 
 // 从ed priv 解析出nacl priv key
-export const parseBoxPrivKey = (edPriv: Uint8Array) => {
+export const parseBoxPrivKey = (edPriv: Uint8Array): Uint8Array => {
   const xsk = lsm.crypto_sign_ed25519_sk_to_curve25519(edPriv);
   return xsk;
 };
 
-export const newNonce = () => randomBytes(secretbox.nonceLength);
+export const newNonce = (): Uint8Array => randomBytes(secretbox.nonceLength);
 (async () => {
   // await lsm.ready;
   // // 生成did

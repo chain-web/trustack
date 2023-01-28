@@ -1,3 +1,5 @@
+/* eslint-disable prefer-const */
+/* eslint-disable no-fallthrough */
 /**
  * JS Implementation of MurmurHash3 (r136) (as of May 20, 2011)
  *
@@ -11,8 +13,9 @@
  * @return {number} 32-bit positive integer hash
  */
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const murmurhash3_32_gc = (key: string, seed: number) => {
-  let remainder, bytes, h1, h1b, c1, c1b, c2, c2b, k1, i;
+  let remainder, bytes, h1, h1b, c1, c2, k1, i;
 
   remainder = key.length & 3; // key.length % 4
   bytes = key.length - remainder;

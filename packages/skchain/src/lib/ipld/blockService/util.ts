@@ -5,7 +5,7 @@ export const isTxInBlock = async (
   tx: string,
   blockHeader: BlockHeaderData,
   db: SKDB,
-) => {
+): Promise<boolean> => {
   if (blockHeader.logsBloom.contains(tx)) {
     const transactionMpt = new Mpt(db, blockHeader.transactionsRoot);
     await transactionMpt.initRootTree();

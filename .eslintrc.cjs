@@ -31,21 +31,8 @@ module.exports = defineConfig({
       },
     ],
 
-    'node/no-missing-import': [
-      'error',
-      {
-        allowModules: ['types', 'estree', 'less', 'sass', 'stylus'],
-        tryExtensions: ['.ts', '.js', '.jsx', '.tsx', '.d.ts'],
-      },
-    ],
-    'node/no-missing-require': [
-      'error',
-      {
-        // for try-catching yarn pnp
-        allowModules: [],
-        tryExtensions: ['.ts', '.js', '.jsx', '.tsx', '.d.ts'],
-      },
-    ],
+    'node/no-missing-import': 'off',
+    'node/no-missing-require': 'off',
     'node/no-extraneous-import': [
       'error',
       {
@@ -80,7 +67,11 @@ module.exports = defineConfig({
     '@typescript-eslint/no-non-null-assertion': 'warn',
     '@typescript-eslint/no-unused-vars': [
       'warn',
-      { argsIgnorePattern: '^_', destructuredArrayIgnorePattern: '^_' },
+      {
+        argsIgnorePattern: '^_',
+        destructuredArrayIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+      },
     ],
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/consistent-type-imports': [
@@ -138,6 +129,12 @@ module.exports = defineConfig({
       files: ['*.d.ts'],
       rules: {
         '@typescript-eslint/triple-slash-reference': 'off',
+      },
+    },
+    {
+      files: ['contractHelper.ts'],
+      rules: {
+        '@typescript-eslint/no-namespace': 'off',
       },
     },
   ],

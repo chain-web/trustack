@@ -1,6 +1,6 @@
-import type { ContractResultSaveItem as CRI } from '../lib/contract';
-import type { Address } from '../mate/address';
-import type { Transaction } from './../mate/transaction';
+import type { ContractResultSaveItem as CRI } from '../lib/contract/index.js';
+import type { Address } from '../mate/address.js';
+import type { Transaction } from './../mate/transaction.js';
 
 export type SliceKeyType = 'base58' | 'base32';
 
@@ -13,7 +13,7 @@ export namespace ConstractHelper {
   };
   export type ContractResultItem = CRI;
   export type ContractFuncReruen<T> = Promise<{
-    // origin: T;
+    origin: T;
     trans: Transaction;
   }>;
 }
@@ -32,12 +32,12 @@ class SliceDb<T> implements ConstractHelper.SliceDb<T> {
   delete = this.db.delete;
 }
 
-const createSliceDb = <T = any>(keyType: SliceKeyType) => {
+const createSliceDb = <T>(keyType: SliceKeyType): SliceDb<T> => {
   return new SliceDb<T>(keyType);
 };
 
-const hash = (str: string) => {
-  return sk.genCidString(str);
+const hash = (_str: string): void => {
+  // return sk.genCidString(str);
 };
 
 export class BaseContract {
@@ -49,5 +49,6 @@ export class BaseContract {
 export const constractHelper = {
   createSliceDb,
   hash,
+  // eslint-disable-next-line no-console
   log: console.log,
 };

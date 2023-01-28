@@ -68,7 +68,7 @@ export class SKChain {
 
   chainState = chainState;
 
-  run = () => {
+  run = (): void => {
     this.chainState.send('START');
     this.chainState.send('CHANGE', { event: LifecycleStap.startCreateSKChain });
   };

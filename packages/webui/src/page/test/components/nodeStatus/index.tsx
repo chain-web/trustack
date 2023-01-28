@@ -1,58 +1,51 @@
 import React, { useEffect, useState } from 'react';
-import { skService } from '../../../../state/sk.state';
 import './index.scss';
-import { useActor } from '@xstate/react';
 import { useTranslation } from 'react-i18next';
 import { Button, Modal } from 'antd';
-import type { Account, Block } from 'sk-chain';
 import { lanKeys } from './index.i18n';
 
 export default function NodeStatus() {
-  const [current] = useActor(skService);
   const [t] = useTranslation();
-  const [time, settime] = useState<NodeJS.Timeout>();
-  const [headerBlock, setHeaderBlock] = useState<Block>();
-  const [account, setAccount] = useState<Account>();
+  const [time, _settime] = useState<NodeJS.Timeout>();
   const [showPeers, setshowPeers] = useState(false);
   const [showBlock, setshowBlock] = useState(false);
   useEffect(() => {
     getHeaderBlock();
     return () => {
-      clearTimeout(time!);
+      clearTimeout(time);
     };
   }, []);
 
-  const node = current.context.chain.sk;
   const getHeaderBlock = () => {
-    node.getHeaderBlock().then((res) => {
-      setHeaderBlock(res);
-      const id = setTimeout(() => {
-        getHeaderBlock();
-      }, 800);
-      settime(id);
-    });
-    node.ipld.getAccountFromDb(node.did).then((res: Account) => {
-      setAccount(res);
-    });
+    // node.getHeaderBlock().then((res) => {
+    //   setHeaderBlock(res);
+    //   const id = setTimeout(() => {
+    //     getHeaderBlock();
+    //   }, 800);
+    //   settime(id);
+    // });
+    // node.ipld.getAccountFromDb(node.did).then((res: Account) => {
+    //   setAccount(res);
+    // });
   };
   return (
     <div className="status-box">
       <h3>{t(lanKeys.node_status)}</h3>
       <div className="status-item">
         <span>{t(lanKeys.slicePeerSize)}: </span>
-        <span>{node.consensus.slice.slice}</span>
+        {/* <span>{node.consensus.slice.slice}</span> */}
       </div>
       <div className="status-item">
         <span>{t(lanKeys.sliceStatus)}: </span>
-        <span>{node.consensus.slice.syncing ? 'syncing' : ''}</span>
+        {/* <span>{node.consensus.slice.syncing ? 'syncing' : ''}</span> */}
       </div>
       <div className="status-item">
         <span>{t(lanKeys.consensusStatus)}: </span>
-        <span>{node.consensus.isReady() ? 'ready' : 'no ready'}</span>
+        {/* <span>{node.consensus.isReady() ? 'ready' : 'no ready'}</span> */}
       </div>
       <div className="status-item">
         <span>{t(lanKeys.slicePeerSize)}: </span>
-        <span>{node.consensus.slice.curPeers.size}</span>
+        {/* <span>{node.consensus.slice.curPeers.size}</span> */}
         <Button
           onClick={() => {
             setshowPeers(true);
@@ -61,7 +54,7 @@ export default function NodeStatus() {
           👀
         </Button>
       </div>
-      {headerBlock && (
+      {/* {headerBlock && (
         <div className="status-item">
           <span>{t(lanKeys.blockNumber)}: </span>
           <span>{headerBlock.header.number.toString()}</span>
@@ -78,8 +71,8 @@ export default function NodeStatus() {
             👀
           </Button>
         </div>
-      )}
-      {account && (
+      )} */}
+      {/* {account && (
         <div className="status-item">
           <span>{t(lanKeys.accountBalance)}: </span>
           <span>{account.getBlance().toString()}</span>
@@ -91,7 +84,7 @@ export default function NodeStatus() {
           <span>{t(lanKeys.accountNonce)}: </span>
           <span>{account.nonce.toString()}</span>
         </div>
-      )}
+      )} */}
 
       {showPeers && (
         <Modal
@@ -103,7 +96,7 @@ export default function NodeStatus() {
           footer={null}
           className="nodestatus-peer-list-modal-box"
         >
-          {Array.from(node.consensus.slice.curPeers.keys()).map((ele) => (
+          {/* {Array.from(node.consensus.slice.curPeers.keys()).map((ele) => (
             <div className="pree-item" key={`${ele}`}>
               <p>{ele}: </p>
               <p>
@@ -120,7 +113,7 @@ export default function NodeStatus() {
           <p>blockRootMap</p>
           <pre>
             {JSON.stringify(node.consensus.slice.blockRootMap, null, 2)}
-          </pre>
+          </pre> */}
         </Modal>
       )}
       {showBlock && (
@@ -133,9 +126,9 @@ export default function NodeStatus() {
           footer={null}
           className="nodestatus-peer-list-modal-box"
         >
-          {t(lanKeys.blockHesh)}:<pre>{headerBlock!.hash}</pre>
+          {/* {t(lanKeys.blockHesh)}:<pre>{headerBlock!.hash}</pre>
           {t(lanKeys.blockMsg)}
-          <pre>{JSON.stringify(headerBlock!.header, null, 4)}</pre>
+          <pre>{JSON.stringify(headerBlock!.header, null, 4)}</pre> */}
         </Modal>
       )}
     </div>

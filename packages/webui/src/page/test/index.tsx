@@ -2,7 +2,6 @@
 // import React, { useEffect } from 'react';
 
 // import { accounts } from './accounts';
-// import { skCacheKeys } from 'sk-chain';
 // import Devtool from './components/devtool';
 // import Transaction from './components/transaction';
 // import NodeStatus from './components/nodeStatus';

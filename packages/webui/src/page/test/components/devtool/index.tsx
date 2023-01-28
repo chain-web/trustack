@@ -1,14 +1,11 @@
 import { Button, Input, message } from 'antd';
 import React, { useState } from 'react';
-import { useActor } from '@xstate/react';
 import { JsonView } from '../../../../components/JsonView';
 import './index.scss';
-import { deepGetCid } from './devtool.service';
 
 export default function Devtool() {
-  // const [current] = useActor(skService);
   const [cid, setCid] = useState('');
-  const [data, setData] = useState({});
+  const [data, _setData] = useState({});
   return (
     <div className="devtool-box">
       <h3>devtools</h3>

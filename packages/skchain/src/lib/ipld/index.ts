@@ -1,4 +1,5 @@
-import BigNumber from 'bignumber.js';
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import type { ValueOf } from '../../global';
 import { Block } from '../../mate/block';
 import { Receipt } from '../../mate/receipt';
@@ -52,10 +53,10 @@ export class Ipld extends SKChainLibBase {
       receiptsRoot: '',
       transactionsRoot: '',
       logsBloom: new BloomFilter(),
-      difficulty: new BigNumber(0), // TODO
-      cuLimit: new BigNumber(0), // TODO ,应该在此时根据上一个块的信息生成
+      difficulty: BigInt(0), // TODO
+      cuLimit: BigInt(0), // TODO ,应该在此时根据上一个块的信息生成
       ts: Date.now(),
-      cuUsed: new BigNumber(0),
+      cuUsed: BigInt(0),
       slice: [0, 0], // 忘了最开始设计这个字段的目的了，尴尬
       body: '',
     });
@@ -74,7 +75,7 @@ export class Ipld extends SKChainLibBase {
       // 调用智能合约
       if (trans.payload.mothed === 'constructor') {
         // 新建合约账户
-        console.log(trans);
+        // console.log(trans);
         const storageRoot = await createEmptyStorageRoot(this.chain.db);
         const codeCid = await this.chain.db.block.put(
           new Uint8Array(trans.payload.args[0]),
@@ -142,7 +143,7 @@ export class Ipld extends SKChainLibBase {
       updates,
       logs: [],
       status: 1,
-      cuUsed: new BigNumber(0),
+      cuUsed: BigInt(0),
       from: trans.from,
       to: trans.recipient,
       transaction: tx,
@@ -166,14 +167,15 @@ export class Ipld extends SKChainLibBase {
         message.error(update.value);
         break;
       case accountOpCodes.minus:
-        account.minusBlance(update.value as BigNumber);
+        account.minusBlance(update.value as bigint);
         break;
       case accountOpCodes.plus:
-        account.plusBlance(update.value as BigNumber, trans.ts.toString());
+        account.plusBlance(update.value as bigint, trans.ts.toString());
         break;
       case accountOpCodes.updateState:
-        const cid = await this.chain.db.dag.put([update.value]);
-        account.updateState(cid);
+        // TODO con not use
+        // const cid = await this.chain.db.dag.put([update.value]);
+        // account.updateState(cid);
         break;
       default:
         message.error('unknown op code');

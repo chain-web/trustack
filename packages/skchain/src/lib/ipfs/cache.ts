@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-nodejs-modules
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 
 export class Cache {
@@ -20,7 +21,7 @@ export class Cache {
   private saveFile = () => {
     writeFileSync(this.path, JSON.stringify(this.data, null, 2));
   };
-  put = (key: string, value: string) => {
+  put = (key: string, value: string): void => {
     this.loadFile();
     this.data = { ...this.data, [key]: value };
     this.saveFile();

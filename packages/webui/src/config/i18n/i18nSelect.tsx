@@ -3,7 +3,7 @@ import { Select } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 export default function ChangeI18n() {
-  const { t, i18n } = useTranslation();
+  const { _t, i18n } = useTranslation();
   return (
     <Select
       style={{

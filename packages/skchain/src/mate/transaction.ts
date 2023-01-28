@@ -1,8 +1,7 @@
-import BigNumber from 'bignumber.js';
 import { CID } from 'multiformats/cid';
-import type { SKDB } from '../lib/ipfs/ipfs.interface';
-import type { BlockHeaderData } from './block';
-import type { Address } from './address';
+import type { SKDB } from '../lib/ipfs/ipfs.interface.js';
+import type { BlockHeaderData } from './block.js';
+import type { Address } from './address.js';
 
 export interface transMeta {
   from: Transaction['from'];
@@ -16,11 +15,11 @@ export interface transMeta {
 
 export interface TransactionOption {
   from: Address;
-  accountNonce: BigNumber;
-  cu: BigNumber;
-  cuLimit: BigNumber;
+  accountNonce: bigint;
+  cu: bigint;
+  cuLimit: bigint;
   recipient: Address;
-  amount: BigNumber;
+  amount: bigint;
   payload?: Transaction['payload'];
   ts: number;
   hash?: string;
@@ -42,20 +41,21 @@ export class Transaction {
     }
   }
   blockNumber!: BlockHeaderData['number'];
-  accountNonce: BigNumber;
-  cu: BigNumber;
-  cuLimit: BigNumber;
+  accountNonce: bigint;
+  cu: bigint;
+  cuLimit: bigint;
   from: Address;
   recipient: Address;
-  amount: BigNumber;
+  amount: bigint;
   payload?: {
     mothed: 'constructor' | string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     args: any[];
   };
   hash!: string;
   ts: number;
 
-  genHash = async (db: SKDB) => {
+  genHash = async (db: SKDB): Promise<void> => {
     const obj = {
       accountNonce: this.accountNonce,
       cu: this.cu,
@@ -69,13 +69,13 @@ export class Transaction {
     this.hash = cid.toString();
   };
 
-  static fromCid = async (db: SKDB, cid: string) => {
+  static fromCid = async (db: SKDB, cid: string): Promise<Transaction> => {
     const transData = (await db.dag.get(CID.parse(cid))).value;
     return new Transaction({
-      accountNonce: new BigNumber(transData[0]),
-      amount: new BigNumber(transData[1]),
-      cu: new BigNumber(transData[2]),
-      cuLimit: new BigNumber(transData[3]),
+      accountNonce: BigInt(transData[0]),
+      amount: BigInt(transData[1]),
+      cu: BigInt(transData[2]),
+      cuLimit: BigInt(transData[3]),
       from: transData[4],
       hash: transData[5],
       payload: transData[6],
@@ -87,7 +87,7 @@ export class Transaction {
   /**
    * 将区块数据保存，落文件
    */
-  commit = async (db: SKDB, blockNumber: BigNumber) => {
+  commit = async (db: SKDB, blockNumber: bigint): Promise<string> => {
     this.blockNumber = blockNumber;
     const transCid = await db.dag.put([
       this.accountNonce.toString(),

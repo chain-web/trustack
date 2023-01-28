@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import type { BitSet } from 'bitset';
 import bs from 'bitset';
-import { murmurhash3_32_gc } from './murmur3';
+import { murmurhash3_32_gc } from './murmur3.js';
 
 export class Bloom {
   constructor(buckets: number = 1000, hashes: number = 5) {
