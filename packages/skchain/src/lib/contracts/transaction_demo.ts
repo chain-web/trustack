@@ -1,6 +1,6 @@
-import BigNumber from 'bignumber.js';
+import type BigNumber from 'bignumber.js';
 import { accountOpCodes, errorCodes } from '../contract/code';
-import { Ipld, UpdateAccountI } from './../ipld/index';
+import type { Ipld, UpdateAccountI } from './../ipld/index';
 export interface TransactionContractParam {
   from: string;
   recipient: string;

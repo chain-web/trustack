@@ -1,4 +1,4 @@
-import { CreateBrowserNodeConfig } from '../node.browser';
+import type { CreateBrowserNodeConfig } from '../node.browser';
 
 export const checkInitOption = (config: Partial<CreateBrowserNodeConfig>) => {
   if (!config.account?.id || !config.account?.privKey) {

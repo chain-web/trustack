@@ -4,8 +4,9 @@ import './index.scss';
 import { useActor } from '@xstate/react';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'antd';
+import type { DidJson } from 'skchain';
+import { genetateDid, localCache, skCacheKeys } from 'skchain';
 import { lanKeys } from './index.i18n';
-import { DidJson, genetateDid, skCacheKeys, localCache } from 'skchain';
 
 enum LoginType {
   None,

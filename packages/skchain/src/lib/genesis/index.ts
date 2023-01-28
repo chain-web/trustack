@@ -1,13 +1,15 @@
 import BigNumber from 'bignumber.js';
-import { GenesisConfig } from '../../config/types';
-import { Account, newAccount } from '../../mate/account';
-import { BlockHeaderData, Block } from '../../mate/block';
+import type { GenesisConfig } from '../../config/types';
+import type { Account } from '../../mate/account';
+import { newAccount } from '../../mate/account';
+import type { BlockHeaderData } from '../../mate/block';
+import { Block } from '../../mate/block';
 import { SKChainLibBase } from '../base';
-import { lifecycleEvents, LifecycleStap } from '../events/lifecycle';
+import { LifecycleStap, lifecycleEvents } from '../events/lifecycle';
 import { BloomFilter } from '../ipld/logsBloom/bloomFilter';
 import { Mpt } from '../ipld/mpt';
 import { createEmptyNode } from '../ipld/util';
-import { SKChain } from './../../skChain';
+import type { SKChain } from './../../skChain';
 export class Genesis extends SKChainLibBase {
   constructor(chain: SKChain, genesis: GenesisConfig) {
     super(chain);

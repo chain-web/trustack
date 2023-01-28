@@ -2,7 +2,7 @@ export const xstateDev = !!window.name.match('xstatedev');
 
 function checkIsMobile() {
   const info = navigator.userAgent;
-  let agents = [
+  const agents = [
     'Android',
     'iPhone',
     'SymbianOS',

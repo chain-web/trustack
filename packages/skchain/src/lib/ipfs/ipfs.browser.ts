@@ -1,12 +1,13 @@
 import { IPFS, create } from 'ipfs-core';
-import type { CacheCommon, SKDB } from './ipfs.interface';
-import { Cache } from './cache.browser';
-import { skCacheKeys } from './key';
-import { bytes, CID } from 'multiformats';
-import { networkidType } from '../../config/types';
-import { DidJson } from '../p2p/did';
+import type { CID } from 'multiformats';
+import { bytes } from 'multiformats';
+import type { networkidType } from '../../config/types';
+import type { DidJson } from '../p2p/did';
 import { message } from '../../utils/message';
 import { browserNetwork } from '../p2p/libp2p.browser';
+import { skCacheKeys } from './key';
+import { Cache } from './cache.browser';
+import type { CacheCommon, SKDB } from './ipfs.interface';
 
 export const cacheCommon = new Cache(`sk_cache`);
 

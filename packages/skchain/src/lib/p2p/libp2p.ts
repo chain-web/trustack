@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-import { createLibp2p, Libp2p, Libp2pOptions } from 'libp2p';
+import type { Libp2pOptions } from 'libp2p';
+import { Libp2p, createLibp2p } from 'libp2p';
 import { Bootstrap } from '@libp2p/bootstrap';
 import { Mplex } from '@libp2p/mplex';
 import { MulticastDNS } from '@libp2p/mdns';
@@ -10,7 +10,7 @@ import { GossipSub } from '@chainsafe/libp2p-gossipsub';
 
 import { WebRTCStar } from '@libp2p/webrtc-star';
 import * as wrtc from 'wrtc';
-import { Libp2pFactoryFn } from 'ipfs-core';
+import type { Libp2pFactoryFn } from 'ipfs-core';
 import { RecursivePartial } from '@libp2p/interfaces';
 import type { Transport } from '@libp2p/interface-transport';
 

@@ -1,14 +1,14 @@
 // import { AbortSignal } from 'abort-controller';
-import { create } from 'ipfs-core';
 import { resolve } from 'path';
-import { Cache } from './cache';
-import { DidJson } from '../p2p/did';
+import { create } from 'ipfs-core';
+import type { CID } from 'multiformats';
+import type { DidJson } from '../p2p/did';
 import { nodeNetwork } from '../p2p/libp2p';
-import { networkidType } from '../../config/types';
-import { skCacheKeys } from './key';
+import type { networkidType } from '../../config/types';
 import { message } from '../../utils/message';
-import { CacheCommon, NetworkConfig, SKDB } from './ipfs.interface';
-import { CID } from 'multiformats';
+import { skCacheKeys } from './key';
+import { Cache } from './cache';
+import type { CacheCommon, NetworkConfig, SKDB } from './ipfs.interface';
 
 export const cacheCommon: CacheCommon = new Cache(`sk_cache`);
 

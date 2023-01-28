@@ -78,7 +78,10 @@ module.exports = defineConfig({
     '@typescript-eslint/no-extra-semi': 'off', // conflicts with prettier
     '@typescript-eslint/no-inferrable-types': 'off',
     '@typescript-eslint/no-non-null-assertion': 'warn',
-    '@typescript-eslint/no-unused-vars': 'warn',
+    '@typescript-eslint/no-unused-vars': [
+      'warn',
+      { argsIgnorePattern: '^_', destructuredArrayIgnorePattern: '^_' },
+    ],
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/consistent-type-imports': [
       'error',
@@ -120,6 +123,13 @@ module.exports = defineConfig({
     },
     {
       files: ['*.js', '*.mjs', '*.cjs'],
+      rules: {
+        '@typescript-eslint/explicit-module-boundary-types': 'off',
+      },
+    },
+    {
+      // disable the rule specifically for jsx/tsx files
+      files: ['*.jsx', '*.tsx'],
       rules: {
         '@typescript-eslint/explicit-module-boundary-types': 'off',
       },

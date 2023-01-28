@@ -1,10 +1,10 @@
-import { lifecycleEvents, LifecycleStap } from './../events/lifecycle';
+import { bytes } from 'multiformats';
+import { Block } from '../../mate/block';
+import { LifecycleStap, lifecycleEvents } from './../events/lifecycle';
 import { message } from './../../utils/message';
 import { SKChainLibBase } from './../base';
-import { SKChain } from './../../skChain';
-import { bytes } from 'multiformats';
+import type { SKChain } from './../../skChain';
 import { Slice } from './slice';
-import { Block } from '../../mate/block';
 
 interface ConsensusNewBlockData {
   cid: string;

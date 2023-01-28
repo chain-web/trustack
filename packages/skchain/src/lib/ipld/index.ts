@@ -1,15 +1,15 @@
-import { SKChainLibBase } from './../base';
-import { SKChain } from './../../skChain';
-import { Account, newAccount } from './../../mate/account';
 import BigNumber from 'bignumber.js';
-import { Mpt } from './mpt';
-import { createEmptyStorageRoot } from './util';
-import { ValueOf } from '../../global';
+import type { ValueOf } from '../../global';
 import { Block } from '../../mate/block';
 import { Receipt } from '../../mate/receipt';
-import { Transaction } from '../../mate/transaction';
+import type { Transaction } from '../../mate/transaction';
 import { message } from '../../utils/message';
-import { errorCodes, accountOpCodes } from '../contract/code';
+import { accountOpCodes, errorCodes } from '../contract/code';
+import { createEmptyStorageRoot } from './util';
+import { Mpt } from './mpt';
+import { Account, newAccount } from './../../mate/account';
+import type { SKChain } from './../../skChain';
+import { SKChainLibBase } from './../base';
 import { BloomFilter } from './logsBloom/bloomFilter';
 
 export type UpdateOpCode =

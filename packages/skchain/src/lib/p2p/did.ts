@@ -1,4 +1,4 @@
-import { create, createFromPrivKey, createFromB58String } from 'peer-id';
+import { create, createFromB58String, createFromPrivKey } from 'peer-id';
 import { bytes } from 'multiformats';
 import { randomBytes, secretbox } from 'tweetnacl';
 import { base58btc } from 'multiformats/bases/base58';

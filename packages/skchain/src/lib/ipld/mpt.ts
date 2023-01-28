@@ -1,14 +1,8 @@
-import { message } from './../../utils/message';
 import { CID } from 'multiformats';
-import { SKDB } from './../ipfs/ipfs.interface';
-import {
-  createLink,
-  createNode,
-  PBLink,
-  PBNode,
-  encode,
-  ByteView,
-} from '@ipld/dag-pb';
+import type { PBNode } from '@ipld/dag-pb';
+import { ByteView, PBLink, createLink, createNode, encode } from '@ipld/dag-pb';
+import { message } from './../../utils/message';
+import type { SKDB } from './../ipfs/ipfs.interface';
 
 /**
  * mpt

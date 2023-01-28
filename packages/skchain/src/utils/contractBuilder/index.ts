@@ -1,8 +1,7 @@
-#!/usr/bin/env node
 import { cac } from 'cac';
 import chalk from 'chalk';
-import { builder } from './builder';
 import { version } from '../../../package.json';
+import { builder } from './builder';
 const cli = cac('sk-builder');
 
 export interface BuildOption {

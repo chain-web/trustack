@@ -3,7 +3,7 @@ import './App.css';
 import TestPage from './page/test';
 
 function App() {
-  let element = useRoutes([{ path: '/test', element: <TestPage /> }]);
+  const element = useRoutes([{ path: '/test', element: <TestPage /> }]);
 
   return element;
 }

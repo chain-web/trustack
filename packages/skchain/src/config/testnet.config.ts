@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { GenesisConfig, networkidType } from './types';
+import type { GenesisConfig, networkidType } from './types';
 
 export const networkid: networkidType = 'testnet';
 

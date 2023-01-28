@@ -1,9 +1,9 @@
-import { SKChain } from './../../skChain';
-import { SKChainLibBase } from './../base';
-import { lifecycleEvents, LifecycleStap } from '../events/lifecycle';
+import { CID, bytes } from 'multiformats';
+import { LifecycleStap, lifecycleEvents } from '../events/lifecycle';
 import { SKDB } from '../ipfs/ipfs.interface';
 import { message } from '../../utils/message';
-import { CID, bytes } from 'multiformats';
+import type { SKChain } from './../../skChain';
+import { SKChainLibBase } from './../base';
 
 type SlicePubData =
   | {
