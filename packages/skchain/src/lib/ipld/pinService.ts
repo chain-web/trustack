@@ -1,5 +1,6 @@
-import type { SKChain } from '../../skChain';
-import { SKChainLibBase } from '../base';
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import type { SKChain } from '../../skChain.js';
+import { SKChainLibBase } from '../base.js';
 
 export class PinService extends SKChainLibBase {
   constructor(chain: SKChain) {

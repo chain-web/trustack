@@ -1,7 +1,7 @@
 import { cac } from 'cac';
 import chalk from 'chalk';
 import { version } from '../../../package.json';
-import { builder } from './builder';
+import { builder } from './builder.js';
 const cli = cac('sk-builder');
 
 export interface BuildOption {
@@ -19,7 +19,7 @@ cli
   .action(async (input: string, opt: BuildOption) => {
     try {
       await builder(input, opt);
-    } catch (e: any) {
+    } catch (e: { stack: string }) {
       chalk.red(`error when build contract:\n${e.stack}`);
       process.exit(1);
     }

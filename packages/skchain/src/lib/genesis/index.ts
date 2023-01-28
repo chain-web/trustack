@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import BigNumber from 'bignumber.js';
 import type { GenesisConfig } from '../../config/types';
 import type { Account } from '../../mate/account';
@@ -93,7 +94,7 @@ export class Genesis extends SKChainLibBase {
   };
 
   // 检查链合法性
-  checkGenesis(genesisBlock: Block) {
+  checkGenesis(_genesisBlock: Block) {
     // 暂时未确定，要搞什么
   }
 }

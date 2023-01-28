@@ -1,5 +1,6 @@
-import { TransactionAction } from '../../transaction/index';
-import { Bloom } from './bloom';
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import { TransactionAction } from '../../transaction/index.js';
+import { Bloom } from './bloom.js';
 
 export class BloomFilter {
   constructor() {

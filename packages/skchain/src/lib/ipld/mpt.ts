@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { CID } from 'multiformats';
 import type { PBNode } from '@ipld/dag-pb';
-import { ByteView, PBLink, createLink, createNode, encode } from '@ipld/dag-pb';
-import { message } from './../../utils/message';
-import type { SKDB } from './../ipfs/ipfs.interface';
+import { createLink } from '@ipld/dag-pb';
+import { message } from './../../utils/message.js';
+import type { SKDB } from './../ipfs/ipfs.interface.js';
 
 /**
  * mpt

@@ -1,17 +1,20 @@
-import BigNumber from 'bignumber.js';
-import type { Transaction, transMeta } from '../../mate/transaction';
-import { genetateDid } from '../p2p/did';
+import type { Transaction, transMeta } from '../../mate/transaction.js';
+import { genetateDid } from '../p2p/did.js';
 
-import type { SKChain } from '../../skChain';
-import { Contract } from '../contract';
-import { accountOpCodes } from '../contract/code';
-import { transDemoFn } from '../contracts/transaction_demo';
-import type { UpdateAccountI } from '../ipld';
-import { createEmptyStorageRoot } from '../ipld/util';
-import { genTransMeta, genTransactionClass, runContract } from './trans.pure';
-import { newAccount } from './../../mate/account';
-import type { Account } from './../../mate/account';
-import { SKChainLibBase } from './../base';
+import type { SKChain } from '../../skChain.js';
+import { Contract } from '../contract/index.js';
+import { accountOpCodes } from '../contract/code.js';
+import { transDemoFn } from '../contracts/transaction_demo.js';
+import type { UpdateAccountI } from '../ipld/index.js';
+import { createEmptyStorageRoot } from '../ipld/util.js';
+import {
+  genTransMeta,
+  genTransactionClass,
+  runContract,
+} from './trans.pure.js';
+import { newAccount } from './../../mate/account.js';
+import type { Account } from './../../mate/account.js';
+import { SKChainLibBase } from './../base.js';
 
 // 处理交易活动
 export class TransactionTest extends SKChainLibBase {
@@ -23,11 +26,11 @@ export class TransactionTest extends SKChainLibBase {
   private contract: Contract;
   account!: Account;
 
-  init = async () => {
+  init = async (): Promise<void> => {
     await this.contract.init();
   };
 
-  doTransTask = async (trans: Transaction) => {
+  doTransTask = async (trans: Transaction): Promise<UpdateAccountI[]> => {
     let update: UpdateAccountI[] = [];
 
     if (trans.payload) {
@@ -61,7 +64,7 @@ export class TransactionTest extends SKChainLibBase {
     return update;
   };
 
-  handelTransaction = async (trans: Transaction) => {
+  handelTransaction = async (trans: Transaction): Promise<UpdateAccountI[]> => {
     return await this.doTransTask(trans);
   };
 
@@ -69,15 +72,22 @@ export class TransactionTest extends SKChainLibBase {
     tm: Pick<transMeta, 'amount' | 'recipient'> & {
       payload?: Transaction['payload'];
     },
-  ) => {
+  ): Promise<{
+    trans: Transaction;
+  }> => {
     const transMeta = await genTransMeta(tm, this.chain);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const trans = await genTransactionClass(transMeta!, this.chain);
     await this.handelTransaction(trans);
     return { trans };
   };
 
   // deploy contract
-  deploy = async (meta: { payload: Uint8Array }) => {
+  deploy = async (meta: {
+    payload: Uint8Array;
+  }): Promise<{
+    trans: Transaction;
+  }> => {
     // TODO 要不要加update code 的接口
     const newDid = await genetateDid();
     const storageRoot = await createEmptyStorageRoot(this.chain.db);

@@ -14,7 +14,7 @@ export const transDemoFn = async (
   getAccount: Ipld['getAccount'],
 ): Promise<UpdateAccountI[]> => {
   const fromAccount = await getAccount(trans.from);
-  const toAccount = await getAccount(trans.recipient);
+  const _toAccount = await getAccount(trans.recipient);
 
   if (fromAccount.getBlance().minus(trans.amount).isLessThan(0)) {
     return [

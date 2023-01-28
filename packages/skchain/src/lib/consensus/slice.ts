@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { CID, bytes } from 'multiformats';
 import { LifecycleStap, lifecycleEvents } from '../events/lifecycle';
-import { SKDB } from '../ipfs/ipfs.interface';
 import { message } from '../../utils/message';
 import type { SKChain } from './../../skChain';
 import { SKChainLibBase } from './../base';
@@ -86,15 +86,15 @@ export class Slice extends SKChainLibBase {
           });
         });
       } catch (error) {
-        console.log(error);
+        // console.log(error);
       }
     }
 
     const sliceArr = this.slice.split('-');
     let curSlice = '';
-    sliceArr.forEach((ele, i) => {
+    sliceArr.forEach((ele, _i) => {
       curSlice = curSlice + ele;
-      const isL = this.checkIsL(i);
+      // const isL = this.checkIsL(i);
       // if (this.slice === 'o') {
       //   // 还未分片
       //   if () {}
@@ -117,6 +117,7 @@ export class Slice extends SKChainLibBase {
     );
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private handelSubSliceMessage: any = async (data: any) => {
     const slicePubData: SlicePubData = JSON.parse(bytes.toString(data.data));
     if (data.from.toString() !== this.chain.did) {
@@ -201,7 +202,7 @@ export class Slice extends SKChainLibBase {
         blockRoot: this.chain.blockService.blockRoot.rootCid,
       };
     }
-    console.log(this.chain.db.pubsub);
+    // console.log(this.chain.db.pubsub);
     await this.chain.db.pubsub.publish(
       `${slicePrefix}${this.slice}`,
       bytes.fromString(JSON.stringify(slicePubData)),

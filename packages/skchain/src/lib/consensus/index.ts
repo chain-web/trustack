@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { bytes } from 'multiformats';
 import { Block } from '../../mate/block';
 import { LifecycleStap, lifecycleEvents } from './../events/lifecycle';
@@ -137,7 +138,7 @@ export class Consensus extends SKChainLibBase {
     });
   };
 
-  compareContribute = async (block: Block) => {
+  compareContribute = async (_block: Block) => {
     // 对比相同高度两个block的sum contribute
     // 如果存储的contribute相等，就用上一block的hash的后几位，计算来进行确定性随即
   };

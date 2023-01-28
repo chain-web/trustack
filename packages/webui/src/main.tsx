@@ -5,6 +5,7 @@ import App from './App';
 import './index.css';
 
 // https://github.com/GoogleChromeLabs/jsbi/issues/30
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 (BigInt.prototype as any).toJSON = function () {
   return this.toString();
 };

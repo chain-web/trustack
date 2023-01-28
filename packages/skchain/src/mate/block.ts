@@ -103,6 +103,7 @@ export class Block {
       }
       if (bnHeaderKeys.includes(key)) {
         // 恢复bignumber
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (header[key] as any) = BigInt(headerData[i]);
       }
     });
@@ -124,14 +125,16 @@ export class Block {
     return block;
   };
 
-  genHash = async () => {
+  genHash = async (): Promise<void> => {
     const obj = {
       ...this.header,
       logsBloom: this.header.logsBloom.getData(),
       body: this.body,
     };
     // ts，hash 不参与生成块hash
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     delete (obj as any).hash;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     delete (obj as any).ts;
     // TODO block?
     const hash = CID.create(1, code, encode(obj)).toString();
@@ -141,11 +144,12 @@ export class Block {
     this.hash = hash;
   };
 
-  bodyToBinary = () => {
+  bodyToBinary = (): ByteView<BlockBodyData> => {
     return encode(this.body);
   };
 
-  toBinary = () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  toBinary = (): ByteView<any> => {
     const bodyBinary = this.bodyToBinary();
     // TODO block?
     const bodyCid = CID.asCID(bodyBinary);

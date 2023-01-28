@@ -1,19 +1,23 @@
-import BigNumber from 'bignumber.js';
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { bytes } from 'multiformats';
-import type { Transaction, transMeta } from '../../mate/transaction';
-import { peerEvent } from '../events/peer';
-import { genetateDid, verifyById } from '../p2p/did';
-import { message } from '../../utils/message';
+import type { Transaction, transMeta } from '../../mate/transaction.js';
+import { genetateDid, verifyById } from '../p2p/did.js';
+import { message } from '../../utils/message.js';
 
-import { Contract } from '../contract';
-import { transDemoFn } from '../contracts/transaction_demo';
-import type { SKChain } from '../../skChain';
-import { newAccount } from '../../mate/account';
-import { createEmptyStorageRoot } from '../ipld/util';
-import type { UpdateAccountI } from '../ipld';
-import type { BlockHeaderData } from '../../mate/block';
-import { genTransMeta, genTransactionClass, runContract } from './trans.pure';
-import { SKChainLibBase } from './../base';
+import { Contract } from '../contract/index.js';
+import { transDemoFn } from '../contracts/transaction_demo.js';
+import type { SKChain } from '../../skChain.js';
+import { newAccount } from '../../mate/account.js';
+import { createEmptyStorageRoot } from '../ipld/util.js';
+import type { UpdateAccountI } from '../ipld/index.js';
+import type { BlockHeaderData } from '../../mate/block.js';
+import {
+  genTransMeta,
+  genTransactionClass,
+  runContract,
+} from './trans.pure.js';
+import { SKChainLibBase } from './../base.js';
 
 export enum TransStatus {
   'transing' = 'transing',
@@ -275,6 +279,7 @@ export class TransactionAction extends SKChainLibBase {
     );
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private receiveTransaction = async (data: any) => {
     // 接收p2p网络里的交易，并塞到交易列表
     if (data.from === this.chain.did) {
@@ -283,8 +288,8 @@ export class TransactionAction extends SKChainLibBase {
     }
     const tm: transMeta = JSON.parse(bytes.toString(data.data));
     // parse bigNumber
-    tm.amount = new BigNumber(tm.amount);
-    tm.cu = new BigNumber(tm.cu);
+    tm.amount = BigInt(tm.amount);
+    tm.cu = BigInt(tm.cu);
     const signature = tm.signature;
     if (
       signature &&
@@ -311,7 +316,7 @@ export class TransactionAction extends SKChainLibBase {
     // 供外部调用的发起交易方法
     const transMeta = await genTransMeta(tm, this.chain);
     await this.chain.db.pubsub.publish(
-      peerEvent.transaction,
+      'peerEvent.transaction',
       bytes.fromString(JSON.stringify(transMeta)),
     );
     if (transMeta) {
@@ -337,7 +342,7 @@ export class TransactionAction extends SKChainLibBase {
     );
     await account.commit(this.chain.db);
     return await this.transaction({
-      amount: new BigNumber(0),
+      amount: BigInt(0),
       recipient: account.account,
       payload: {
         mothed: 'constructor',

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import type { evaluate } from 'cwjsr';
 import { bytes } from 'multiformats';
 import type { SliceKeyType } from '../../utils/contractHelper';
@@ -19,6 +21,7 @@ export interface ContractResultSaveItem {
 }
 
 export class Contract {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   constructor() {}
 
   ready = false;
@@ -122,7 +125,7 @@ export class Contract {
     };
     run();
     `;
-    console.log(runCode);
+    // console.log(runCode);
     let result = this.evaluate(runCode, BigInt(trans.cuLimit.toString()), {});
     result = result.replace(/("$)|(^")/g, '');
     return JSON.parse(result);

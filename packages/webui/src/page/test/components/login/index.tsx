@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { chain, chainState } from '../../../../state/sk';
 import './index.scss';
-import { useActor } from '@xstate/react';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'antd';
 import type { DidJson } from 'skchain';
@@ -16,7 +14,6 @@ enum LoginType {
 }
 
 export default function Login() {
-  const [current] = useActor(chainState);
   const [t] = useTranslation();
   const [loginType, setLoginType] = useState(LoginType.PrivateKey);
   const [did, setdid] = useState(localCache.get(skCacheKeys.accountId) || '');
@@ -102,7 +99,7 @@ export default function Login() {
                     const did = JSON.parse(
                       (e.target?.result as string) || '{}',
                     );
-                    console.log(did);
+                    // console.log(did);
                     setdid(did.id);
                     setprivKey(did.privKey);
                   };

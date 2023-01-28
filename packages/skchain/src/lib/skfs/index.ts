@@ -1,4 +1,4 @@
-import { LevelDatastore } from 'datastore-level';
+// import { LevelDatastore } from 'datastore-level';
 import type { SKFSNetwork } from './network/index.js';
 
 export interface SkfsOptions {
@@ -7,7 +7,7 @@ export interface SkfsOptions {
 }
 
 export class Skfs {
-  constructor(options: SkfsOptions) {
+  constructor(_options: SkfsOptions) {
     // this.store = new LevelDatastore(options.path);
   }
 

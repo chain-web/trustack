@@ -1,7 +1,9 @@
 /* eslint-disable no-console */
-import * as packageJson from '../../package.json';
+import { version } from '../../package.json';
 
-type BaseSKMessageFunc = (...msg: any[]) => void;
+type simpleConsoleVal = string | number | boolean;
+
+type BaseSKMessageFunc = (...msg: simpleConsoleVal[]) => void;
 
 export class SKMessage {
   constructor(opts?: Partial<Record<'info' | 'error', BaseSKMessageFunc>>) {
@@ -11,11 +13,11 @@ export class SKMessage {
   info: BaseSKMessageFunc;
   error: BaseSKMessageFunc;
 
-  static logger = (...msg: any) => {
-    console.log(`sk-v${packageJson.version}:`, ...msg);
+  static logger = (...msg: simpleConsoleVal[]): void => {
+    console.log(`sk-v${version}:`, ...msg);
   };
-  static error = (...msg: any) => {
-    console.error(`sk-v${packageJson.version}:`, ...msg);
+  static error = (...msg: simpleConsoleVal[]): void => {
+    console.error(`sk-v${version}:`, ...msg);
   };
 
   static defaultInfo: BaseSKMessageFunc = (...msg) => {

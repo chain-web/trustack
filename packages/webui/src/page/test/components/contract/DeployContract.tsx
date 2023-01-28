@@ -1,29 +1,26 @@
-import { Button, message } from 'antd';
-import { useActor } from '@xstate/react';
-import type { Transaction } from 'sk-chain';
-import { Account } from 'sk-chain';
-import { skService } from '../../../../state/sk.state';
+import { Button } from 'antd';
 
-export const DeployContract = (_CodeClass: any, contractCode: Uint8Array) => {
-  return function DeployContractComp(props: {
-    onSuccess?: (trans: Transaction) => void;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const DeployContract = (_CodeClass: any, _contractCode: Uint8Array) => {
+  return function DeployContractComp(_props: {
+    onSuccess?: (trans: object) => void;
   }) {
-    const [{ context }] = useActor(skService);
+    // const [{ context }] = useActor(skService);
 
     return (
       <div style={{}}>
         <Button
-          disabled={!context.chain.started}
+          // disabled={!context.chain.started}
           onClick={() => {
-            skService.state.context.chain.sk
-              .deploy({ payload: contractCode })
-              .then(({ trans }) => {
-                props.onSuccess && props.onSuccess(trans!);
-                message.info(
-                  'deploy trans send, contract address: ' +
-                    trans?.recipient.did,
-                );
-              });
+            // skService.state.context.chain.sk
+            //   .deploy({ payload: contractCode })
+            //   .then(({ trans }) => {
+            //     props.onSuccess && props.onSuccess(trans!);
+            //     message.info(
+            //       'deploy trans send, contract address: ' +
+            //         trans?.recipient.did,
+            //     );
+            //   });
           }}
         >
           deploy

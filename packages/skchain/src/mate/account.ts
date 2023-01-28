@@ -51,7 +51,9 @@ export class Account {
    * @param cid
    * @returns
    */
-  public static fromBinary = async (binary: AccountBinary) => {
+  public static fromBinary = async (
+    binary: AccountBinary,
+  ): Promise<Account> => {
     const accountData = decode<AccountBinary>(binary);
     const bl: Account['balance'] = {};
     accountData[1].map((ele: [string, string]) => {
@@ -72,7 +74,7 @@ export class Account {
   };
 
   // 每进行一次交易，执行此操作
-  setNextNonce = () => {
+  setNextNonce = (): void => {
     this.nonce = this.nonce + 1n;
   };
 
@@ -80,7 +82,7 @@ export class Account {
    * 获取当前账户余额
    * @returns
    */
-  getBlance = () => {
+  getBlance = (): bigint => {
     return Object.keys(this.balance).reduce((sum, cur) => {
       return sum + this.balance[cur as unknown as number];
     }, 0n);
@@ -91,22 +93,24 @@ export class Account {
    * @param amount
    * @returns
    */
-  minusBlance = (amount: bigint) => {
+  minusBlance = (amount: bigint): void => {
     if (amount > this.getBlance()) {
-      return 'dont have such amount to minus';
+      throw new Error('dont have such amount to minus');
     }
     const zero = 0n;
     const blanceKeys = Object.keys(this.balance).sort((a, b) => +b - +a);
     // 从年龄最大的blance开始进行减法，直到能把amount全部减掉
     while (amount !== zero) {
-      const curIndex = blanceKeys.shift()!;
-      const last = this.balance[curIndex] - amount;
-      if (last <= zero) {
-        amount = -last;
-        delete this.balance[curIndex];
-      } else {
-        this.balance[curIndex] = last;
-        amount = zero;
+      const curIndex = blanceKeys.shift();
+      if (curIndex) {
+        const last = this.balance[curIndex] - amount;
+        if (last <= zero) {
+          amount = -last;
+          delete this.balance[curIndex];
+        } else {
+          this.balance[curIndex] = last;
+          amount = zero;
+        }
       }
     }
     this.setNextNonce();
@@ -116,18 +120,18 @@ export class Account {
    * 余额增加
    * @param amount
    */
-  plusBlance = (amount: bigint, ts: string) => {
+  plusBlance = (amount: bigint, ts: string): void => {
     this.balance[ts] = amount;
     this.setNextNonce();
   };
 
   // 更新状态树
-  updateState = (cid: CID) => {
+  updateState = (cid: CID): void => {
     this.storageRoot = cid;
     this.setNextNonce();
   };
 
-  toBinary = async () => {
+  toBinary = async (): Promise<ByteView<(string | string[][] | null)[]>[]> => {
     const binary = encode([
       this.account.did,
       Object.keys(this.balance).map((key) => {
@@ -148,7 +152,7 @@ export const newAccount = (
   storageRoot: CID,
   codeCid?: CID,
   owner?: string,
-) => {
+): Account => {
   return new Account({
     account: new Address(did),
     contribute: 0n,

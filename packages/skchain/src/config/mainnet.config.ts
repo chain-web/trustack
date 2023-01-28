@@ -1,3 +1,3 @@
-import type { networkidType } from './types';
+import type { networkidType } from './types.js';
 
 export const networkid: networkidType = 'mainnet';

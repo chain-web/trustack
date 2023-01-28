@@ -1,24 +1,21 @@
-import {
-  ByteView,
-  PBLink,
-  PBNode,
-  createLink,
-  createNode,
-  encode,
-} from '@ipld/dag-pb';
+import { createNode } from '@ipld/dag-pb';
+import type { PBNode } from '@ipld/dag-pb';
 import { bytes } from 'multiformats';
-import type { SKDB } from '../ipfs/ipfs.interface';
+import type { SKDB } from '../ipfs/ipfs.interface.js';
 
-export const createEmptyNode = (name: string) => {
+export const createEmptyNode = (name: string): PBNode => {
   return createNode(bytes.fromString(name), []);
 };
 
-export const createEmptyNodeCid = async (name: string, db: SKDB) => {
+export const createEmptyNodeCid = async (
+  name: string,
+  db: SKDB,
+): Promise<string> => {
   const storageRoot = await db.dag.put(createEmptyNode(name));
   return storageRoot;
 };
 
 // generate init account storageRoot
-export const createEmptyStorageRoot = async (db: SKDB) => {
+export const createEmptyStorageRoot = async (db: SKDB): Promise<string> => {
   return await db.dag.put([]);
 };

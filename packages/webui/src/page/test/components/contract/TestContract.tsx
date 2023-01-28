@@ -1,15 +1,10 @@
-import { Button, Input, Select, message } from 'antd';
-import { useActor } from '@xstate/react';
-import BigNumber from 'bignumber.js';
+import { Button, Input, Select } from 'antd';
 import { useState } from 'react';
-import type { Address } from 'sk-chain';
-import { skService } from '../../../../state/sk.state';
 
-export const TestContract = (CodeClass: any, contractCode: Uint8Array) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const TestContract = (CodeClass: any, _contractCode: Uint8Array) => {
   const codeClass = new CodeClass();
   return function TestContractComp() {
-    const [{ context }] = useActor(skService);
-    const [account, setaccount] = useState<Address>();
     const [func, setfunc] = useState('');
     const [arg, setarg] = useState('');
 
@@ -17,16 +12,16 @@ export const TestContract = (CodeClass: any, contractCode: Uint8Array) => {
       <div style={{}}>
         <h3>contract test</h3>
         <Button
-          disabled={!context.chain.started}
+          // disabled={!context.chain.started}
           onClick={() => {
-            skService.state.context.chain.sk.transTest
-              .deploy({ payload: contractCode })
-              .then(({ trans }) => {
-                setaccount(trans.recipient);
-                message.info(
-                  'deploy trans send, contract address: ' + trans.recipient.did,
-                );
-              });
+            // skService.state.context.chain.sk.transTest
+            //   .deploy({ payload: contractCode })
+            //   .then(({ trans }) => {
+            //     setaccount(trans.recipient);
+            //     message.info(
+            //       'deploy trans send, contract address: ' + trans.recipient.did,
+            //     );
+            //   });
           }}
         >
           deploy test
@@ -34,7 +29,7 @@ export const TestContract = (CodeClass: any, contractCode: Uint8Array) => {
         <div>
           func:
           <Select
-            disabled={!context.chain.started}
+            // disabled={!context.chain.started}
             style={{ width: 200 }}
             onChange={(e) => {
               setfunc(e);
@@ -54,24 +49,24 @@ export const TestContract = (CodeClass: any, contractCode: Uint8Array) => {
             }}
           />
           <Button
-            disabled={!context.chain.started}
+            // disabled={!context.chain.started}
             onClick={() => {
               if (!func) {
                 return;
               }
-              console.log('run func', func);
-              skService.state.context.chain.sk.transTest
-                .transaction({
-                  amount: new BigNumber(0),
-                  recipient: account!,
-                  payload: {
-                    mothed: func,
-                    args: [...arg.split(',')],
-                  },
-                })
-                .then((res: any) => {
-                  console.log(res);
-                });
+              // console.log('run func', func);
+              // skService.state.context.chain.sk.transTest
+              //   .transaction({
+              //     amount: new BigNumber(0),
+              //     recipient: account!,
+              //     payload: {
+              //       mothed: func,
+              //       args: [...arg.split(',')],
+              //     },
+              //   })
+              //   .then((res: any) => {
+              //     console.log(res);
+              //   });
             }}
           >
             test

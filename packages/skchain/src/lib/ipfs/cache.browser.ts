@@ -4,7 +4,7 @@ export class Cache {
   }
   path: string;
 
-  put = (key: string, value: string) => {
+  put = (key: string, value: string): void => {
     localStorage.setItem(`${this.path}-_-${key}`, value);
   };
   get = (key: string): string => {
