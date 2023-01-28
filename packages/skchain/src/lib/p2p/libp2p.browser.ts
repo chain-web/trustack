@@ -5,15 +5,15 @@ import { KadDHT } from '@libp2p/kad-dht';
 import { GossipSub } from '@chainsafe/libp2p-gossipsub';
 import { WebRTCStar } from '@libp2p/webrtc-star';
 import { Libp2pFactoryFn } from 'ipfs-core/dist/src/types';
-import { Noise } from '@chainsafe/libp2p-noise'
-import { Mplex } from '@libp2p/mplex'
-import { Bootstrap } from '@libp2p/bootstrap'
+import { Noise } from '@chainsafe/libp2p-noise';
+import { Mplex } from '@libp2p/mplex';
+import { Bootstrap } from '@libp2p/bootstrap';
 
 export class Network {
   private libp2p?: Promise<Libp2p>;
   webRtcStar = new WebRTCStar();
 
-  constructor () {
+  constructor() {
     this.checkNetwork();
   }
 
@@ -27,14 +27,14 @@ export class Network {
       // const topice = lp.pubsub.getTopics();
       // console.log('topice', topice)
       setTimeout(() => {
-        this.checkNetwork()
+        this.checkNetwork();
       }, 10000);
     } else {
       setTimeout(() => {
-        this.checkNetwork()
+        this.checkNetwork();
       }, 10000);
     }
-  }
+  };
 
   genlibp2p = async () => {
     // this.libp2p = createLibp2p(this.config);
@@ -43,8 +43,8 @@ export class Network {
 
   createLibp2p: Libp2pFactoryFn = (opts) => {
     const peerId = opts.peerId;
-    const ds = opts.datastore
-    console.log(opts)
+    const ds = opts.datastore;
+    console.log(opts);
     const config: Libp2pOptions = {
       ...opts.libp2pOptions,
       peerId,

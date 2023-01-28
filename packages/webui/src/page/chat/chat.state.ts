@@ -85,7 +85,6 @@ export const chatService = interpret(ChatMachine);
 
 chatService.start();
 
-
 export const initChatService = () => {
   skService.onTransition((e) => {
     if (!chatService.state.context.chat && e.matches('started')) {
@@ -94,4 +93,4 @@ export const initChatService = () => {
       });
     }
   });
-}
+};

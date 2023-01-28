@@ -5,7 +5,7 @@ export interface DaoMeta {
   owner: Dao['owner'];
   dbs: Dao['dbs'];
   accountBloom: Dao['accountBloom'];
-  contracts: Dao['contracts']
+  contracts: Dao['contracts'];
 }
 
 // DAO, decentralized autonomous organization 元数据

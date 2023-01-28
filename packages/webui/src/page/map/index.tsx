@@ -5,7 +5,7 @@ import Tabbar from './components/Tabbar';
 import NeedPremission from './components/needPremission';
 import { MapOption } from 'sk-gridmap';
 import { useActor } from '@xstate/react';
-import { MapEventType, mapStateService,  } from './map.state';
+import { MapEventType, mapStateService } from './map.state';
 export const mapBoxPk =
   'pk.eyJ1Ijoic2NjLW1hcGJveCIsImEiOiJja292MGsxNXgwMzl0MnZxczJ1ZHJ6MXNhIn0.BP99qksZP77yNqFTyfz_rw';
 export const MapBox = () => {

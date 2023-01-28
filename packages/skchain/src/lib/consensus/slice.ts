@@ -201,7 +201,7 @@ export class Slice extends SKChainLibBase {
         blockRoot: this.chain.blockService.blockRoot.rootCid,
       };
     }
-    console.log(this.chain.db.pubsub)
+    console.log(this.chain.db.pubsub);
     await this.chain.db.pubsub.publish(
       `${slicePrefix}${this.slice}`,
       bytes.fromString(JSON.stringify(slicePubData)),

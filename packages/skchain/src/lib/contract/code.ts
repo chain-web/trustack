@@ -2,10 +2,10 @@
 
 export const errorCodes = {
   'Insufficient balance': 'Insufficient balance',
-}
+};
 
 export const accountOpCodes = {
   minus: 'minus',
   plus: 'plus',
   updateState: 'updateState',
-}
+};

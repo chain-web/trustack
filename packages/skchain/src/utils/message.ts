@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import * as packageJson from '../../package.json'
+import * as packageJson from '../../package.json';
 
 type BaseSKMessageFunc = (...msg: any[]) => void;
 
@@ -12,11 +12,11 @@ export class SKMessage {
   error: BaseSKMessageFunc;
 
   static logger = (...msg: any) => {
-    console.log(`sk-v${packageJson.version}:`, ...msg)
+    console.log(`sk-v${packageJson.version}:`, ...msg);
   };
   static error = (...msg: any) => {
-    console.error(`sk-v${packageJson.version}:`, ...msg)
-  };;
+    console.error(`sk-v${packageJson.version}:`, ...msg);
+  };
 
   static defaultInfo: BaseSKMessageFunc = (...msg) => {
     SKMessage.logger(...msg);

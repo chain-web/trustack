@@ -38,12 +38,16 @@ export default function RepoStatus() {
         {repoStatus && <JsonView data={repoStatus} />}
       </div>
       <div className="status-item">
-        <Button onClick={async() => {
-          const itr = node.db.repo.gc()
-          for await (const block of itr) {
-            console.log('gc: ', block.cid?.toString())
-          }
-        }}>GC</Button>
+        <Button
+          onClick={async () => {
+            const itr = node.db.repo.gc();
+            for await (const block of itr) {
+              console.log('gc: ', block.cid?.toString());
+            }
+          }}
+        >
+          GC
+        </Button>
       </div>
 
       {showBlock && (
