@@ -1,13 +1,5 @@
-import { createNode, DidJson, SKChain } from 'sk-chain';
-export class SkChain {
-  sk!: SKChain;
-  started = false;
+import { SKChain } from 'skchain';
 
-  init = async (account: DidJson) => {
-    this.sk = await createNode({
-      networkid: 'testnet',
-      account,
-    });
-    this.started = true;
-  };
-}
+export const chain = new SKChain();
+
+export const chainState = chain.chainState;

@@ -1,9 +1,7 @@
 import { create, createFromPrivKey, createFromB58String } from 'peer-id';
 import { bytes } from 'multiformats';
 import { randomBytes, secretbox } from 'tweetnacl';
-import { message } from '../../utils/message';
 import { base58btc } from 'multiformats/bases/base58';
-import { __wbgtest_console_log } from 'cwjsr';
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string';
 import * as lsm from 'libsodium-wrappers-sumo';
 

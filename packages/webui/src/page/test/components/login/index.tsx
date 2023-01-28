@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { SkNodeEventType, skService } from '../../../../state/sk.state';
+import { chain, chainState } from '../../../../state/sk';
 import './index.scss';
 import { useActor } from '@xstate/react';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'antd';
 import { lanKeys } from './index.i18n';
-import { DidJson, genetateDid, skCacheKeys, localCache } from 'sk-chain';
+import { DidJson, genetateDid, skCacheKeys, localCache } from 'skchain';
 
 enum LoginType {
   None,
@@ -15,15 +15,13 @@ enum LoginType {
 }
 
 export default function Login() {
-  const [current] = useActor(skService);
+  const [current] = useActor(chainState);
   const [t] = useTranslation();
   const [loginType, setLoginType] = useState(LoginType.PrivateKey);
   const [did, setdid] = useState(localCache.get(skCacheKeys.accountId) || '');
   const [privKey, setprivKey] = useState(
     localCache.get(skCacheKeys.accountPrivKey) || '',
   );
-
-  const node = current.context.chain.sk;
 
   const downloadDIDFile = (did: DidJson) => {
     const element = document.createElement('a');
@@ -142,10 +140,10 @@ export default function Login() {
             <Button
               id="login-login-btn"
               onClick={() => {
-                skService.send(SkNodeEventType.START_CHAIN, {
-                  id: did,
-                  privKey,
-                });
+                // skService.send(SkNodeEventType.START_CHAIN, {
+                //   id: did,
+                //   privKey,
+                // });
               }}
             >
               {t(lanKeys.login)}

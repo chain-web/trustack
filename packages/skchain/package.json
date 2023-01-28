@@ -2,7 +2,7 @@
   "name": "skchain",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,15 +11,20 @@
   "author": "scc",
   "license": "ISC",
   "devDependencies": {
+    "@types/libsodium-wrappers-sumo": "^0.7.5",
     "@types/node": "^18.11.13"
   },
   "dependencies": {
+    "@chain-web/network": "workspace:*",
     "@ipld/dag-cbor": "^8.0.0",
     "datastore-level": "^9.0.4",
+    "libsodium-wrappers-sumo": "^0.7.10",
     "multiformats": "^10.0.2",
+    "peer-id": "^0.16.0",
     "ts-node": "^10.9.1",
+    "tweetnacl": "^1.0.3",
     "typescript": "^4.9.3",
-    "xstate": "^4.35.0",
-    "@chain-web/network": "workspace:*"
+    "uint8arrays": "^4.0.2",
+    "xstate": "^4.35.0"
   }
 }

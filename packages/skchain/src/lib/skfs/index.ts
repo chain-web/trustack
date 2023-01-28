@@ -8,8 +8,8 @@ export interface SkfsOptions {
 
 export class Skfs {
   constructor(options: SkfsOptions) {
-    this.store = new LevelDatastore(options.path);
+    // this.store = new LevelDatastore(options.path);
   }
 
-  store: LevelDatastore;
+  // store: LevelDatastore;
 }
