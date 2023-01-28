@@ -1,7 +1,7 @@
 // import { Button, Input } from 'antd';
 // import React, { useEffect } from 'react';
 import { useActor } from '@xstate/react';
-// import { SkNodeEventType, skService } from '../../state/sk.state';
+import { chain } from '../../state/sk';
 import './index.scss';
 // import { accounts } from './accounts';
 // import { skCacheKeys } from 'sk-chain';
@@ -10,6 +10,9 @@ import './index.scss';
 // import NodeStatus from './components/nodeStatus';
 import ChangeI18n from '../../config/i18n/i18nSelect';
 import { useTranslation } from 'react-i18next';
+import Devtool from './components/devtool';
+import Login from './components/login';
+import { Button } from 'antd';
 // import { lanKeys } from './index.i18n';
 // import { historyAction } from '../../utils/history';
 // import RepoStatus from './components/repoStatus';
@@ -20,7 +23,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function TestPage() {
   // const [current] = useActor(skService);
-  // const started = current.matches('started');
+  const started = false;
   const [t] = useTranslation();
   // const start = current.matches('start');
   // const { chain } = current.context;
@@ -44,27 +47,27 @@ export default function TestPage() {
   return (
     <div className="test-box">
       <ChangeI18n />
-      {/* <div className="home-start-node">
+      <div className="home-start-node">
         {!started && <div>
           <Login />
           </div>}
         <div className="home-node-status">
-          {start && (
+          {/* {start && (
             <Button type="default" loading={true}>
               {t(lanKeys.starting)}
             </Button>
-          )}
-          {started && <p>{chain.sk.db.cache.get(skCacheKeys.accountId)}</p>}
+          )} */}
+          {/* {started && <p>{chain.sk.db.cache.get(skCacheKeys.accountId)}</p>}
           {started && <Button type="ghost">{t(lanKeys.started)}</Button>}
           {started && <NodeStatus />}
           {started && <RepoStatus />}
           {started && <StateRootStatus />}
           {started && <BlockStatus />}
-          {started && <TransactionStatus />}
+          {started && <TransactionStatus />} */}
         </div>
       </div>
-      {<Transaction />}
-      {<Devtool />} */}
+      {/* {<Transaction />} */}
+      {<Devtool />}
     </div>
   );
 }

@@ -1,14 +1,12 @@
 import { Button, Input, message } from 'antd';
 import React, { useState } from 'react';
 import { JsonView } from '../../../../components/JsonView';
-import { skService } from '../../../../state/sk.state';
 import { useActor } from '@xstate/react';
 import './index.scss';
-import { CID } from 'sk-chain';
 import { deepGetCid } from './devtool.service';
 
 export default function Devtool() {
-  const [current] = useActor(skService);
+  // const [current] = useActor(skService);
   const [cid, setCid] = useState('');
   const [data, setData] = useState({});
   return (
@@ -46,11 +44,11 @@ export default function Devtool() {
         />
         <Button
           onClick={() => {
-            deepGetCid(current.context.chain.sk.db, CID.parse(cid)).then(
-              (res) => {
-                setData(res);
-              },
-            );
+            // deepGetCid(current.context.chain.sk.db, CID.parse(cid)).then(
+            //   (res) => {
+            //     setData(res);
+            //   },
+            // );
           }}
         >
           get dag cid

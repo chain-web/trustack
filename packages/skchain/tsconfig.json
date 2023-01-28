@@ -12,7 +12,7 @@
     "isolatedModules": true,
     "esModuleInterop": true,
     "types": ["node"],
-    "lib": ["ESNext"],
+    "lib": ["ESNext", "DOM"],
     "outDir": "./dist",
     "baseUrl": "./src"
   },
