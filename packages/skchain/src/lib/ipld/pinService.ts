@@ -1,4 +1,4 @@
-import { SKChain } from '../../skChain';
+import type { SKChain } from '../../skChain';
 import { SKChainLibBase } from '../base';
 
 export class PinService extends SKChainLibBase {

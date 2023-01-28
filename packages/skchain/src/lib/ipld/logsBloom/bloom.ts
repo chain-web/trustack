@@ -72,7 +72,7 @@ export const estimateFalsePositiveRate = (
   // k - number of hashes
   // n - number of set entries
   // m - number of buckets
-  var expectedFalsePositivesRate = Math.pow(
+  const expectedFalsePositivesRate = Math.pow(
     1 - Math.exp((-numHashes * numValues) / numBuckets),
     numHashes,
   );

@@ -1,7 +1,8 @@
-import { Transaction } from './transaction.js';
 import { CID } from 'multiformats';
+import type { ByteView } from '@ipld/dag-cbor';
+import { code, decode, encode } from '@ipld/dag-cbor';
 import { BloomFilter } from '../lib/ipld/logsBloom/bloomFilter.js';
-import { encode, decode, ByteView, code } from '@ipld/dag-cbor';
+import type { Transaction } from './transaction.js';
 
 export interface createBlockOpt {
   transactions: Transaction[];

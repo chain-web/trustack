@@ -1,19 +1,19 @@
-import { SKChainLibBase } from './../base';
 import BigNumber from 'bignumber.js';
-import { Transaction, transMeta } from '../../mate/transaction';
-import { peerEvent } from '../events/peer';
 import { bytes } from 'multiformats';
+import type { Transaction, transMeta } from '../../mate/transaction';
+import { peerEvent } from '../events/peer';
 import { genetateDid, verifyById } from '../p2p/did';
 import { message } from '../../utils/message';
 
 import { Contract } from '../contract';
 import { transDemoFn } from '../contracts/transaction_demo';
-import { SKChain } from '../../skChain';
+import type { SKChain } from '../../skChain';
 import { newAccount } from '../../mate/account';
 import { createEmptyStorageRoot } from '../ipld/util';
-import { UpdateAccountI } from '../ipld';
-import { genTransactionClass, genTransMeta, runContract } from './trans.pure';
-import { BlockHeaderData } from '../../mate/block';
+import type { UpdateAccountI } from '../ipld';
+import type { BlockHeaderData } from '../../mate/block';
+import { genTransMeta, genTransactionClass, runContract } from './trans.pure';
+import { SKChainLibBase } from './../base';
 
 export enum TransStatus {
   'transing' = 'transing',

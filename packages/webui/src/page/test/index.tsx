@@ -1,19 +1,20 @@
 // import { Button, Input } from 'antd';
 // import React, { useEffect } from 'react';
-import { useActor } from '@xstate/react';
-import { chain } from '../../state/sk';
-import './index.scss';
+
 // import { accounts } from './accounts';
 // import { skCacheKeys } from 'sk-chain';
 // import Devtool from './components/devtool';
 // import Transaction from './components/transaction';
 // import NodeStatus from './components/nodeStatus';
-import ChangeI18n from '../../config/i18n/i18nSelect';
 import { useTranslation } from 'react-i18next';
+import { Button } from 'antd';
+import ChangeI18n from '../../config/i18n/i18nSelect';
+import { chainState } from '../../state/sk';
+import './index.scss';
 import Devtool from './components/devtool';
 import Login from './components/login';
-import { Button } from 'antd';
-// import { lanKeys } from './index.i18n';
+import { lanKeys } from './index.i18n';
+// import { useIntervalUpdate } from '../../components/intervalUpdate.hook';
 // import { historyAction } from '../../utils/history';
 // import RepoStatus from './components/repoStatus';
 // import StateRootStatus from './components/stateRootStatus';
@@ -22,10 +23,10 @@ import { Button } from 'antd';
 // import Login from './components/login';
 
 export default function TestPage() {
-  // const [current] = useActor(skService);
   const started = false;
   const [t] = useTranslation();
-  // const start = current.matches('start');
+  const start = chainState.getSnapshot().matches('START');
+  // const time = useIntervalUpdate(1000)
   // const { chain } = current.context;
   // useEffect(() => {
   //   // 方便调试，自动启动节点
@@ -48,15 +49,17 @@ export default function TestPage() {
     <div className="test-box">
       <ChangeI18n />
       <div className="home-start-node">
-        {!started && <div>
-          <Login />
-          </div>}
+        {!started && (
+          <div>
+            <Login />
+          </div>
+        )}
         <div className="home-node-status">
-          {/* {start && (
+          {start && (
             <Button type="default" loading={true}>
               {t(lanKeys.starting)}
             </Button>
-          )} */}
+          )}
           {/* {started && <p>{chain.sk.db.cache.get(skCacheKeys.accountId)}</p>}
           {started && <Button type="ghost">{t(lanKeys.started)}</Button>}
           {started && <NodeStatus />}

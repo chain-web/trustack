@@ -1,5 +1,5 @@
-import { SKFSNetwork } from './network/index.js';
 import { LevelDatastore } from 'datastore-level';
+import type { SKFSNetwork } from './network/index.js';
 
 export interface SkfsOptions {
   path: string;

@@ -1,4 +1,4 @@
-import { actions, createMachine, interpret } from 'xstate';
+import { actions, assign, createMachine, interpret } from 'xstate';
 
 type ChainEvents =
   | { type: 'CHANGE'; event: string }
@@ -7,11 +7,18 @@ type ChainEvents =
   | { type: 'ERROR' }
   | { type: 'STARTED' };
 
+interface ChainContext {
+  event: string;
+}
+
 // chain state
 const chainMachine = createMachine<any, ChainEvents>({
   id: 'chain-state',
   initial: 'inactive',
   predictableActionArguments: true,
+  context: {
+    event: '',
+  },
   states: {
     inactive: {
       states: {
@@ -21,6 +28,9 @@ const chainMachine = createMachine<any, ChainEvents>({
               target: '..starting',
               actions: () => {
                 console.log('to starting');
+                assign({
+                  event: 'START',
+                });
               },
             },
           },
@@ -31,6 +41,9 @@ const chainMachine = createMachine<any, ChainEvents>({
           target: 'inactive.initializing',
           actions: () => {
             console.log('to initializing');
+            assign({
+              event: 'INITIALIZE',
+            });
           },
         },
       },
@@ -42,6 +55,9 @@ const chainMachine = createMachine<any, ChainEvents>({
           actions: [
             (_, e) => {
               console.log('starting: ', e.event);
+              assign({
+                event: e.event,
+              });
             },
           ],
         },

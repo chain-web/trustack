@@ -4,8 +4,8 @@ import './index.scss';
 import { useActor } from '@xstate/react';
 import { useTranslation } from 'react-i18next';
 import { Button, Modal } from 'antd';
+import type { Account, Block } from 'sk-chain';
 import { lanKeys } from './index.i18n';
-import { Block, Account } from 'sk-chain';
 
 export default function NodeStatus() {
   const [current] = useActor(skService);

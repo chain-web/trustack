@@ -1,6 +1,6 @@
 import { Mpt } from '../mpt';
-import { BlockHeaderData } from './../../../mate/block';
-import { SKDB } from './../../ipfs/ipfs.interface';
+import type { BlockHeaderData } from './../../../mate/block';
+import type { SKDB } from './../../ipfs/ipfs.interface';
 export const isTxInBlock = async (
   tx: string,
   blockHeader: BlockHeaderData,

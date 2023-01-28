@@ -1,5 +1,5 @@
-import { BloomFilter } from '../lib/ipld/logsBloom/bloomFilter';
-import { Address } from './address';
+import type { BloomFilter } from '../lib/ipld/logsBloom/bloomFilter';
+import type { Address } from './address';
 
 export interface DaoMeta {
   owner: Dao['owner'];

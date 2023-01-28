@@ -1,6 +1,7 @@
 import { CID } from 'multiformats';
+import type { ByteView } from '@ipld/dag-cbor';
+import { decode, encode } from '@ipld/dag-cbor';
 import { Address } from './address.js';
-import { encode, decode, ByteView } from '@ipld/dag-cbor';
 
 interface AccountMeta {
   codeCid?: Account['codeCid'];

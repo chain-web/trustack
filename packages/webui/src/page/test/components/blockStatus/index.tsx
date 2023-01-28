@@ -4,9 +4,9 @@ import './index.scss';
 import { useActor } from '@xstate/react';
 import { useTranslation } from 'react-i18next';
 import { Button, Modal } from 'antd';
-import { lanKeys } from './index.i18n';
-import { JsonView } from '../../../../components/JsonView';
 import { CID } from 'sk-chain';
+import { JsonView } from '../../../../components/JsonView';
+import { lanKeys } from './index.i18n';
 
 export default function BlockStatus() {
   const [current] = useActor(skService);

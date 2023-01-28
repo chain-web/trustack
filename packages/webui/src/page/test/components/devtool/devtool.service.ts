@@ -1,7 +1,8 @@
-import { SKChain } from "skchain";
+import type { SKChain } from 'skchain';
 
-export const deepGetCid = async (db: SKChain['db'], 
-// cid: CID
+export const deepGetCid = async (
+  db: SKChain['db'],
+  // cid: CID
 ): Promise<object> => {
   // const obj = await db.dag.get(cid);
   // if (obj.value?.Links) {
@@ -11,5 +12,5 @@ export const deepGetCid = async (db: SKChain['db'],
   //   }
   // }
   // return obj.value;
-  return {}
-}
+  return {};
+};

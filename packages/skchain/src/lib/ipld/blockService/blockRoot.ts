@@ -1,9 +1,10 @@
-import { createLink, PBNode } from '@ipld/dag-pb';
-import BigNumber from 'bignumber.js';
+import type { PBNode } from '@ipld/dag-pb';
+import { createLink } from '@ipld/dag-pb';
+import type BigNumber from 'bignumber.js';
 import { CID } from 'multiformats';
 import { Block } from '../../../mate/block';
 import { message } from '../../../utils/message';
-import { SKDB } from '../../ipfs/ipfs.interface';
+import type { SKDB } from '../../ipfs/ipfs.interface';
 
 // 块数据索引数据结构
 interface BlockIndex {

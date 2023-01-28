@@ -1,6 +1,6 @@
-import { Transaction } from './../mate/transaction';
-import { ContractResultSaveItem as CRI } from '../lib/contract';
-import { Address } from '../mate/address';
+import type { ContractResultSaveItem as CRI } from '../lib/contract';
+import type { Address } from '../mate/address';
+import type { Transaction } from './../mate/transaction';
 
 export type SliceKeyType = 'base58' | 'base32';
 

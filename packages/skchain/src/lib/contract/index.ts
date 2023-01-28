@@ -1,10 +1,10 @@
-import { getEval } from './cwjsr/node';
-import { evaluate } from 'cwjsr';
+import type { evaluate } from 'cwjsr';
 import { bytes } from 'multiformats';
-import { SliceKeyType } from '../../utils/contractHelper';
-import { Transaction } from '../../mate/transaction';
+import type { SliceKeyType } from '../../utils/contractHelper';
+import type { Transaction } from '../../mate/transaction';
 import { message } from '../../utils/message';
-import { lifecycleEvents, LifecycleStap } from '../events/lifecycle';
+import { LifecycleStap, lifecycleEvents } from '../events/lifecycle';
+import { getEval } from './cwjsr/node';
 
 export interface ContractResult {
   saves: ContractResultSaveItem[];
@@ -42,7 +42,7 @@ export class Contract {
     storage: string,
   ): ContractResult => {
     const codeStr = bytes.toString(code);
-    let mothed = trans.payload?.mothed;
+    const mothed = trans.payload?.mothed;
     const runCode = `
     const baseContractKey = ['msg']
     const cwjsrSk = __init__sk__()
@@ -124,7 +124,7 @@ export class Contract {
     `;
     console.log(runCode);
     let result = this.evaluate(runCode, BigInt(trans.cuLimit.toString()), {});
-    result = result.replace(/(\"$)|(^\")/g, '');
+    result = result.replace(/("$)|(^")/g, '');
     return JSON.parse(result);
   };
 

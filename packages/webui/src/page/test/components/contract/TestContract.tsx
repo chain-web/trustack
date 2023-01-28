@@ -1,9 +1,9 @@
-import { Button, Input, message, Select } from 'antd';
+import { Button, Input, Select, message } from 'antd';
 import { useActor } from '@xstate/react';
 import BigNumber from 'bignumber.js';
 import { useState } from 'react';
+import type { Address } from 'sk-chain';
 import { skService } from '../../../../state/sk.state';
-import { Address } from 'sk-chain';
 
 export const TestContract = (CodeClass: any, contractCode: Uint8Array) => {
   const codeClass = new CodeClass();

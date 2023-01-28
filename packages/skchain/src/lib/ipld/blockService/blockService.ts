@@ -1,14 +1,14 @@
-import { BlockRoot } from './blockRoot';
+import BigNumber from 'bignumber.js';
+import { CID } from 'multiformats';
 import { Block } from '../../../mate/block';
 import { createEmptyNode } from '../util';
-import BigNumber from 'bignumber.js';
-import { SKChain } from '../../../skChain';
+import type { SKChain } from '../../../skChain';
 import { SKChainLibBase } from '../../base';
-import { lifecycleEvents, LifecycleStap } from '../../events/lifecycle';
+import { LifecycleStap, lifecycleEvents } from '../../events/lifecycle';
 import { skCacheKeys } from '../../ipfs/key';
 import { message } from '../../../utils/message';
-import { CID } from 'multiformats';
 import { Mpt } from '../mpt';
+import { BlockRoot } from './blockRoot';
 import { isTxInBlock } from './util';
 
 // 管理、已经存储的块索引
@@ -36,8 +36,8 @@ export class BlockService extends SKChainLibBase {
     cid: string,
     number: BigNumber, // 其实没必要用BigNumber，因为这里实现是用的数组，并且最大长度为setSize，不会出现超大数字，先这么放着吧
   ) => {
-    let prevBlock = await this.getBlockByNumber(this.checkedBlockHeight);
-    let nextBlock = await Block.fromCid(cid, this.chain.db);
+    const prevBlock = await this.getBlockByNumber(this.checkedBlockHeight);
+    const nextBlock = await Block.fromCid(cid, this.chain.db);
     if (this.checkOneBlock(nextBlock, prevBlock)) {
       this.checkedBlockHeight = nextBlock.header.number;
     }

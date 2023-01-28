@@ -1,7 +1,8 @@
 import { Button, message } from 'antd';
 import { useActor } from '@xstate/react';
+import type { Transaction } from 'sk-chain';
+import { Account } from 'sk-chain';
 import { skService } from '../../../../state/sk.state';
-import { Account, Transaction } from 'sk-chain';
 
 export const DeployContract = (_CodeClass: any, contractCode: Uint8Array) => {
   return function DeployContractComp(props: {

@@ -1,20 +1,14 @@
-import typescript from 'rollup-plugin-typescript2';
 import { resolve } from 'path';
 import { writeFileSync } from 'fs';
-import {
-  rollup,
-  RollupOptions,
-  Plugin,
-  watch,
-  RollupWatcher,
-  MergedRollupOptions,
-} from 'rollup';
+import typescript from 'rollup-plugin-typescript2';
+import type { Plugin, RollupOptions } from 'rollup';
+import { MergedRollupOptions, RollupWatcher, rollup, watch } from 'rollup';
 import { init, parse } from 'es-module-lexer';
 import commonjs from '@rollup/plugin-commonjs';
 import { terser } from 'rollup-plugin-terser';
 import { bytes } from 'multiformats';
 import chalk from 'chalk';
-import { BuildOption } from '.';
+import type { BuildOption } from '.';
 const skContractTsPlugin = (): Plugin => {
   return {
     name: 'sk-chain-resolve-ts',
@@ -84,7 +78,7 @@ const skContractJsPlugin = (input: string): Plugin => {
       // console.log(code);
       if (id.match(input) && !id.match('commonjs-entry')) {
         // delete calss extend
-        code = code.replace(/Contract extends(\s*)(\S*)(\s*){/, 'Contract {');
+        code = code.replace(/Contract extends(\s*)(\S*)(\s*)\{/, 'Contract {');
         // 把constructor替换为__sk__constructor，因为只有在部署合约时才调用constructor
         // 同时，把baseContract中数据和方法写到constructor
         code = code.replace(
@@ -191,12 +185,12 @@ export const builder = async (input: string, opts: BuildOption) => {
         if (filePath.match(input.replace('.ts', '.d.ts'))) {
           console.log(chalk.green('starting build contract declaration'));
           // thanks to [zhigang]
-          const mainClassReg = /export declare[\s\S]*?(?=declare)/gim;
-          let mainClass = code.match(mainClassReg);
+          const mainClassReg = /export declare[\s\S]*?(?=declare)/gi;
+          const mainClass = code.match(mainClassReg);
           if (mainClass?.length === 1) {
             const mainClassCode = mainClass[0];
-            const sreg = /(=>\s*)([a-z]+|\{[\s\S]*?\});/gim; // 单行返回类型函数
-            const sreg2 = /(=>\s*)(\{[\s\S]*\});/gim; // 多行返回类型函数
+            const sreg = /(=>\s*)([a-z]+|\{[\s\S]*?\});/gi; // 单行返回类型函数
+            const sreg2 = /(=>\s*)(\{[\s\S]*\});/g; // 多行返回类型函数
             const r = mainClassCode
               .replace(sreg, '$1ConstractHelper.ContractFuncReruen<$2>;')
               .replace(sreg2, '$1ConstractHelper.ContractFuncReruen<$2>;');
