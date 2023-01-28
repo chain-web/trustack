@@ -28,3 +28,23 @@ jobs:
       
     - name: Lint
       run: pnpm run --if-present lint
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install pnpm
+      uses: pnpm/action-setup@v2.2.4
+      
+    - name: Set node version to 18
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        cache: "pnpm"
+
+    - name: Install deps
+      run: pnpm install
+      
+    - name: test
+      run: pnpm run test

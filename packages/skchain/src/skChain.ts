@@ -1,8 +1,8 @@
 import { LifecycleStap } from './lib/state/lifecycle.js';
 import type { GenesisConfig } from './config/types.js';
-import { chainState } from './lib/state/index.js';
 import { Skfs } from './lib/skfs/index.js';
 import { SKFSNetwork } from './lib/skfs/network/index.js';
+import { chainState } from './lib/state/index.js';
 // import { skCacheKeys } from './lib/ipfs/key';
 // import { SKDB } from './lib/ipfs/ipfs.interface';
 // import { TransactionAction } from './lib/transaction';
@@ -98,5 +98,3 @@ export class SKChain {
   //   return await this.blockService.getHeaderBlock();
   // };
 }
-
-new SKChain();

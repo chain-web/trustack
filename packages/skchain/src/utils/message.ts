@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
-import { version } from '../../package.json';
-
-type simpleConsoleVal = string | number | boolean;
+import pkg from '../../package.json' assert { type: 'json' };
+type simpleConsoleVal = string | number | boolean | object;
 
 type BaseSKMessageFunc = (...msg: simpleConsoleVal[]) => void;
 
@@ -14,10 +13,10 @@ export class SKMessage {
   error: BaseSKMessageFunc;
 
   static logger = (...msg: simpleConsoleVal[]): void => {
-    console.log(`sk-v${version}:`, ...msg);
+    console.log(`sk-v${pkg.version}:`, ...msg);
   };
   static error = (...msg: simpleConsoleVal[]): void => {
-    console.error(`sk-v${version}:`, ...msg);
+    console.error(`sk-v${pkg.version}:`, ...msg);
   };
 
   static defaultInfo: BaseSKMessageFunc = (...msg) => {
