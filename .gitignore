@@ -6,6 +6,7 @@ dist
 thumbs.db
 .fun
 .fun/*
+.pnpm-store
 
 .eslintcache
 
