@@ -13,7 +13,16 @@ interface AccountMeta {
   storageRoot: Account['storageRoot'];
 }
 
-export type AccountBinary = ByteView<(string | string[][] | null)[]>;
+export type AccountBinaryMeta = [
+  string,
+  [string, string][],
+  string | undefined,
+  string,
+  string | undefined,
+  string,
+  string,
+];
+export type AccountBinary = ByteView<AccountBinaryMeta>;
 
 // 账户，基础数据结构
 export class Account {
@@ -54,7 +63,7 @@ export class Account {
   public static fromBinary = async (
     binary: AccountBinary,
   ): Promise<Account> => {
-    const accountData = decode<AccountBinary>(binary);
+    const accountData = decode<AccountBinary>(binary) as AccountBinaryMeta;
     const bl: Account['balance'] = {};
     accountData[1].map((ele: [string, string]) => {
       bl[ele[0]] = BigInt(ele[1]);
@@ -89,6 +98,14 @@ export class Account {
   };
 
   /**
+   * 获取账户余额原始数据
+   * @returns
+   */
+  getOriginBlanceData = (): Account['balance'] => {
+    return this.balance;
+  };
+
+  /**
    * 支出余额
    * @param amount
    * @returns
@@ -120,8 +137,8 @@ export class Account {
    * 余额增加
    * @param amount
    */
-  plusBlance = (amount: bigint, ts: string): void => {
-    this.balance[ts] = amount;
+  plusBlance = (amount: bigint, timestamp: string | number): void => {
+    this.balance[timestamp] = amount;
     this.setNextNonce();
   };
 
@@ -131,7 +148,7 @@ export class Account {
     this.setNextNonce();
   };
 
-  toBinary = async (): Promise<ByteView<(string | string[][] | null)[]>[]> => {
+  toBinary = async (): Promise<AccountBinary> => {
     const binary = encode([
       this.account.did,
       Object.keys(this.balance).map((key) => {
@@ -143,7 +160,7 @@ export class Account {
       this.nonce.toString(),
       this.storageRoot.toString(),
     ]);
-    return [binary];
+    return binary;
   };
 }
 

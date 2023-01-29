@@ -6,8 +6,8 @@
     "lint": "eslint --cache .",
     "lint:fix": "eslint --fix --cache .",
     "format": "prettier --write --cache .",
-    "test:dev": "node --experimental-vm-modules --no-warnings node_modules/jest/bin/jest.js --no-cache --verbose=false",
-    "test": "node --experimental-vm-modules --no-warnings node_modules/jest/bin/jest.js --no-cache"
+    "test:dev": "node --experimental-vm-modules --no-warnings node_modules/jest/bin/jest.js --no-cache",
+    "test": "node --experimental-vm-modules --no-warnings node_modules/jest/bin/jest.js --no-cache --silent"
   },
   "repository": {
     "type": "git",
