@@ -12,8 +12,6 @@ then you can open faith-stack directory then click open with devcontainer.
 
 Tips: you should open terminal at vscode to run commands.
 
-
-
 ## Building packages when you make changes
 
 In the root directory:

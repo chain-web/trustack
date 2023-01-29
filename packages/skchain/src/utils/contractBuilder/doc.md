@@ -1,7 +1,7 @@
-#### 把智能合约代码，编译成cwjsr可以执行的js字符串
+#### 把智能合约代码，编译成 cwjsr 可以执行的 js 字符串
 
- - 把从sk-chain import进来的变量替换成全局变量，类型直接写在了TS代码里面，方法替换为从__sk__这个全局变量里拿，__sk__是在cwjsr运行时注入的
- - 把class extends删除，在TS代码里extends只是为了能使用BaseContract的类型定义
- - 把super()替换为向当前class注入BaseContract的属性
- - 把export等模块相关的代码剔除
- - 把js code string生成Uint8Array数据，写入文件
+- 把从 sk-chain import 进来的变量替换成全局变量，类型直接写在了 TS 代码里面，方法替换为从**sk**这个全局变量里拿，**sk**是在 cwjsr 运行时注入的
+- 把 class extends 删除，在 TS 代码里 extends 只是为了能使用 BaseContract 的类型定义
+- 把 super()替换为向当前 class 注入 BaseContract 的属性
+- 把 export 等模块相关的代码剔除
+- 把 js code string 生成 Uint8Array 数据，写入文件
