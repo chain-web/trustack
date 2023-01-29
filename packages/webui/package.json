@@ -12,8 +12,11 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
+    "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
+    "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
     "@xstate/react": "^3.0.1",
     "antd": "^5.1.4",
+    "esbuild": "^0.17.5",
     "i18next": "^22.3.0",
     "i18next-browser-languagedetector": "^7.0.1",
     "react": "^18.2.0",
@@ -22,6 +25,7 @@
     "react-json-view": "^1.21.3",
     "react-router": "^6.4.5",
     "react-router-dom": "^6.4.5",
+    "rollup-plugin-node-polyfills": "^0.2.1",
     "skchain": "workspace:^1.0.0",
     "xstate": "^4.35.0"
   },
