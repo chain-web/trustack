@@ -3,11 +3,11 @@ import type { GenesisConfig } from './config/types.js';
 import { Skfs } from './lib/skfs/index.js';
 import { SKFSNetwork } from './lib/skfs/network/index.js';
 import { chainState } from './lib/state/index.js';
+import { version } from './config/index.js';
 // import { skCacheKeys } from './lib/ipfs/key';
 // import { SKDB } from './lib/ipfs/ipfs.interface';
 // import { TransactionAction } from './lib/transaction';
 // import { Ipld } from './lib/ipld';
-// import {version} from '../package.json';
 // import { Consensus } from './lib/consensus';
 // import { Genesis } from './lib/genesis';
 // import { TransactionTest } from './lib/transaction/test';
@@ -42,7 +42,7 @@ export class SKChain {
     // this.deploy = this.transAction.deploy;
   }
 
-  version = '1.0.0';
+  version = version;
   // 数据存取服务
   db: Skfs;
   // 创世配置
