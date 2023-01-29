@@ -1,12 +1,22 @@
 {
-    "printWidth": 80,
-    "tabWidth": 2,
-    "useTabs": false,
-    "singleQuote": true,
-    "semi": true,
-    "trailingComma": "all",
-    "bracketSpacing": true,
-    "arrowParens": "always",
-    "parser": "typescript"
-  }
-  
+  "semi": true,
+  "tabWidth": 2,
+  "singleQuote": true,
+  "printWidth": 80,
+  "trailingComma": "all",
+  "overrides": [
+    {
+      "files": ["*.json"],
+      "options": {
+        "singleQuote": false,
+        "quoteProps": "preserve"
+      }
+    },
+    {
+      "files": ["*.yml"],
+      "options": {
+        "singleQuote": false
+      }
+    }
+  ]
+}
