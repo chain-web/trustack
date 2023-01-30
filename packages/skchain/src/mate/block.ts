@@ -1,8 +1,8 @@
-import { CID } from 'multiformats';
-import type { ByteView } from '@ipld/dag-cbor';
-import { code, decode, encode } from '@ipld/dag-cbor';
+import type { CID } from 'multiformats';
 import { BloomFilter } from '../lib/ipld/logsBloom/bloomFilter.js';
 import type { Transaction } from './transaction.js';
+import type { DefaultBlockType } from './utils.js';
+import { createBlock, takeBlockValue } from './utils.js';
 
 export interface createBlockOpt {
   transactions: Transaction[];
@@ -21,7 +21,7 @@ export interface BlockHeaderData {
   cuUsed: bigint; // 当前块消耗的计算量
   ts: number; // 当前块最后一个交易的时间戳
   slice: [number, number]; // 分片信息
-  extraData?: { [key: string]: unknown }; // 当前块自定义数据，不能超过？kb
+  extraData: { [key: string]: unknown } | null; // 当前块自定义数据，不能超过？kb
   body: CID;
 }
 
@@ -30,7 +30,7 @@ export interface BlockBodyData {
   transactions: Transaction['hash'][];
 }
 
-export type BlockBinary = ByteView<{
+export type BlockBinary = {
   header: (
     | string
     | number
@@ -43,7 +43,7 @@ export type BlockBinary = ByteView<{
     | CID
   )[];
   hash: string;
-}>;
+};
 
 const blockHeaderKeys: (keyof BlockHeaderData)[] = [
   'body',
@@ -63,6 +63,10 @@ const blockHeaderKeys: (keyof BlockHeaderData)[] = [
 
 const bnHeaderKeys = ['cuLimit', 'cuUsed', 'difficulty', 'number'];
 
+export const initBlockBody = {
+  transactions: [],
+};
+
 export class Block {
   constructor(header: Omit<BlockHeaderData, 'hash'>) {
     if (!header.extraData) {
@@ -72,39 +76,28 @@ export class Block {
   }
   hash!: string;
   header: BlockHeaderData;
-  body: BlockBodyData = {
-    transactions: [],
-  };
+  body?: BlockBodyData;
 
   /**
-   * 创建一个新的块
+   * parse a block,只包含块头，但不解析body
    */
-  // public static createNew = (): Block => {
-  //   const blockHeader = {}
-  //   const blockBody = {}
-  //   return new Block(blockHeader, blockBody)
-  // };
-
-  /**
-   * 从已有cid，读取一个区块,只包含块头，但不解析body
-   */
-  public static fromBinaryOnlyHeader = (
-    binary: BlockBinary,
-  ): Omit<Block, 'body'> => {
-    const blockData = decode<BlockBinary>(binary);
+  public static fromBinary = async (
+    binary: Uint8Array,
+  ): Promise<Omit<Block, 'body'>> => {
+    const blockData = await takeBlockValue<BlockBinary>(binary);
     const headerData = blockData.header;
     const header: Partial<BlockHeaderData> = {};
     blockHeaderKeys.map((key, i) => {
-      header[key] = headerData[i];
+      header[key] = headerData[i] as never;
       if (key === 'logsBloom') {
         // load BloomFilter data
-        header[key] = new BloomFilter();
-        header[key]?.loadData(headerData[i]);
+        header['logsBloom'] = new BloomFilter();
+        header['logsBloom'].loadData(headerData[i] as string);
       }
       if (bnHeaderKeys.includes(key)) {
         // 恢复bignumber
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (header[key] as any) = BigInt(headerData[i]);
+        (header[key] as any) = BigInt(headerData[i] as string);
       }
     });
 
@@ -114,49 +107,34 @@ export class Block {
   };
 
   /**
-   * 从已有cid，读取一个区块,包含块头、body
+   * parse body from block data
    */
-  public static fromBinary = ([blockBinary, bodyBinary]: [
-    BlockBinary,
-    ByteView<BlockBodyData>,
-  ]): Block => {
-    const block = Block.fromBinaryOnlyHeader(blockBinary) as Block;
-    block.body = decode<BlockBodyData>(bodyBinary);
-    return block;
+  updateBodyByBinary = async (data: Uint8Array): Promise<void> => {
+    this.body = await takeBlockValue<Block['body']>(data);
   };
 
   genHash = async (): Promise<void> => {
     const obj = {
       ...this.header,
       logsBloom: this.header.logsBloom.getData(),
-      body: this.body,
+      body: this.body || null,
     };
     // ts，hash 不参与生成块hash
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     delete (obj as any).hash;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     delete (obj as any).ts;
-    // TODO block?
-    const hash = CID.create(1, code, encode(obj)).toString();
-    if (!hash) {
-      throw new Error('hash is null');
-    }
+    const hash = (await createBlock(obj)).cid.toString();
     this.hash = hash;
   };
 
-  bodyToBinary = (): ByteView<BlockBodyData> => {
-    return encode(this.body);
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  toBinary = (): ByteView<any> => {
-    const bodyBinary = this.bodyToBinary();
-    // TODO block?
-    const bodyCid = CID.asCID(bodyBinary);
-    if (!bodyCid) {
-      throw new Error('bodyCid is null');
+  toBlock = async (): Promise<DefaultBlockType<unknown>> => {
+    if (!this.hash) {
+      await this.genHash();
     }
-    this.header.body = bodyCid;
+    if (this.body) {
+      this.header.body = (await createBlock(this.body)).cid;
+    }
     const blockData = {
       header: blockHeaderKeys.map((ele) => {
         let val = this.header[ele];
@@ -171,6 +149,7 @@ export class Block {
       }),
       hash: this.hash,
     };
-    return [encode(blockData), bodyBinary];
+    const block = await createBlock(blockData);
+    return block;
   };
 }
