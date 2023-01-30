@@ -59,6 +59,7 @@ importers:
       '@ipld/dag-pb': ^4.0.0
       '@types/libsodium-wrappers-sumo': ^0.7.5
       '@types/node': ^18.11.13
+      bitset: ^5.1.1
       cac: ^6.7.14
       chalk: ^5.2.0
       datastore-level: ^9.0.4
@@ -76,6 +77,7 @@ importers:
       '@chain-web/network': link:../network
       '@ipld/dag-cbor': 8.0.0
       '@ipld/dag-pb': 4.0.0
+      bitset: 5.1.1
       cac: 6.7.14
       chalk: 5.2.0
       datastore-level: 9.0.4
@@ -2805,6 +2807,10 @@ packages:
     resolution: {integrity: sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==}
     engines: {node: '>=8'}
     dev: true
+
+  /bitset/5.1.1:
+    resolution: {integrity: sha512-oKaRp6mzXedJ1Npo86PKhWfDelI6HxxJo+it9nAcBB0HLVvYVp+5i6yj6DT5hfFgo+TS5T57MRWtw8zhwdTs3g==}
+    dev: false
 
   /brace-expansion/1.1.11:
     resolution: {integrity: sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==}

@@ -21,6 +21,7 @@
     "@chain-web/network": "workspace:*",
     "@ipld/dag-cbor": "^8.0.0",
     "@ipld/dag-pb": "^4.0.0",
+    "bitset": "^5.1.1",
     "cac": "^6.7.14",
     "chalk": "^5.2.0",
     "datastore-level": "^9.0.4",

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import type { BitSet } from 'bitset';
 import bs from 'bitset';
@@ -7,7 +8,7 @@ export class Bloom {
   constructor(buckets: number = 1000, hashes: number = 5) {
     this.numBuckets = buckets;
     this.numHashes = hashes;
-    this.bitVector = new bs(this.numBuckets);
+    this.bitVector = new (bs as any)(this.numBuckets);
   }
   numBuckets: number;
   numHashes: number;
@@ -53,7 +54,7 @@ export class Bloom {
   };
 
   loadData = (data: string) => {
-    this.bitVector = new bs(data);
+    this.bitVector = new (bs as any)(data);
   };
 }
 

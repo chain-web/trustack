@@ -109,7 +109,7 @@ module.exports = defineConfig({
           '__dirname',
           '__filename',
         ],
-        'no-console': ['error'],
+        'no-console': ['warn'],
       },
     },
     {
