@@ -40,7 +40,7 @@ describe('Account', () => {
       const account = newAccount(testDid, storageRoot);
       account.plusBlance(2000n, Date.now());
       account.minusBlance(1000n);
-      await account.toBinary();
+      await account.toBlock();
     });
     it('should account from binary ok', async () => {
       const testTimestamp = 1674975141922;
@@ -50,11 +50,11 @@ describe('Account', () => {
       account.plusBlance(2000n, testTimestamp);
       account.minusBlance(1000n);
       expect(account.getOriginBlanceData()[testTimestamp]).toEqual(2000n);
-      const binary = await account.toBinary();
-      const accountFromBinart = await Account.fromBinary(binary);
-      expect(accountFromBinart.nonce).toEqual(3n);
-      expect(accountFromBinart.getBlance()).toEqual(3000n);
-      expect(accountFromBinart.getOriginBlanceData()[testTimestamp]).toEqual(
+      const block = await account.toBlock();
+      const accountFromBlock = await Account.fromBinary(block.bytes);
+      expect(accountFromBlock.nonce).toEqual(3n);
+      expect(accountFromBlock.getBlance()).toEqual(3000n);
+      expect(accountFromBlock.getOriginBlanceData()[testTimestamp]).toEqual(
         2000n,
       );
     });

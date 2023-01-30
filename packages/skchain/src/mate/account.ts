@@ -1,11 +1,11 @@
 import { CID } from 'multiformats';
-import type { ByteView } from '@ipld/dag-cbor';
-import { decode, encode } from '@ipld/dag-cbor';
 import { Address } from './address.js';
+import type { DefaultBlockType } from './utils.js';
+import { createBlock, takeBlockValue } from './utils.js';
 
 interface AccountMeta {
-  codeCid?: Account['codeCid'];
-  owner?: Account['owner'];
+  codeCid: Account['codeCid'];
+  owner: Account['owner'];
   account: Account['account'];
   contribute: Account['contribute'];
   nonce: Account['nonce'];
@@ -16,13 +16,12 @@ interface AccountMeta {
 export type AccountBinaryMeta = [
   string,
   [string, string][],
-  string | undefined,
+  string | null,
   string,
-  string | undefined,
+  string | null,
   string,
   string,
 ];
-export type AccountBinary = ByteView<AccountBinaryMeta>;
 
 // 账户，基础数据结构
 export class Account {
@@ -49,10 +48,10 @@ export class Account {
   // 合约数据库地址，可能没法用hash
   storageRoot: CID;
   // 存储合约代码的地址
-  codeCid?: CID; // v1
+  codeCid: CID | null; // v1
 
   // 合约的所有者
-  owner?: string;
+  owner: string | null;
 
   /**
    * 用存储account 数据的 cid string生成一个account实例
@@ -60,10 +59,8 @@ export class Account {
    * @param cid
    * @returns
    */
-  public static fromBinary = async (
-    binary: AccountBinary,
-  ): Promise<Account> => {
-    const accountData = decode<AccountBinary>(binary) as AccountBinaryMeta;
+  public static fromBinary = async (binary: Uint8Array): Promise<Account> => {
+    const accountData = await takeBlockValue<AccountBinaryMeta>(binary);
     const bl: Account['balance'] = {};
     accountData[1].map((ele: [string, string]) => {
       bl[ele[0]] = BigInt(ele[1]);
@@ -75,6 +72,7 @@ export class Account {
       owner: accountData[4],
       nonce: BigInt(accountData[5]),
       storageRoot: CID.parse(accountData[6]),
+      codeCid: null,
     };
     if (accountData[2]) {
       accountMeta.codeCid = CID.parse(accountData[2]);
@@ -148,8 +146,8 @@ export class Account {
     this.setNextNonce();
   };
 
-  toBinary = async (): Promise<AccountBinary> => {
-    const binary = encode([
+  toBlock = async (): Promise<DefaultBlockType<AccountBinaryMeta>> => {
+    const block = await createBlock<AccountBinaryMeta>([
       this.account.did,
       Object.keys(this.balance).map((key) => {
         return [key, this.balance[key].toString()];
@@ -160,15 +158,15 @@ export class Account {
       this.nonce.toString(),
       this.storageRoot.toString(),
     ]);
-    return binary;
+    return block;
   };
 }
 
 export const newAccount = (
   did: string,
   storageRoot: CID,
-  codeCid?: CID,
-  owner?: string,
+  codeCid: CID | null = null,
+  owner: string | null = null,
 ): Account => {
   return new Account({
     account: new Address(did),
@@ -176,7 +174,7 @@ export const newAccount = (
     nonce: 0n,
     balance: {},
     storageRoot,
-    codeCid: codeCid,
+    codeCid,
     owner,
   });
 };
