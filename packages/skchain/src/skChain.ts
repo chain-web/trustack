@@ -1,7 +1,7 @@
 import { LifecycleStap } from './lib/state/lifecycle.js';
 import type { GenesisConfig } from './config/types.js';
 import { Skfs } from './lib/skfs/index.js';
-import { SKFSNetwork } from './lib/skfs/network/index.js';
+// import { SKFSNetwork } from './lib/skfs/network/index.js';
 import { chainState } from './lib/state/index.js';
 import { version } from './config/index.js';
 // import { skCacheKeys } from './lib/ipfs/key';
@@ -26,7 +26,7 @@ export class SKChain {
     // this.version = version;
     this.db = new Skfs({
       path: option?.datastorePath || 'skfs',
-      net: new SKFSNetwork(),
+      // net: new SKFSNetwork(),
     });
     // this.ipld = new Ipld(this);
     // this.blockService = new BlockService(this);
