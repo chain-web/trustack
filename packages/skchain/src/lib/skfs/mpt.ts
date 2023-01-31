@@ -46,11 +46,9 @@ export class Mpt {
     });
   };
 
-  put = async (key: string, value: string): Promise<void> => {
-    await this.trie.put(
-      bytes.fromString(key) as Buffer,
-      bytes.fromString(value) as Buffer,
-    );
+  put = async (key: string, value: string | Uint8Array): Promise<void> => {
+    value = typeof value === 'string' ? bytes.fromString(value) : value;
+    await this.trie.put(bytes.fromString(key) as Buffer, value as Buffer);
   };
 
   get = async (key: string): Promise<Buffer | null> => {
@@ -79,3 +77,19 @@ export class Mpt {
   //   return await this.db.dag.put(this.rootTree);
   // };
 }
+
+const getEmptyMptRootCache = () => {
+  let root = '';
+  return () => {
+    if (!root) {
+      const mpt = new Mpt({ useMemDb: true });
+      mpt.initRootTree();
+      root = bytes.toHex(mpt.root);
+    }
+    return root;
+  };
+};
+
+export const getEmptyMptRoot = (): string => {
+  return getEmptyMptRootCache()();
+};

@@ -1,4 +1,4 @@
-import type { SKChain } from '../skChain';
+import type { SKChain } from '../skChain.js';
 export class SKChainLibBase {
   constructor(chain: SKChain) {
     this.chain = chain;
