@@ -1,27 +1,23 @@
-import { MemoryLevel } from 'memory-level';
 import { bytes } from 'multiformats';
 import { createBlock, takeBlockValue } from '../../../mate/utils.js';
 import { Skfs } from '../index.js';
+
+const createTestSkfs = (): Skfs => {
+  return new Skfs({
+    path: 'test',
+    useMemoryBb: true,
+  });
+};
 
 describe('Skfs', () => {
   const testDid = '12D3KooWL8qb3L8nKPjDtQmJU8jge5Qspsn6YLSBei9MsbTjJDr8';
   describe('test', () => {
     it('should open db ok', async () => {
-      const skfs = new Skfs({
-        path: new MemoryLevel({
-          keyEncoding: 'utf8',
-          valueEncoding: 'view',
-        }),
-      });
+      const skfs = createTestSkfs();
       await skfs.open();
     });
     it('should db put and get ok', async () => {
-      const skfs = new Skfs({
-        path: new MemoryLevel({
-          keyEncoding: 'utf8',
-          valueEncoding: 'view',
-        }),
-      });
+      const skfs = new Skfs({ path: 'test', useMemoryBb: true });
       await skfs.open();
       const data = bytes.fromString(testDid);
 
@@ -30,12 +26,7 @@ describe('Skfs', () => {
       expect(bytes.toString(backData)).toEqual(testDid);
     });
     it('should db put block and get ok', async () => {
-      const skfs = new Skfs({
-        path: new MemoryLevel({
-          keyEncoding: 'utf8',
-          valueEncoding: 'view',
-        }),
-      });
+      const skfs = createTestSkfs();
       await skfs.open();
       const blockVal = { user: testDid };
       const block = await createBlock(blockVal);
