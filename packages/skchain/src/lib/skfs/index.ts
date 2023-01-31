@@ -1,20 +1,39 @@
 import { Key } from 'interface-datastore';
+import { MemoryLevel } from 'memory-level';
 import type { LevelDb } from 'datastore-level';
 import { LevelDatastore } from 'datastore-level';
+import { Level } from 'level';
 import type { DefaultBlockType } from '../../mate/utils.js';
 // import type { SKFSNetwork } from './network/index.js';
 
 export interface SkfsOptions {
-  path: string | LevelDb;
+  path: string;
+  useMemoryBb?: boolean;
   // net: SKFSNetwork;
 }
 
 export class Skfs {
   constructor(options: SkfsOptions) {
-    this.store = new LevelDatastore(options.path);
+    this._db = this.generateDb(options);
+    this.store = new LevelDatastore(this._db);
   }
 
   store: LevelDatastore;
+  _db: LevelDb;
+
+  generateDb = (options: SkfsOptions): LevelDb => {
+    if (options.useMemoryBb) {
+      return new MemoryLevel({
+        keyEncoding: 'utf8',
+        valueEncoding: 'view',
+      });
+    }
+
+    return new Level<string, Uint8Array>(options.path, {
+      keyEncoding: 'utf8',
+      valueEncoding: 'view',
+    }) as unknown as LevelDb;
+  };
 
   open = async (): Promise<void> => {
     await this.store.open();
