@@ -12,8 +12,6 @@ export enum LifecycleStap {
   'checkedBlockIndex' = 'checkedBlockIndex', // 初始化区块存储模块-检查本地区块合法性成功
   'initedBlockService' = 'initedBlockService', // 初始化区块存储模块成功
   'syncingHeaderBlock' = 'syncingHeaderBlock', // 从其他节点同步区块中
-  'initingIpld' = 'initingIpld', // 开始初始化IPLD
-  'initedIpld' = 'initedIpld', // 初始化IPLD成功
   'initingTransaction' = 'initingTransaction', // 开始初始化交易模块
   'initedTransaction' = 'initedTransaction', // 交易模块初始化成功
   'initingSlice' = 'initingSlice', // 开始初始化分片共识模块

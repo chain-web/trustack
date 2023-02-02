@@ -8,9 +8,9 @@ describe('SkChain', () => {
         genesis: genesis,
         datastorePath: 'test',
       });
-      expect(chain.chainState.getSnapshot().context.event).toEqual(
-        'INITIALIZE',
-      );
+      expect(
+        chain.chainState.getSnapshot().matches('inactive.initializing'),
+      ).toEqual(true);
     });
   });
 });
