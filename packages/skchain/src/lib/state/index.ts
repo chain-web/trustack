@@ -1,78 +1,83 @@
-import { assign, createMachine, interpret } from 'xstate';
+import { createMachine, interpret } from 'xstate';
 import { message } from '../../utils/message.js';
 
-export type ChainEvents =
-  | { type: 'CHANGE'; event: string }
-  | { type: 'INITIALIZE' }
-  | { type: 'START' }
-  | { type: 'ERROR' }
-  | { type: 'STARTED' };
+export type ChainEvents = {
+  type: 'CHANGE' | 'INITIALIZE' | 'START' | 'ERROR' | 'STARTED';
+  event?: string;
+  data?: string[];
+};
 
 export interface ChainContext {
-  event: string;
+  eventQueue: { event: string; data?: string[] }[];
 }
 
 // chain state
-const chainMachine = createMachine<ChainContext, ChainEvents>({
-  id: 'chain-state',
-  initial: 'inactive',
-  predictableActionArguments: true,
-  context: {
-    event: '',
-  },
-  states: {
-    inactive: {
-      initial: 'uncreated',
-      states: {
-        initializing: {
-          on: {
-            START: {
-              target: '..starting',
-              actions: [
-                () => {
-                  message.info('to starting');
-                },
-                assign({
-                  event: 'START',
-                }),
-              ],
+const chainMachine = createMachine<ChainContext, ChainEvents>(
+  {
+    id: 'chain-state',
+    initial: 'inactive',
+    predictableActionArguments: true,
+    context: {
+      eventQueue: [],
+    },
+    type: 'parallel',
+    states: {
+      inactive: {
+        initial: 'uncreated',
+        states: {
+          initializing: {
+            on: {
+              START: {
+                target: '..starting',
+                actions: [
+                  () => {
+                    message.info('to starting');
+                  },
+                ],
+              },
             },
           },
+          uncreated: {},
         },
-        uncreated: {},
-      },
-      on: {
-        INITIALIZE: {
-          target: 'inactive.initializing',
-          actions: [
-            () => {
-              message.info('to initializing');
-            },
-            assign({
-              event: 'INITIALIZE',
-            }),
-          ],
+        on: {
+          INITIALIZE: {
+            target: 'inactive.initializing',
+            actions: [
+              () => {
+                message.info('to initializing');
+              },
+            ],
+          },
         },
       },
-    },
-    starting: {
-      on: {
-        STARTED: 'active',
-        CHANGE: {
-          actions: [
-            (_, e) => {
-              message.info('starting: ', e.event);
-            },
-            assign({
-              event: (_ctx, e) => e.event,
-            }),
-          ],
+      starting: {
+        on: {
+          STARTED: 'active',
+        },
+      },
+      active: {
+        on: {
+          ERROR: 'inactive',
         },
       },
     },
-    active: { on: { ERROR: 'inactive' } },
+    on: {
+      CHANGE: {
+        actions: ['update'],
+      },
+    },
   },
-});
+  {
+    actions: {
+      update: (ctx, e) => {
+        message.info('starting: ', e, ...(e.data || []));
+        if (e.event) {
+          ctx.eventQueue.push({ event: e.event, data: e.data });
+        }
+      },
+    },
+  },
+);
 
 export const chainState = interpret(chainMachine)
   // .onEvent((state) => console.log(state))
