@@ -2,6 +2,7 @@ import { Trie } from '@ethereumjs/trie';
 import { Level } from 'level';
 import { bytes } from 'multiformats';
 import { MptDb } from './mptDb.js';
+import { leveldb_prefix } from './index.js';
 
 interface MptOptions {
   useMemDb?: boolean;
@@ -12,13 +13,13 @@ interface MptOptions {
  * 基础数据结构
  */
 export class Mpt {
-  constructor(opts?: MptOptions) {
+  constructor(name: string, opts?: MptOptions) {
     if (opts?.useMemDb) {
       this.db = new MptDb();
       return;
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    this.db = new MptDb(new Level('sk_mpt') as any);
+    this.db = new MptDb(new Level(`${leveldb_prefix}${name}`) as any);
   }
 
   private db: MptDb;
@@ -82,7 +83,7 @@ const getEmptyMptRootCache = () => {
   let root = '';
   return () => {
     if (!root) {
-      const mpt = new Mpt({ useMemDb: true });
+      const mpt = new Mpt('temp_mpt', { useMemDb: true });
       mpt.initRootTree();
       root = bytes.toHex(mpt.root);
     }

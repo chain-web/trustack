@@ -35,5 +35,14 @@ describe('Skfs', () => {
       const value = await takeBlockValue<typeof blockVal>(backData);
       expect(value.user).toEqual(testDid);
     });
+
+    it('should db put and get cache ok', async () => {
+      const skfs = createTestSkfs();
+      await skfs.open();
+
+      await skfs.cachePut('test_key', 'test_val');
+      const val = await skfs.cacheGet('test_key');
+      expect(val).toEqual('test_val');
+    });
   });
 });
