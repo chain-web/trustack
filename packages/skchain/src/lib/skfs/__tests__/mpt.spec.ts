@@ -2,7 +2,7 @@ import { bytes } from 'multiformats';
 import { Mpt } from '../mpt.js';
 
 const createTestSkMpt = (): Mpt => {
-  return new Mpt({ useMemDb: true });
+  return new Mpt('test_mpt', { useMemDb: true });
 };
 
 describe('SkMpt', () => {

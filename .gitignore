@@ -7,6 +7,7 @@ thumbs.db
 .fun
 .fun/*
 .pnpm-store
+.leveldb
 
 .eslintcache
 
