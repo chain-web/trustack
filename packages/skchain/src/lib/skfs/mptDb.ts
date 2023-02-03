@@ -52,4 +52,7 @@ export class MptDb implements DB {
   copy(): DB {
     return new MptDb(this._leveldb);
   }
+  close = async (): Promise<void> => {
+    await this._leveldb.close();
+  };
 }

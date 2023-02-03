@@ -56,6 +56,10 @@ export class Mpt {
     return await this.trie.get(bytes.fromString(key) as Buffer);
   };
 
+  close = async (): Promise<void> => {
+    await this.db.close();
+  };
+
   // getKey = async (key: string): Promise<string | undefined> => {
   //   // TODO MPT
   //   const contentCid = this.rootTree.Links.find((ele) => ele.Name === key);
