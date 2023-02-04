@@ -51,6 +51,7 @@ export class Skfs {
 
   open = async (): Promise<void> => {
     await this.store.open();
+    await this.skCache.open();
   };
 
   put = async (key: string, data: Uint8Array): Promise<void> => {
@@ -64,9 +65,29 @@ export class Skfs {
     return await this.store.put(key, block.bytes);
   };
 
-  get = async (cid: string): Promise<Uint8Array> => {
+  get = async (cid: string): Promise<Uint8Array | undefined> => {
     const key = new Key(cid);
-    return await this.store.get(key);
+    try {
+      const data = await this.store.get(key);
+      return data;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      if (error.notFound) {
+        return undefined;
+      } else {
+        throw new Error(error);
+      }
+    }
+  };
+
+  del = async (cid: string): Promise<void> => {
+    const key = new Key(cid);
+    await this.store.delete(key);
+  };
+
+  clear = async (): Promise<void> => {
+    await this.skCache.clear();
+    await this._db.clear();
   };
 
   cacheGet = async (key: string): Promise<string> => {
@@ -74,5 +95,10 @@ export class Skfs {
   };
   cachePut = async (key: string, data: string): Promise<void> => {
     return await this.skCache.put(key, data);
+  };
+
+  close = async (): Promise<void> => {
+    await this.skCache.close();
+    await this.store.close();
   };
 }
