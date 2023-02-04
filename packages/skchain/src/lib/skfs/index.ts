@@ -90,8 +90,18 @@ export class Skfs {
     await this._db.clear();
   };
 
-  cacheGet = async (key: string): Promise<string> => {
-    return await this.skCache.get(key);
+  cacheGet = async (key: string): Promise<string | undefined> => {
+    try {
+      const data = await this.skCache.get(key);
+      return data;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      if (error.notFound) {
+        return undefined;
+      } else {
+        throw new Error(error);
+      }
+    }
   };
   cachePut = async (key: string, data: string): Promise<void> => {
     return await this.skCache.put(key, data);

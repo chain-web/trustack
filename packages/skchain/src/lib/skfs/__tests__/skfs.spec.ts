@@ -1,29 +1,7 @@
 import { bytes } from 'multiformats';
 import { createBlock, takeBlockValue } from '../../../mate/utils.js';
-import { Skfs } from '../index.js';
-
-const createTestSkfs = async (): Promise<Skfs> => {
-  const skfs = new Skfs({
-    path: 'test_skfs',
-    useMemoryBb: true,
-  });
-  await skfs.open();
-
-  await skfs.clear();
-
-  return skfs;
-};
-
-const createTestDiskSkfs = async (): Promise<Skfs> => {
-  const skfs = new Skfs({
-    path: 'test_skfs',
-  });
-  await skfs.open();
-
-  await skfs.clear();
-
-  return skfs;
-};
+import type { Skfs } from '../index.js';
+import { createTestDiskSkfs, createTestSkfs } from './utils.js';
 
 describe('Skfs', () => {
   const testDid = '12D3KooWL8qb3L8nKPjDtQmJU8jge5Qspsn6YLSBei9MsbTjJDr8';
@@ -69,6 +47,8 @@ describe('Skfs', () => {
         await skfs.cachePut('test_key', 'test_val');
         const val = await skfs.cacheGet('test_key');
         expect(val).toEqual('test_val');
+        const val1 = await skfs.cacheGet('test_key_new');
+        expect(val1).toEqual(undefined);
         await skfs.close();
       });
     });

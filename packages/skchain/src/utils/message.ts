@@ -1,7 +1,7 @@
 import { version } from '../config/index.js';
 
 /* eslint-disable no-console */
-type simpleConsoleVal = string | number | boolean | object;
+type simpleConsoleVal = string | number | boolean | object | undefined | null;
 
 type BaseSKMessageFunc = (...msg: simpleConsoleVal[]) => void;
 
