@@ -5,8 +5,8 @@ const createTestSkMpt = (): Mpt => {
   return new Mpt('test_mpt', { useMemDb: true });
 };
 
-const createTestDiskSkMpt = (): Mpt => {
-  const mpt = new Mpt('test_mpt');
+const createTestDiskSkMpt = (name: string): Mpt => {
+  const mpt = new Mpt(name);
   return mpt;
 };
 
@@ -26,7 +26,7 @@ describe('SkMpt', () => {
       }
     });
     it('should disk get put ok', async () => {
-      const mpt = createTestDiskSkMpt();
+      const mpt = createTestDiskSkMpt('test_mpt');
       mpt.initRootTree();
       await mpt.put('testKey', 'testValue');
       const res = await mpt.get('testKey');

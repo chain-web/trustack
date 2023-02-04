@@ -28,6 +28,11 @@ describe('SkMpt', () => {
       await root.addBlockToRootNode('test_cid', 10n);
       const res = await root.getBlockCidByNumber(10n);
       expect(res).toEqual('test_cid');
+      const res2 = await root.getBlockCidByNumber(100n);
+      expect(res2).toEqual(undefined);
+      const res3 = await root.getBlockCidByNumber(100n);
+      expect(res3).toEqual(undefined);
+
       await root.closeDb();
     });
   });
