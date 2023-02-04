@@ -2,47 +2,78 @@ import { bytes } from 'multiformats';
 import { createBlock, takeBlockValue } from '../../../mate/utils.js';
 import { Skfs } from '../index.js';
 
-const createTestSkfs = (): Skfs => {
-  return new Skfs({
-    path: 'test',
+const createTestSkfs = async (): Promise<Skfs> => {
+  const skfs = new Skfs({
+    path: 'test_skfs',
     useMemoryBb: true,
   });
+  await skfs.open();
+
+  await skfs.clear();
+
+  return skfs;
+};
+
+const createTestDiskSkfs = async (): Promise<Skfs> => {
+  const skfs = new Skfs({
+    path: 'test_skfs',
+  });
+  await skfs.open();
+
+  await skfs.clear();
+
+  return skfs;
 };
 
 describe('Skfs', () => {
   const testDid = '12D3KooWL8qb3L8nKPjDtQmJU8jge5Qspsn6YLSBei9MsbTjJDr8';
-  describe('test', () => {
-    it('should open db ok', async () => {
-      const skfs = createTestSkfs();
-      await skfs.open();
-    });
-    it('should db put and get ok', async () => {
-      const skfs = new Skfs({ path: 'test', useMemoryBb: true });
-      await skfs.open();
-      const data = bytes.fromString(testDid);
+  const runTest = (type: string, createFn: () => Promise<Skfs>) => {
+    describe(`test: ${type}`, () => {
+      it('should open db ok', async () => {
+        const skfs = await createFn();
+        await skfs.close();
+      });
+      it('should db put and get ok', async () => {
+        const skfs = await createFn();
+        const data = bytes.fromString(testDid);
 
-      await skfs.put('did', data);
-      const backData = await skfs.get('did');
-      expect(bytes.toString(backData)).toEqual(testDid);
-    });
-    it('should db put block and get ok', async () => {
-      const skfs = createTestSkfs();
-      await skfs.open();
-      const blockVal = { user: testDid };
-      const block = await createBlock(blockVal);
-      await skfs.putBlock(block);
-      const backData = await skfs.get(block.cid.toString());
-      const value = await takeBlockValue<typeof blockVal>(backData);
-      expect(value.user).toEqual(testDid);
-    });
+        await skfs.put('did', data);
+        const backData = await skfs.get('did');
+        expect(backData).not.toEqual(undefined);
+        if (backData) {
+          expect(bytes.toString(backData)).toEqual(testDid);
+        }
+        await skfs.close();
+      });
+      it('should db put block and get ok', async () => {
+        const skfs = await createFn();
+        const blockVal = { user: testDid };
+        const block = await createBlock(blockVal);
+        await skfs.putBlock(block);
+        const cid = block.cid.toString();
+        const backData = await skfs.get(cid);
+        expect(backData).not.toEqual(undefined);
+        if (backData) {
+          const value = await takeBlockValue<typeof blockVal>(backData);
+          expect(value.user).toEqual(testDid);
+        }
+        await skfs.del(cid);
+        const backData2 = await skfs.get(cid);
+        expect(backData2).toEqual(undefined);
+        await skfs.close();
+      });
 
-    it('should db put and get cache ok', async () => {
-      const skfs = createTestSkfs();
-      await skfs.open();
+      it('should db put and get cache ok', async () => {
+        const skfs = await createFn();
 
-      await skfs.cachePut('test_key', 'test_val');
-      const val = await skfs.cacheGet('test_key');
-      expect(val).toEqual('test_val');
+        await skfs.cachePut('test_key', 'test_val');
+        const val = await skfs.cacheGet('test_key');
+        expect(val).toEqual('test_val');
+        await skfs.close();
+      });
     });
-  });
+  };
+
+  runTest('mem', createTestSkfs);
+  runTest('disk', createTestDiskSkfs);
 });
