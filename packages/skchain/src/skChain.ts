@@ -12,6 +12,8 @@ import { Genesis } from './lib/genesis/index.js';
 import { genesis as testNetGenesis } from './config/testnet.config.js';
 import { BlockService } from './lib/ipld/blockService/blockService.js';
 import { message } from './utils/message.js';
+import { skCacheKeys } from './lib/ipfs/key.js';
+import type { DidJson } from './lib/p2p/did.js';
 // import { TransactionTest } from './lib/transaction/test';
 // import { message } from './utils/message';
 // import { BlockService } from './lib/ipld/blockService/blockService';
@@ -24,10 +26,13 @@ export interface SKChainOption {
   datastorePath?: string;
 }
 
+export interface SKChainRunOpts {
+  user: DidJson;
+}
+
 export class SKChain {
   constructor(option?: SKChainOption) {
     this.chainState.send('INITIALIZE');
-    // this.version = version;
     this.db =
       option?.db ||
       new Skfs({
@@ -66,8 +71,8 @@ export class SKChain {
 
   // // 共识
   // consensus: Consensus;
-  // // 当前节点did
-  // did: string;
+  // did of current node
+  did!: string;
 
   // // public methods
   // transaction;
@@ -75,9 +80,12 @@ export class SKChain {
 
   chainState = chainState;
 
-  run = async (): Promise<void> => {
+  run = async (opts: SKChainRunOpts): Promise<void> => {
     this.chainState.send('START');
     this.chainState.send('CHANGE', { event: LifecycleStap.startCreateSKChain });
+    await this.db.cachePut(skCacheKeys.accountId, opts.user.id);
+    await this.db.cachePut(skCacheKeys.accountPrivKey, opts.user.privKey);
+    this.did = opts.user.id;
     try {
       await this.db.open();
       await this.blockService.init();
