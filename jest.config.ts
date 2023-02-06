@@ -1,5 +1,7 @@
 /** @type {import('jest').Config} */
 const config = {
+  maxConcurrency: 1,
+  maxWorkers: 1,
   projects: [
     {
       displayName: 'skchain',

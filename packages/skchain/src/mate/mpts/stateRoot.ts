@@ -2,8 +2,8 @@ import { bytes } from 'multiformats';
 import { Mpt } from '../../lib/skfs/mpt.js';
 
 export class StateRoot {
-  constructor() {
-    this.mpt = new Mpt('state_root');
+  constructor(opts?: { mpt?: Mpt }) {
+    this.mpt = opts?.mpt || new Mpt('state_root');
     this.mpt.initRootTree();
     this.put = this.mpt.put;
     this.get = this.mpt.get;

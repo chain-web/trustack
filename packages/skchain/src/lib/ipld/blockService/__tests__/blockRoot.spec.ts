@@ -1,9 +1,4 @@
-import { BlockRoot } from '../blockRoot.js';
-
-const createTestBlockRoot = (): BlockRoot => {
-  const root = new BlockRoot();
-  return root;
-};
+import { createTestBlockRoot } from './blockService.util.js';
 
 describe('SkMpt', () => {
   describe('test', () => {

@@ -1,14 +1,5 @@
 import { bytes } from 'multiformats';
-import { Mpt } from '../mpt.js';
-
-const createTestSkMpt = (): Mpt => {
-  return new Mpt('test_mpt', { useMemDb: true });
-};
-
-const createTestDiskSkMpt = (name: string): Mpt => {
-  const mpt = new Mpt(name);
-  return mpt;
-};
+import { createTestDiskSkMpt, createTestSkMpt } from './utils.js';
 
 describe('SkMpt', () => {
   describe('test', () => {
@@ -26,7 +17,7 @@ describe('SkMpt', () => {
       }
     });
     it('should disk get put ok', async () => {
-      const mpt = createTestDiskSkMpt('test_mpt');
+      const mpt = createTestDiskSkMpt('test__mpt');
       mpt.initRootTree();
       await mpt.put('testKey', 'testValue');
       const res = await mpt.get('testKey');

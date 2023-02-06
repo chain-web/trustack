@@ -50,15 +50,27 @@ export class Skfs {
   };
 
   open = async (): Promise<void> => {
+    await this._db.open();
     await this.store.open();
     await this.skCache.open();
   };
 
+  /**
+   * put any ArrayBuffer data
+   * @param key
+   * @param data
+   * @returns
+   */
   put = async (key: string, data: Uint8Array): Promise<void> => {
     const idKey = new Key(key);
     return await this.store.put(idKey, data);
   };
 
+  /**
+   * @description put multiformats block
+   * @param block multiformats block
+   * @returns
+   */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   putBlock = async (block: DefaultBlockType<any>): Promise<void> => {
     const key = new Key(block.cid.toString());
@@ -110,5 +122,6 @@ export class Skfs {
   close = async (): Promise<void> => {
     await this.skCache.close();
     await this.store.close();
+    await this._db.close();
   };
 }
