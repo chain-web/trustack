@@ -2,6 +2,7 @@ import { genesis } from '../src/config/testnet.config.js';
 import { createTestBlockService } from '../src/lib/ipld/blockService/__tests__/blockService.util.js';
 import { createTestDiskSkfs } from '../src/lib/skfs/__tests__/utils.js';
 import { SKChain } from '../src/skChain.js';
+import { testAccounts } from './testAccount.js';
 
 describe('SkChain', () => {
   describe('test', () => {
@@ -26,8 +27,9 @@ describe('SkChain', () => {
         blockService,
       });
       await chain.db.clear();
-      await chain.run();
+      await chain.run({ user: testAccounts[0] });
       expect(chain.chainState.getSnapshot().matches('active')).toEqual(true);
+      expect(chain.did).toEqual(testAccounts[0].id);
       await chain.stop();
       expect(chain.chainState.getSnapshot().matches('inactive')).toEqual(true);
     });
