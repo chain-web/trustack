@@ -8,12 +8,16 @@ import {
 describe('block service', () => {
   describe('test', () => {
     it('should block root init ok', async () => {
-      const blockService = await createTestBlockService('test__block_init');
+      const blockService = await createTestBlockService({
+        name: 'test__block_init',
+      });
       await blockService.init();
       await closeTestBlockService(blockService);
     });
     it('should add block ok', async () => {
-      const blockService = await createTestBlockService('test__block_add');
+      const blockService = await createTestBlockService({
+        name: 'test__block_add',
+      });
       await blockService.init();
       const block = await createGenesisBlock(genesis, 'stateRoot');
       await blockService.addBlock(block);

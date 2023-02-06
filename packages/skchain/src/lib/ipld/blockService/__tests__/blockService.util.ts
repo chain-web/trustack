@@ -1,4 +1,5 @@
 import { createTestStateRoot } from '../../../../mate/mpts/__tests__/mptTest.util.js';
+import type { Skfs } from '../../../skfs/index.js';
 import {
   createTestDiskSkMpt,
   createTestDiskSkfs,
@@ -13,13 +14,16 @@ export const createTestBlockRoot = (name?: string): BlockRoot => {
   return root;
 };
 
-export const createTestBlockService = async (
-  name?: string,
-): Promise<BlockService> => {
-  const skfs = await createTestDiskSkfs(name);
-  const blockRoot = createTestBlockRoot(`${name}_blockRoot`);
-  // TODO
-  const stateRoot = createTestStateRoot(`${name}_stateRoot`);
+export const createTestBlockService = async (opts?: {
+  name?: string;
+  skfs?: Skfs;
+}): Promise<BlockService> => {
+  let skfs = opts?.skfs;
+  if (!skfs) {
+    skfs = await createTestDiskSkfs(opts?.name);
+  }
+  const blockRoot = createTestBlockRoot(`${opts?.name}_blockRoot`);
+  const stateRoot = createTestStateRoot(`${opts?.name}_stateRoot`);
   const root = new BlockService(skfs, { blockRoot, stateRoot });
   return root;
 };
