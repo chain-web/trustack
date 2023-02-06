@@ -1,7 +1,6 @@
 import { LifecycleStap } from './lib/state/lifecycle.js';
 import type { GenesisConfig } from './config/types.js';
 import { Skfs } from './lib/skfs/index.js';
-// import { SKFSNetwork } from './lib/skfs/network/index.js';
 import { chainState } from './lib/state/index.js';
 import { version } from './config/index.js';
 // import { skCacheKeys } from './lib/ipfs/key';
@@ -21,19 +20,21 @@ import { message } from './utils/message.js';
 export interface SKChainOption {
   genesis: GenesisConfig;
   db?: Skfs;
-  datastorePath: string;
+  blockService?: BlockService;
+  datastorePath?: string;
 }
 
 export class SKChain {
   constructor(option?: SKChainOption) {
     this.chainState.send('INITIALIZE');
     // this.version = version;
-    this.db = new Skfs({
-      path: option?.datastorePath || 'skfs',
-      // net: new SKFSNetwork(),
-    });
+    this.db =
+      option?.db ||
+      new Skfs({
+        path: option?.datastorePath || 'skfs',
+      });
     // this.ipld = new Ipld(this);
-    this.blockService = new BlockService(this.db);
+    this.blockService = option?.blockService || new BlockService(this.db);
     // this.did = this.db.cache.get(skCacheKeys.accountId);
     this.genesis = new Genesis(
       this.blockService,

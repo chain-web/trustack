@@ -8,7 +8,9 @@ import { Genesis } from '../index.js';
 describe('Genesis', () => {
   describe('test', () => {
     it('should Genesis check ok', async () => {
-      const blockService = await createTestBlockService('test__genesis_check');
+      const blockService = await createTestBlockService({
+        name: 'test__genesis_check',
+      });
       const gs = new Genesis(blockService, genesis);
       await gs.checkGenesisBlock();
       const block0 = await blockService.getBlockByNumber(0n);
