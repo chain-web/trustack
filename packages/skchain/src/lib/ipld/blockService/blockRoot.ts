@@ -3,8 +3,8 @@ import { Mpt } from '../../skfs/mpt.js';
 
 // 操作已经存储的块索引
 export class BlockRoot {
-  constructor() {
-    this.db = new Mpt('block_root');
+  constructor(opts?: { mpt?: Mpt }) {
+    this.db = opts?.mpt || new Mpt('block_root');
     this.db.initRootTree();
   }
   // 块cid存储在一个类似二维数组的结构里，setSize是内层数组的单组大小

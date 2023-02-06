@@ -10,10 +10,16 @@ import { isTxInBlock } from './util.js';
 
 // 管理、已经存储的块索引
 export class BlockService {
-  constructor(db: Skfs) {
+  constructor(
+    db: Skfs,
+    opts?: {
+      blockRoot?: BlockRoot;
+      stateRoot?: StateRoot;
+    },
+  ) {
     this.db = db;
-    this.blockRoot = new BlockRoot();
-    this.stateRoot = new StateRoot();
+    this.blockRoot = opts?.blockRoot || new BlockRoot();
+    this.stateRoot = opts?.stateRoot || new StateRoot();
   }
   db: Skfs;
   blockRoot: BlockRoot;
@@ -40,25 +46,48 @@ export class BlockService {
     return await this.getBlockByNumber(this.headerBlockNumber);
   };
 
-  /**
-   * @description 添加或更新指定块的cid
-   * @param cid
-   * @param number
-   */
-  addBlockCidByNumber = async (cid: string, number: bigint): Promise<void> => {
-    const prevBlock = await this.getBlockByNumber(this.checkedBlockHeight);
-    const blockData = await this.db.get(cid);
-    if (!blockData) {
-      throw new Error('can not find cid data');
+  addBlock = async (block: Block): Promise<void> => {
+    if (block.header.number > 0n) {
+      // check block
+      const prevBlock = await this.getBlockByNumber(block.header.number - 1n);
+      if (this.checkOneBlock(block, prevBlock)) {
+        throw new Error('checkOneBlock faild');
+      }
+      // update checked block
+      if (block.header.number - 1n === this.checkedBlockHeight) {
+        this.checkedBlockHeight = block.header.number;
+      }
     }
-    const nextBlock = await Block.fromBinary(blockData);
-    if (this.checkOneBlock(nextBlock, prevBlock)) {
-      this.checkedBlockHeight = nextBlock.header.number;
-    }
-    await this.blockRoot.addBlockToRootNode(cid, number);
+    // save block
+    const blockData = await block.toBlock();
+    await this.db.putBlock(blockData);
+    await this.blockRoot.addBlockToRootNode(
+      blockData.cid.toString(),
+      block.header.number,
+    );
     // TODO
     // await this.chain.pinService.pin(cid);
   };
+
+  // /**
+  //  * @description 添加或更新指定块的cid
+  //  * @param cid
+  //  * @param number
+  //  */
+  // addBlockCidByNumber = async (cid: string, number: bigint): Promise<void> => {
+  //   const prevBlock = await this.getBlockByNumber(this.checkedBlockHeight);
+  //   const blockData = await this.db.get(cid);
+  //   if (!blockData) {
+  //     throw new Error('can not find cid data');
+  //   }
+  //   const nextBlock = await Block.fromBinary(blockData);
+  //   if (this.checkOneBlock(nextBlock, prevBlock)) {
+  //     this.checkedBlockHeight = nextBlock.header.number;
+  //   }
+  //   await this.blockRoot.addBlockToRootNode(cid, number);
+  //   // TODO
+  //   // await this.chain.pinService.pin(cid);
+  // };
 
   // 删除指定块及其之后的块
   deleteFromStartNUmber = async (number: bigint): Promise<void> => {

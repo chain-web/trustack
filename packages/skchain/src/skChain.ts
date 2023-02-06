@@ -9,7 +9,10 @@ import { version } from './config/index.js';
 // import { TransactionAction } from './lib/transaction';
 // import { Ipld } from './lib/ipld';
 // import { Consensus } from './lib/consensus';
-// import { Genesis } from './lib/genesis';
+import { Genesis } from './lib/genesis/index.js';
+import { genesis as testNetGenesis } from './config/testnet.config.js';
+import { BlockService } from './lib/ipld/blockService/blockService.js';
+import { message } from './utils/message.js';
 // import { TransactionTest } from './lib/transaction/test';
 // import { message } from './utils/message';
 // import { BlockService } from './lib/ipld/blockService/blockService';
@@ -17,6 +20,7 @@ import { version } from './config/index.js';
 
 export interface SKChainOption {
   genesis: GenesisConfig;
+  db?: Skfs;
   datastorePath: string;
 }
 
@@ -29,9 +33,12 @@ export class SKChain {
       // net: new SKFSNetwork(),
     });
     // this.ipld = new Ipld(this);
-    // this.blockService = new BlockService(this);
+    this.blockService = new BlockService(this.db);
     // this.did = this.db.cache.get(skCacheKeys.accountId);
-    // this.genesis = new Genesis(this, option.genesis);
+    this.genesis = new Genesis(
+      this.blockService,
+      option?.genesis || testNetGenesis,
+    );
     // this.consensus = new Consensus(this);
     // this.transAction = new TransactionAction(this);
     // this.transTest = new TransactionTest(this);
@@ -46,21 +53,20 @@ export class SKChain {
   // 数据存取服务
   db: Skfs;
   // 创世配置
-  // genesis: Genesis;
+  genesis: Genesis;
   // // 交易
   // transAction: TransactionAction;
   // transTest: TransactionTest;
   // // 数据操作
   // ipld: Ipld;
 
-  // blockService: BlockService;
+  blockService: BlockService;
   // pinService: PinService;
 
   // // 共识
   // consensus: Consensus;
   // // 当前节点did
   // did: string;
-  // inited = false;
 
   // // public methods
   // transaction;
@@ -68,31 +74,35 @@ export class SKChain {
 
   chainState = chainState;
 
-  run = (): void => {
+  run = async (): Promise<void> => {
     this.chainState.send('START');
     this.chainState.send('CHANGE', { event: LifecycleStap.startCreateSKChain });
+    try {
+      await this.db.open();
+      await this.blockService.init();
+      await this.genesis.checkGenesisBlock();
+      // await this.db.swarm.connect(
+      //   '/ip4/47.99.47.82/tcp/4003/ws/p2p/12D3KooWDd6gAZ1Djtt4bhAG7djGKM32ETxiiiJCCWnH5ypK2csa',
+      // );
+      // this.chainState.send('CHANGE', {
+      //   event: LifecycleStap.initingTransaction,
+      // });
+      // await this.transAction.init();
+      // this.chainState.send('CHANGE', {
+      //   event: LifecycleStap.initedTransaction,
+      // });
+      // await this.consensus.init();
+      this.chainState.send('STARTED');
+    } catch (error) {
+      message.error('init error', error as string);
+    }
   };
 
-  // init = async () => {
-  //   try {
-  //     await this.blockService.init();
-  //     await this.genesis.checkGenesisBlock();
-  //     // await this.db.swarm.connect(
-  //     //   '/ip4/47.99.47.82/tcp/4003/ws/p2p/12D3KooWDd6gAZ1Djtt4bhAG7djGKM32ETxiiiJCCWnH5ypK2csa',
-  //     // );
-  //     lifecycleEvents.emit(LifecycleStap.initingIpld);
-  //     await this.ipld.init();
-  //     lifecycleEvents.emit(LifecycleStap.initedIpld);
-  //     lifecycleEvents.emit(LifecycleStap.initingTransaction);
-  //     await this.transAction.init();
-  //     lifecycleEvents.emit(LifecycleStap.initedTransaction);
-  //     await this.consensus.init();
-  //   } catch (error) {
-  //     message.error('init error', error);
-  //   }
-
-  //   this.inited = true;
-  // };
+  stop = async (): Promise<void> => {
+    await this.blockService.close();
+    await this.db.close();
+    this.chainState.send('STOP');
+  };
 
   // getHeaderBlock = async () => {
   //   return await this.blockService.getHeaderBlock();

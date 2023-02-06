@@ -2,7 +2,7 @@ import { createMachine, interpret } from 'xstate';
 import { message } from '../../utils/message.js';
 
 export type ChainEvents = {
-  type: 'CHANGE' | 'INITIALIZE' | 'START' | 'ERROR' | 'STARTED';
+  type: 'CHANGE' | 'INITIALIZE' | 'START' | 'ERROR' | 'STARTED' | 'STOP';
   event?: string;
   data?: string[];
 };
@@ -58,6 +58,7 @@ const chainMachine = createMachine<ChainContext, ChainEvents>(
       active: {
         on: {
           ERROR: 'inactive',
+          STOP: 'inactive',
         },
       },
     },

@@ -6,6 +6,7 @@ export enum LifecycleStap {
   'createdIpfs' = 'createdIpfs', // 节点启动前，初始化IPFS成功
   'startCreateSKChain' = 'startCreateSKChain', // 节点启动
   'checkingGenesisBlock' = 'checkingGenesisBlock', // 开始检查创世区块
+  'creatingGenesisBlock' = 'creatingGenesisBlock',
   'checkedGenesisBlock' = 'checkedGenesisBlock', // 创世区块检查成功
   'initingBlockService' = 'initingBlockService', // 开始初始化区块存储模块
   'checkingBlockIndex' = 'checkingBlockIndex', // 初始化区块存储模块-检查本地区块合法性
