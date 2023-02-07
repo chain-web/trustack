@@ -14,8 +14,10 @@ FROM mcr.microsoft.com/vscode/devcontainers/typescript-node:0-${VARIANT}
 
 # To install more global node packages
 RUN su node -c "npm install -g pnpm ts-node"
-# RUN su node -c "sudo pnpm dlx playwright install-deps"
 
+RUN su node -c "npx playwright install-deps"
+
+RUN su node -c "npx playwright install"
 
 
 # maybe can use to support rust
