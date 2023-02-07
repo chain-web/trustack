@@ -29,7 +29,8 @@
     "esbenp.prettier-vscode",
     "firsttris.vscode-jest-runner",
     "eamodio.gitlens",
-    "GitHub.vscode-pull-request-github"
+    "GitHub.vscode-pull-request-github",
+    "ms-playwright.playwright"
   ],
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.

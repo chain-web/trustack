@@ -1,6 +1,3 @@
-/* eslint-disable import/no-nodejs-modules */
-import { existsSync, rmSync } from 'fs';
-import { resolve } from 'path';
 import { Skfs } from '../index.js';
 import { Mpt } from '../mpt.js';
 
@@ -9,10 +6,7 @@ export const createTestSkMpt = (): Mpt => {
 };
 
 export const createTestDiskSkMpt = (name: string): Mpt => {
-  const dbFile = resolve(process.cwd(), `.leveldb/${name}`);
-  if (existsSync(dbFile)) {
-    rmSync(dbFile, { recursive: true, force: true });
-  }
+  rmDbFile(name);
   const mpt = new Mpt(name);
   return mpt;
 };
@@ -31,10 +25,7 @@ export const createTestSkfs = async (): Promise<Skfs> => {
 
 export const createTestDiskSkfs = async (name?: string): Promise<Skfs> => {
   name = name || 'test__skfs';
-  const dbFile = resolve(process.cwd(), `.leveldb/${name}`);
-  if (existsSync(dbFile)) {
-    rmSync(dbFile, { recursive: true, force: true });
-  }
+  rmDbFile(name);
   const skfs = new Skfs({
     path: name,
   });
@@ -43,4 +34,23 @@ export const createTestDiskSkfs = async (name?: string): Promise<Skfs> => {
   await skfs.clear();
 
   return skfs;
+};
+
+const rmDbFile = (name: string = '') => {
+  let isNodejs = false;
+  try {
+    // eslint-disable-next-line import/no-nodejs-modules
+    require('fs');
+    isNodejs = true;
+  } catch (error) {}
+  if (isNodejs) {
+    // eslint-disable-next-line import/no-nodejs-modules
+    const { resolve } = require('path');
+    // eslint-disable-next-line import/no-nodejs-modules
+    const { existsSync, rmSync } = require('fs');
+    const dbFile = resolve(process.cwd(), `.leveldb/${name}`);
+    if (existsSync(dbFile)) {
+      rmSync(dbFile, { recursive: true, force: true });
+    }
+  }
 };
