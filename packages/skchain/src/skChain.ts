@@ -14,6 +14,7 @@ import { BlockService } from './lib/ipld/blockService/blockService.js';
 import { message } from './utils/message.js';
 import { skCacheKeys } from './lib/ipfs/key.js';
 import type { DidJson } from './lib/p2p/did.js';
+import { genetateDid } from './lib/p2p/did.js';
 // import { TransactionTest } from './lib/transaction/test';
 // import { message } from './utils/message';
 // import { BlockService } from './lib/ipld/blockService/blockService';
@@ -27,7 +28,7 @@ export interface SKChainOption {
 }
 
 export interface SKChainRunOpts {
-  user: DidJson;
+  user?: DidJson;
 }
 
 export class SKChain {
@@ -80,12 +81,13 @@ export class SKChain {
 
   chainState = chainState;
 
-  run = async (opts: SKChainRunOpts): Promise<void> => {
+  run = async (opts?: SKChainRunOpts): Promise<void> => {
     this.chainState.send('START');
     this.chainState.send('CHANGE', { event: LifecycleStap.startCreateSKChain });
-    await this.db.cachePut(skCacheKeys.accountId, opts.user.id);
-    await this.db.cachePut(skCacheKeys.accountPrivKey, opts.user.privKey);
-    this.did = opts.user.id;
+    const user = opts?.user || (await genetateDid());
+    await this.db.cachePut(skCacheKeys.accountId, user.id);
+    await this.db.cachePut(skCacheKeys.accountPrivKey, user.privKey);
+    this.did = user.id;
     try {
       await this.db.open();
       await this.blockService.init();

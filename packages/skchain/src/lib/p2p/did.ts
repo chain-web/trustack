@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { create, createFromB58String, createFromPrivKey } from 'peer-id';
 import { bytes } from 'multiformats';
-import { randomBytes, secretbox } from 'tweetnacl';
+import * as nacl from 'tweetnacl';
 import { base58btc } from 'multiformats/bases/base58';
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string';
 import * as lsm from 'libsodium-wrappers-sumo';
-
+const { randomBytes, secretbox } = nacl;
 export interface DidJson {
   id: string; // sk did
   pubKey?: string; // libp2p
