@@ -1,9 +1,10 @@
 import { createMachine, interpret } from 'xstate';
 import { message } from '../../utils/message.js';
+import type { LifecycleStap } from './lifecycle.js';
 
 export type ChainEvents = {
   type: 'CHANGE' | 'INITIALIZE' | 'START' | 'ERROR' | 'STARTED' | 'STOP';
-  event?: string;
+  event?: LifecycleStap;
   data?: string[];
 };
 
