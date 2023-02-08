@@ -15,6 +15,7 @@ import { message } from './utils/message.js';
 import { skCacheKeys } from './lib/ipfs/key.js';
 import type { DidJson } from './lib/p2p/did.js';
 import { genetateDid } from './lib/p2p/did.js';
+import { Consensus } from './lib/consensus/index.js';
 // import { TransactionTest } from './lib/transaction/test';
 // import { message } from './utils/message';
 // import { BlockService } from './lib/ipld/blockService/blockService';
@@ -46,7 +47,7 @@ export class SKChain {
       this.blockService,
       option?.genesis || testNetGenesis,
     );
-    // this.consensus = new Consensus(this);
+    this.consensus = new Consensus(this.db, this.blockService);
     // this.transAction = new TransactionAction(this);
     // this.transTest = new TransactionTest(this);
     // this.pinService = new PinService(this);
@@ -71,7 +72,7 @@ export class SKChain {
   // pinService: PinService;
 
   // // 共识
-  // consensus: Consensus;
+  consensus: Consensus;
   // did of current node
   did!: string;
 
@@ -102,7 +103,7 @@ export class SKChain {
       // this.chainState.send('CHANGE', {
       //   event: LifecycleStap.initedTransaction,
       // });
-      // await this.consensus.init();
+      await this.consensus.init();
       this.chainState.send('STARTED');
     } catch (error) {
       message.error('init error', error as string);
