@@ -5,7 +5,7 @@ import { chainState } from './lib/state/index.js';
 import { version } from './config/index.js';
 // import { skCacheKeys } from './lib/ipfs/key';
 // import { SKDB } from './lib/ipfs/ipfs.interface';
-// import { TransactionAction } from './lib/transaction';
+// import { TransactionAction } from './lib/transaction/index.js';
 // import { Ipld } from './lib/ipld';
 // import { Consensus } from './lib/consensus';
 import { Genesis } from './lib/genesis/index.js';
@@ -48,7 +48,7 @@ export class SKChain {
       option?.genesis || testNetGenesis,
     );
     this.consensus = new Consensus(this.db, this.blockService);
-    // this.transAction = new TransactionAction(this);
+    // this.transAction = new TransactionAction();
     // this.transTest = new TransactionTest(this);
     // this.pinService = new PinService(this);
 
