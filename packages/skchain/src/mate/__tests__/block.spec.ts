@@ -36,14 +36,14 @@ describe('Block', () => {
     });
     it('should block to binary ok', async () => {
       const block = await createSimpleTestBlock();
-      await block.toBlock();
+      await block.toCborBlock();
     });
     it('should block from binary ok', async () => {
       const storageRoot = await createEmptyStorageRoot();
       const block = await createSimpleTestBlock();
       expect(block.header.body).toEqual(storageRoot);
 
-      const blockData = await block.toBlock();
+      const blockData = await block.toCborBlock();
       const accountFromBlock = await Block.fromBinary(blockData.bytes);
       expect(accountFromBlock.header.cuUsed).toEqual(0n);
       expect(accountFromBlock.header.body.toString()).toEqual(

@@ -1,7 +1,7 @@
 import type { GenesisConfig } from '../../config/types.js';
 import type { BlockHeaderData } from '../../mate/block.js';
 import { Block } from '../../mate/block.js';
-import { createBlock } from '../../mate/utils.js';
+import { createCborBlock } from '../../mate/utils.js';
 import { BloomFilter } from '../ipld/logsBloom/bloomFilter.js';
 import { getEmptyMptRoot } from '../skfs/mpt.js';
 
@@ -23,7 +23,7 @@ export const createGenesisBlock = async (
     cuUsed: BigInt(0),
     ts: genesis.timestamp,
     slice: [1, 0],
-    body: (await createBlock([])).cid,
+    body: (await createCborBlock([])).cid,
     extraData: null,
   };
 

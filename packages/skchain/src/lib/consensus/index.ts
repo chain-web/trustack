@@ -61,7 +61,7 @@ export class Consensus {
    * @param nextBlock
    */
   public pubNewBlock = async (nextBlock: Block): Promise<void> => {
-    const blockCid = await nextBlock.toBlock();
+    const blockCid = await nextBlock.toCborBlock();
     // TODO
     // const nextData: ConsensusNewBlockData = {
     //   number: nextBlock.header.number,

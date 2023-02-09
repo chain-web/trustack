@@ -1,12 +1,10 @@
-import { bytes } from 'multiformats';
+import { CID, bytes } from 'multiformats';
 import { Mpt } from '../../lib/skfs/mpt.js';
 
 export class StateRoot {
   constructor(opts?: { mpt?: Mpt }) {
     this.mpt = opts?.mpt || new Mpt('state_root');
     this.mpt.initRootTree();
-    this.put = this.mpt.put;
-    this.get = this.mpt.get;
   }
   mpt: Mpt;
 
@@ -14,6 +12,13 @@ export class StateRoot {
     return bytes.toHex(this.mpt.root);
   }
 
-  put: Mpt['put'];
-  get: Mpt['get'];
+  put = async (did: string, cid: string): Promise<void> => {
+    await this.mpt.put(did, cid);
+  };
+  get = async (did: string): Promise<CID | undefined> => {
+    const cid = await this.mpt.get(did);
+    if (cid) {
+      return CID.parse(bytes.toString(cid));
+    }
+  };
 }

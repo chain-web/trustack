@@ -77,7 +77,7 @@ export class Skfs {
     return await this.store.put(key, block.bytes);
   };
 
-  get = async (cid: string): Promise<Uint8Array | undefined> => {
+  get = async (cid: string | Uint8Array): Promise<Uint8Array | undefined> => {
     const key = new Key(cid);
     try {
       const data = await this.store.get(key);
