@@ -1,7 +1,7 @@
-import { CID } from 'multiformats/cid';
-import type { SKDB } from '../lib/ipfs/ipfs.interface.js';
 import type { BlockHeaderData } from './block.js';
-import type { Address } from './address.js';
+import { Address } from './address.js';
+import type { DefaultBlockType } from './utils.js';
+import { createCborBlock, takeBlockValue } from './utils.js';
 
 export interface transMeta {
   from: Transaction['from'];
@@ -24,6 +24,8 @@ export interface TransactionOption {
   ts: number;
   hash?: string;
 }
+
+export type TransactionBinaryMeta = string[];
 
 // 交易，基础数据
 export class Transaction {
@@ -55,7 +57,7 @@ export class Transaction {
   hash!: string;
   ts: number;
 
-  genHash = async (db: SKDB): Promise<void> => {
+  genHash = async (): Promise<void> => {
     const obj = {
       accountNonce: this.accountNonce,
       cu: this.cu,
@@ -65,41 +67,45 @@ export class Transaction {
       payload: this.payload || null,
       ts: this.ts,
     };
-    const cid = await db.dag.put(obj);
-    this.hash = cid.toString();
+    const block = await createCborBlock(obj);
+    this.hash = block.cid.toString();
   };
 
-  static fromCid = async (db: SKDB, cid: string): Promise<Transaction> => {
-    const transData = (await db.dag.get(CID.parse(cid))).value;
+  static fromBinary = async (binary: Uint8Array): Promise<Transaction> => {
+    const transData = await takeBlockValue<TransactionBinaryMeta>(binary);
+
     return new Transaction({
       accountNonce: BigInt(transData[0]),
       amount: BigInt(transData[1]),
       cu: BigInt(transData[2]),
       cuLimit: BigInt(transData[3]),
-      from: transData[4],
+      from: new Address(transData[4]),
       hash: transData[5],
-      payload: transData[6],
-      recipient: transData[7],
-      ts: transData[8],
+      payload: JSON.parse(transData[6]) || undefined,
+      recipient: new Address(transData[7]),
+      ts: Number(transData[8]),
     });
   };
 
   /**
    * 将区块数据保存，落文件
    */
-  commit = async (db: SKDB, blockNumber: bigint): Promise<string> => {
-    this.blockNumber = blockNumber;
-    const transCid = await db.dag.put([
+  toCborBlock = async (): Promise<DefaultBlockType<TransactionBinaryMeta>> => {
+    if (!this.hash) {
+      await this.genHash();
+    }
+    const cborBlock = await createCborBlock<TransactionBinaryMeta>([
       this.accountNonce.toString(),
       this.amount.toString(),
       this.cu.toString(),
       this.cuLimit.toString(),
-      this.from,
+      this.from.did,
       this.hash,
-      this.payload || null,
-      this.recipient,
-      this.ts,
+      JSON.stringify(this.payload || ''),
+      this.recipient.did,
+      this.ts.toString(),
     ]);
-    return transCid;
+
+    return cborBlock;
   };
 }

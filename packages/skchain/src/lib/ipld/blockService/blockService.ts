@@ -9,6 +9,7 @@ import { chainState } from '../../state/index.js';
 import { Account } from '../../../mate/account.js';
 import { isTxInBlock } from './util.js';
 import { BlockRoot } from './blockRoot.js';
+import { NextBlock } from './nextBlock.js';
 
 // 管理、已经存储的块索引
 export class BlockService {
@@ -22,6 +23,7 @@ export class BlockService {
     this.db = db;
     this.blockRoot = opts?.blockRoot || new BlockRoot();
     this.stateRoot = opts?.stateRoot || new StateRoot();
+    this.nextBlock = new NextBlock(this.getAccount);
   }
   db: Skfs;
   blockRoot: BlockRoot;
@@ -31,6 +33,9 @@ export class BlockService {
   checkedBlockHeight = 0n;
 
   private headerBlockNumber = 0n;
+
+  private preLoadAccount: Map<string, Account> = new Map();
+  nextBlock: NextBlock;
 
   getBlockByNumber = async (number: bigint): Promise<BlockMeta | undefined> => {
     const blockCid = await this.blockRoot.getBlockCidByNumber(number);
