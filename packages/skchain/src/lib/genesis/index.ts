@@ -59,8 +59,8 @@ export class Genesis {
     const initStateRoot = this.blockService.stateRoot;
 
     for (const account of accounts) {
-      const blockData = await account.toBlock();
-      await initStateRoot.put(account.account.did, blockData.cid.bytes);
+      const blockData = await account.toCborBlock();
+      await initStateRoot.put(account.account.did, blockData.cid.toString());
     }
     return initStateRoot.root;
   };

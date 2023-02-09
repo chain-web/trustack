@@ -1,5 +1,5 @@
 import { Account, newAccount } from '../account.js';
-import { createBlock, createEmptyStorageRoot } from '../utils.js';
+import { createCborBlock, createEmptyStorageRoot } from '../utils.js';
 
 describe('Account', () => {
   describe('origin account test', () => {
@@ -12,7 +12,7 @@ describe('Account', () => {
     });
     it('should set account storageRoot ok', async () => {
       const storageRoot = await createEmptyStorageRoot();
-      const storageRootNew = await createBlock({ name: testDid });
+      const storageRootNew = await createCborBlock({ name: testDid });
       const account = newAccount(testDid, storageRoot);
       account.updateState(storageRootNew.cid);
       expect(account.nonce).toEqual(1n);
@@ -40,7 +40,7 @@ describe('Account', () => {
       const account = newAccount(testDid, storageRoot);
       account.plusBlance(2000n, Date.now());
       account.minusBlance(1000n);
-      await account.toBlock();
+      await account.toCborBlock();
     });
     it('should account from binary ok', async () => {
       const testTimestamp = 1674975141922;
@@ -50,7 +50,7 @@ describe('Account', () => {
       account.plusBlance(2000n, testTimestamp);
       account.minusBlance(1000n);
       expect(account.getOriginBlanceData()[testTimestamp]).toEqual(2000n);
-      const block = await account.toBlock();
+      const block = await account.toCborBlock();
       const accountFromBlock = await Account.fromBinary(block.bytes);
       expect(accountFromBlock.nonce).toEqual(3n);
       expect(accountFromBlock.getBlance()).toEqual(3000n);

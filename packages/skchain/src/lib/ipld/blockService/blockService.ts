@@ -1,3 +1,4 @@
+import type { BlockMeta } from '../../../mate/block.js';
 import { Block } from '../../../mate/block.js';
 import { skCacheKeys } from '../../ipfs/key.js';
 import { message } from '../../../utils/message.js';
@@ -5,8 +6,9 @@ import { LifecycleStap } from '../../state/lifecycle.js';
 import { StateRoot } from '../../../mate/mpts/stateRoot.js';
 import type { Skfs } from '../../skfs/index.js';
 import { chainState } from '../../state/index.js';
-import { BlockRoot } from './blockRoot.js';
+import { Account } from '../../../mate/account.js';
 import { isTxInBlock } from './util.js';
+import { BlockRoot } from './blockRoot.js';
 
 // 管理、已经存储的块索引
 export class BlockService {
@@ -30,9 +32,7 @@ export class BlockService {
 
   private headerBlockNumber = 0n;
 
-  getBlockByNumber = async (
-    number: bigint,
-  ): Promise<Omit<Block, 'body'> | undefined> => {
+  getBlockByNumber = async (number: bigint): Promise<BlockMeta | undefined> => {
     const blockCid = await this.blockRoot.getBlockCidByNumber(number);
     if (blockCid) {
       const blockData = await this.db.get(blockCid);
@@ -42,7 +42,7 @@ export class BlockService {
       }
     }
   };
-  getHeaderBlock = async (): Promise<Omit<Block, 'body'> | undefined> => {
+  getHeaderBlock = async (): Promise<BlockMeta | undefined> => {
     return await this.getBlockByNumber(this.headerBlockNumber);
   };
 
@@ -59,7 +59,7 @@ export class BlockService {
       }
     }
     // save block
-    const blockData = await block.toBlock();
+    const blockData = await block.toCborBlock();
     await this.db.putBlock(blockData);
     await this.blockRoot.addBlockToRootNode(
       blockData.cid.toString(),
@@ -68,7 +68,6 @@ export class BlockService {
     // TODO
     // await this.chain.pinService.pin(cid);
   };
-
   // /**
   //  * @description 添加或更新指定块的cid
   //  * @param cid
@@ -229,6 +228,17 @@ export class BlockService {
   //     }
   //   }
   // };
+
+  getAccount = async (did: string): Promise<Account | undefined> => {
+    const cid = await this.stateRoot.get(did);
+    if (cid) {
+      const data = await this.db.get(cid.bytes);
+      if (data) {
+        const account = await Account.fromBinary(data);
+        return account;
+      }
+    }
+  };
 
   // 从块头向下查询某个交易发生的块
   findTxBlockWidthDeep = async (

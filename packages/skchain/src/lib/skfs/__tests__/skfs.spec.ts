@@ -1,5 +1,5 @@
 import { bytes } from 'multiformats';
-import { createBlock, takeBlockValue } from '../../../mate/utils.js';
+import { createCborBlock, takeBlockValue } from '../../../mate/utils.js';
 import type { Skfs } from '../index.js';
 import { createTestDiskSkfs, createTestSkfs } from './utils.js';
 
@@ -26,7 +26,7 @@ describe('Skfs', () => {
       it('should db put block and get ok', async () => {
         const skfs = await createFn();
         const blockVal = { user: testDid };
-        const block = await createBlock(blockVal);
+        const block = await createCborBlock(blockVal);
         await skfs.putBlock(block);
         const cid = block.cid.toString();
         const backData = await skfs.get(cid);

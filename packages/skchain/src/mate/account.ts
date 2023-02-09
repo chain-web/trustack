@@ -1,7 +1,7 @@
 import { CID } from 'multiformats';
 import { Address } from './address.js';
 import type { DefaultBlockType } from './utils.js';
-import { createBlock, takeBlockValue } from './utils.js';
+import { createCborBlock, takeBlockValue } from './utils.js';
 
 interface AccountMeta {
   codeCid: Account['codeCid'];
@@ -146,8 +146,8 @@ export class Account {
     this.setNextNonce();
   };
 
-  toBlock = async (): Promise<DefaultBlockType<AccountBinaryMeta>> => {
-    const block = await createBlock<AccountBinaryMeta>([
+  toCborBlock = async (): Promise<DefaultBlockType<AccountBinaryMeta>> => {
+    const block = await createCborBlock<AccountBinaryMeta>([
       this.account.did,
       Object.keys(this.balance).map((key) => {
         return [key, this.balance[key].toString()];

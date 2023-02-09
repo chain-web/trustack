@@ -16,11 +16,11 @@ export type DefaultBlockType<T> = BlockView<
 
 // generate init account storageRoot
 export const createEmptyStorageRoot = async (): Promise<CID> => {
-  const block = await createBlock<[]>([]);
+  const block = await createCborBlock<[]>([]);
   return block.cid;
 };
 
-export const createBlock = async <T>(
+export const createCborBlock = async <T>(
   value: T,
 ): Promise<DefaultBlockType<T>> => {
   const block = await Block.encode<T, DefaultBlockCodec, DefaultBlockHasher>({

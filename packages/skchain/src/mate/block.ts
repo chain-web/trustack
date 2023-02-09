@@ -2,7 +2,7 @@ import type { CID } from 'multiformats';
 import { BloomFilter } from '../lib/ipld/logsBloom/bloomFilter.js';
 import type { Transaction } from './transaction.js';
 import type { DefaultBlockType } from './utils.js';
-import { createBlock, takeBlockValue } from './utils.js';
+import { createCborBlock, takeBlockValue } from './utils.js';
 
 export interface createBlockOpt {
   transactions: Transaction[];
@@ -29,6 +29,8 @@ export interface BlockHeaderData {
 export interface BlockBodyData {
   transactions: Transaction['hash'][];
 }
+
+export type BlockMeta = Omit<Block, 'body'>;
 
 export type BlockBinary = {
   header: (
@@ -124,16 +126,16 @@ export class Block {
     delete (obj as any).hash;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     delete (obj as any).ts;
-    const hash = (await createBlock(obj)).cid.toString();
+    const hash = (await createCborBlock(obj)).cid.toString();
     this.hash = hash;
   };
 
-  toBlock = async (): Promise<DefaultBlockType<unknown>> => {
+  toCborBlock = async (): Promise<DefaultBlockType<unknown>> => {
     if (!this.hash) {
       await this.genHash();
     }
     if (this.body) {
-      this.header.body = (await createBlock(this.body)).cid;
+      this.header.body = (await createCborBlock(this.body)).cid;
     }
     const blockData = {
       header: blockHeaderKeys.map((ele) => {
@@ -149,7 +151,7 @@ export class Block {
       }),
       hash: this.hash,
     };
-    const block = await createBlock(blockData);
+    const block = await createCborBlock(blockData);
     return block;
   };
 }
