@@ -1,22 +1,19 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { bytes } from 'multiformats';
 import type { Transaction, transMeta } from '../../mate/transaction.js';
-import { genetateDid, verifyById } from '../p2p/did.js';
+import { verifyById } from '../p2p/did.js';
 import { message } from '../../utils/message.js';
-
-import { Contract } from '../contract/index.js';
 import { transDemoFn } from '../contracts/transaction_demo.js';
 import type { SKChain } from '../../skChain.js';
-import { newAccount } from '../../mate/account.js';
-import { createEmptyStorageRoot } from '../ipld/util.js';
-import type { UpdateAccountI } from '../ipld/index.js';
 import type { BlockHeaderData } from '../../mate/block.js';
+import { chainState } from '../state/index.js';
+import { LifecycleStap } from '../state/lifecycle.js';
 import {
-  genTransMeta,
-  genTransactionClass,
-  runContract,
-} from './trans.pure.js';
+  BLOCK_INTERVAL_TIME_LIMIT,
+  MAX_TRANS_LIMIT,
+  WAIT_TIME_LIMIT,
+} from '../../config/index.js';
+import type { UpdateAccountI } from '../ipld/blockService/nextBlock.js';
+import { genTransactionClass } from './trans.pure.js';
 import { SKChainLibBase } from './../base.js';
 
 export enum TransStatus {
@@ -30,19 +27,24 @@ export enum TransStatus {
 export class TransactionAction extends SKChainLibBase {
   constructor(chain: SKChain) {
     super(chain);
-    this.contract = new Contract();
+    // this.contract = new Contract();
   }
 
   private waitTransMap: Map<string, Map<number, Transaction>> = new Map(); // 等待执行的交易
   private transingArr: Transaction[] = []; // 正在执行打包的交易
   private transQueue: Transaction[] = []; // 当前块可执行的交易队列
+  private transTaskInterval?: NodeJS.Timeout;
 
-  private contract: Contract;
+  // private contract: Contract;
   taskInProgress = false; // 是否正在执行智能合约\打包
 
   private breakNextBlock = false; // 是否中断下一个块的打包
 
-  get status() {
+  get status(): {
+    transingArr: Transaction[];
+    waitTransCount: number;
+    waitTransMap: Map<string, Map<number, Transaction>>;
+  } {
     let waitCount = 0;
     this.waitTransMap.forEach((v, _k) => {
       waitCount += v.size;
@@ -54,15 +56,21 @@ export class TransactionAction extends SKChainLibBase {
     };
   }
 
-  init = async () => {
+  init = async (): Promise<void> => {
+    chainState.send('CHANGE', {
+      event: LifecycleStap.initingTransaction,
+    });
     await this.initTransactionListen();
-    await this.contract.init();
+    // await this.contract.init();
     await this.startTransTask();
+    chainState.send('CHANGE', {
+      event: LifecycleStap.initedTransaction,
+    });
   };
 
-  startTransTask = async () => {
+  startTransTask = async (): Promise<void> => {
     // 检查是否要执行打包任务
-    setInterval(async () => {
+    this.transTaskInterval = setInterval(async () => {
       if (!this.chain.consensus.isReady()) {
         // 节点未同步完成
         return;
@@ -78,8 +86,8 @@ export class TransactionAction extends SKChainLibBase {
       const headerBlock = await this.chain.blockService.getHeaderBlock();
       // TODO 这里用Date.now()是否会有问题？
       if (
-        headerBlock.header.ts + TransactionAction.BLOCK_INTERVAL_TIME_LIMIT >
-        Date.now()
+        headerBlock &&
+        headerBlock.header.ts + BLOCK_INTERVAL_TIME_LIMIT > Date.now()
       ) {
         // 当前块还未到达下一个块的时间
         return;
@@ -90,34 +98,39 @@ export class TransactionAction extends SKChainLibBase {
     }, 1000);
   };
 
-  doTransTask = async () => {
+  doTransTask = async (): Promise<void> => {
     // 执行打包任务
-    const cArr: { contribute: BigNumber; did: string }[] = [];
+    const cArr: { contribute: bigint; did: string }[] = [];
     for (const did of this.waitTransMap.keys()) {
-      const account = await this.chain.ipld.getAccount(did);
-      cArr.push({
-        contribute: account.contribute,
-        did,
-      });
+      const account = await this.chain.blockService.getAccount(did);
+      if (account) {
+        cArr.push({
+          contribute: account.contribute,
+          did,
+        });
+      }
     }
     const sortedArr = cArr.sort((a, b) =>
-      a.contribute.isLessThan(b.contribute) ? -1 : 1,
+      a.contribute < b.contribute ? -1 : 1,
     );
     // console.log(sortedArr);
     // 在 sortedArr 按发起交易者的 contribute 来排序，加到当前块打包队列中
     sortedArr.forEach((ele) => {
-      if (this.transingArr.length < TransactionAction.MAX_TRANS_LIMIT) {
+      if (this.transingArr.length < MAX_TRANS_LIMIT) {
         const trans = this.waitTransMap.get(ele.did);
-        Array.from(trans!.keys()).forEach((one) => {
+        if (!trans) {
+          throw new Error('no cached trans');
+        }
+        Array.from(trans.keys()).forEach((one) => {
           // 为防止分叉，交易被发出WAIT_TIME_LIMIT时间后才会被打包
           // TODO 这里用Date.now()是否会有问题？
-          if (Date.now() - one >= TransactionAction.WAIT_TIME_LIMIT) {
+          if (Date.now() - one >= WAIT_TIME_LIMIT) {
             // 此处必定有one这个trans
-            this.transingArr.push(trans!.get(one)!);
+            this.transingArr.push(trans.get(one)!);
 
             // GC
-            trans!.delete(one);
-            if (trans!.size === 0) {
+            trans.delete(one);
+            if (trans.size === 0) {
               this.waitTransMap.delete(ele.did);
             }
           }
@@ -134,14 +147,18 @@ export class TransactionAction extends SKChainLibBase {
       // 依次执行交易的合约
       if (trans.payload) {
         // 调用合约
-        const account = await this.chain.ipld.getAccount(trans.recipient.did);
-        const res = await runContract(
-          account,
-          trans,
-          this.chain,
-          this.contract,
-        );
-        update.push(res);
+        // const account = await this.chain.blockService.getAccount(
+        //   trans.recipient.did,
+        // );
+        // if (account) {
+        //   const res = await runContract(
+        //     account,
+        //     trans,
+        //     this.chain,
+        //     this.contract,
+        //   );
+        //   update.push(res);
+        // }
       } else {
         // 普通转账
         update = await transDemoFn(
@@ -150,7 +167,7 @@ export class TransactionAction extends SKChainLibBase {
             recipient: trans.recipient.did,
             amount: trans.amount,
           },
-          this.chain.ipld.getAccount,
+          this.chain.blockService.getExistAccount,
         );
       }
 
@@ -163,16 +180,16 @@ export class TransactionAction extends SKChainLibBase {
       // console.log(res);
 
       // 更新一个交易的结果到当前块状态机
-      await this.chain.ipld.addUpdates(trans, update, index);
+      // await this.chain.ipld.addUpdates(trans, update, index);
     }
 
     // 生成新块
-    const nextBlock = await this.chain.ipld.commit();
+    const nextBlock = await this.chain.blockService.nextBlock.commit();
 
     // 检查新快是否已经被接受
     if (!this.checkIsBreakTransTask()) {
       const headerBlock = await this.chain.blockService.getHeaderBlock();
-      if (nextBlock.header.parent === headerBlock.hash) {
+      if (headerBlock && nextBlock.header.parent === headerBlock.hash) {
         // 如果新块的父块和当前块相同，说明当前打包的是下一块,则生成新块
 
         // 清理当前打包中的交易
@@ -194,11 +211,11 @@ export class TransactionAction extends SKChainLibBase {
     // 广播新块
     await this.chain.consensus.pubNewBlock(nextBlock);
     // 初始化下一个区块的ipld
-    await this.chain.ipld.goToNext();
+    await this.chain.blockService.goToNextBlock();
   };
 
   private add = async (trans: Transaction) => {
-    await this.chain.ipld.preLoadByTrans(trans);
+    await this.chain.blockService.preLoadByTrans(trans);
     const hasedTrans = this.waitTransMap.get(trans.from.did);
     if (hasedTrans) {
       hasedTrans.set(trans.ts, trans);
@@ -244,18 +261,18 @@ export class TransactionAction extends SKChainLibBase {
   };
 
   // 检查是否要继续执行打包操作
-  checkIsBreakTransTask = () => {
+  checkIsBreakTransTask = (): boolean => {
     return !this.breakNextBlock;
   };
 
   // 终止本次打包，可能是因为收到了广播出来的最新块，被调用
-  stopThisBlock = async () => {
+  stopThisBlock = (): void => {
     if (this.taskInProgress) {
       this.breakNextBlock = true;
     }
   };
 
-  handelTransaction = async (trans: Transaction) => {
+  handelTransaction = (trans: Transaction): void => {
     // 处理接受到的或者本地发起的交易
 
     this.add(trans);
@@ -270,10 +287,10 @@ export class TransactionAction extends SKChainLibBase {
 
   private initTransactionListen = async () => {
     // 接收交易
-    await this.chain.db.pubsub.subscribe(
-      peerEvent.transaction,
-      this.receiveTransaction,
-    );
+    // await this.chain.db.pubsub.subscribe(
+    //   peerEvent.transaction,
+    //   this.receiveTransaction,
+    // );
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -298,53 +315,58 @@ export class TransactionAction extends SKChainLibBase {
       ))
     ) {
       // 交易签名验证通过
-      const trans = await genTransactionClass(tm, this.chain);
+      const trans = await genTransactionClass(tm);
       this.handelTransaction(trans);
     } else {
       message.info('trans unlow');
     }
   };
 
-  transaction = async (
-    tm: Pick<transMeta, 'amount' | 'recipient'> & {
-      payload?: Transaction['payload'];
-    },
-  ) => {
-    // 供外部调用的发起交易方法
-    const transMeta = await genTransMeta(tm, this.chain);
-    await this.chain.db.pubsub.publish(
-      'peerEvent.transaction',
-      bytes.fromString(JSON.stringify(transMeta)),
-    );
-    if (transMeta) {
-      const trans = await genTransactionClass(transMeta, this.chain);
-      await this.handelTransaction(trans);
-      return { trans };
-    }
-    return {};
+  stop = async (): Promise<void> => {
+    clearInterval(this.transTaskInterval);
+    //  unbindTransactionListen
   };
+
+  // transaction = async (
+  //   tm: Pick<transMeta, 'amount' | 'recipient'> & {
+  //     payload?: Transaction['payload'];
+  //   },
+  // ) => {
+  //   // 供外部调用的发起交易方法
+  //   const transMeta = await genTransMeta(tm, this.chain);
+  //   await this.chain.db.pubsub.publish(
+  //     'peerEvent.transaction',
+  //     bytes.fromString(JSON.stringify(transMeta)),
+  //   );
+  //   if (transMeta) {
+  //     const trans = await genTransactionClass(transMeta, this.chain);
+  //     await this.handelTransaction(trans);
+  //     return { trans };
+  //   }
+  //   return {};
+  // };
 
   // deploy contract
-  deploy = async (meta: { payload: Uint8Array }) => {
-    // TODO 要不要加update code 的接口
-    const newDid = await genetateDid();
-    const storageRoot = await createEmptyStorageRoot(this.chain.db);
+  // deploy = async (meta: { payload: Uint8Array }): Promise<{Transaction}> => {
+  //   // TODO 要不要加update code 的接口
+  //   const newDid = await genetateDid();
+  //   const storageRoot = await createEmptyStorageRoot(this.chain.db);
 
-    const codeCid = await this.chain.db.block.put(meta.payload);
-    const account = newAccount(
-      newDid.id,
-      storageRoot,
-      codeCid.toV1(),
-      this.chain.did,
-    );
-    await account.commit(this.chain.db);
-    return await this.transaction({
-      amount: BigInt(0),
-      recipient: account.account,
-      payload: {
-        mothed: 'constructor',
-        args: [meta.payload],
-      },
-    });
-  };
+  //   const codeCid = await this.chain.db.block.put(meta.payload);
+  //   const account = newAccount(
+  //     newDid.id,
+  //     storageRoot,
+  //     codeCid.toV1(),
+  //     this.chain.did,
+  //   );
+  //   await account.commit(this.chain.db);
+  //   return await this.transaction({
+  //     amount: BigInt(0),
+  //     recipient: account.account,
+  //     payload: {
+  //       mothed: 'constructor',
+  //       args: [meta.payload],
+  //     },
+  //   });
+  // };
 }
