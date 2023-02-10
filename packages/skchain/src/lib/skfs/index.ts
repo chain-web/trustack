@@ -102,6 +102,14 @@ export class Skfs {
     await this._db.clear();
   };
 
+  cacheGetExist = async (key: string): Promise<string> => {
+    const res = await this.cacheGet(key);
+    if (!res) {
+      throw new Error(`cacheGet ${key} result not exist`);
+    }
+    return res;
+  };
+
   cacheGet = async (key: string): Promise<string | undefined> => {
     try {
       const data = await this.skCache.get(key);

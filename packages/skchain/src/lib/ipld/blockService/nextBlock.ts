@@ -1,3 +1,4 @@
+import { bytes } from 'multiformats';
 import type { Account } from '../../../mate/account.js';
 import type { BlockMeta } from '../../../mate/block.js';
 import { Block } from '../../../mate/block.js';
@@ -23,11 +24,11 @@ export type UpdateAccountI = {
 };
 
 export class NextBlock {
-  constructor(getAccount: BlockService['getAccount']) {
+  constructor(getAccount: BlockService['getExistAccount']) {
     this.getAccount = getAccount;
   }
 
-  getAccount: BlockService['getAccount'];
+  getAccount: BlockService['getExistAccount'];
   // 下一个块
   nextBlock!: Block;
 
@@ -144,5 +145,37 @@ export class NextBlock {
   addReceipts = async (tx: string, receipt: Receipt): Promise<void> => {
     const receiptsCbor = await receipt.toCborBlock();
     this.nextReceiptsMpt.put(tx, receiptsCbor.cid.toString());
+  };
+
+  /**
+   * 提交当前区块的数据，进行打包
+   */
+  commit = async (): Promise<Block> => {
+    // for (const account of this.updates) {
+    //   // TODO 不是所有的账户都有更新，只有有更新的账户才会更新
+    //   const newCid = await account[1].commit(this.chain.db);
+    //   await this.stateMpt.updateKey(account[0], newCid);
+    // }
+
+    // // block body
+    // const body = await this.chain.db.dag.put(this.nextBlockBodyTrans);
+    // this.nextBlock.header.body = body.toString();
+    // this.nextBlock.body = {
+    //   transactions: this.nextBlockBodyTrans,
+    // };
+
+    // 新块的三棵树
+    // const stateRoot = await this.stateMpt.save();
+    // const transactionsRoot = await this.transactionMpt.save();
+    // const receiptRoot = await this.receiptsMpt.save();
+    // this.nextBlock.header.stateRoot = stateRoot.toString();
+    this.nextBlock.header.transactionsRoot = bytes.toHex(
+      this.nextTransactionMpt.root,
+    );
+    this.nextBlock.header.receiptsRoot = bytes.toHex(this.nextReceiptsMpt.root);
+
+    this.nextBlock.header.ts = Date.now();
+    await this.nextBlock.genHash();
+    return this.nextBlock;
   };
 }

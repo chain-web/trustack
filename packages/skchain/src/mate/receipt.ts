@@ -1,4 +1,4 @@
-import type { UpdateAccountI } from '../lib/ipld/index.js';
+import type { UpdateAccountI } from '../lib/ipld/blockService/nextBlock.js';
 import { Address } from './address.js';
 import type { BlockHeaderData } from './block.js';
 import type { DefaultBlockType } from './utils.js';

@@ -6,7 +6,12 @@ import { LifecycleStap } from '../../state/lifecycle.js';
 import { StateRoot } from '../../../mate/mpts/stateRoot.js';
 import type { Skfs } from '../../skfs/index.js';
 import { chainState } from '../../state/index.js';
-import { Account } from '../../../mate/account.js';
+import { Account, newAccount } from '../../../mate/account.js';
+import type { Transaction } from '../../../mate/transaction.js';
+import {
+  createCborBlock,
+  createEmptyStorageRoot,
+} from '../../../mate/utils.js';
 import { isTxInBlock } from './util.js';
 import { BlockRoot } from './blockRoot.js';
 import { NextBlock } from './nextBlock.js';
@@ -23,7 +28,6 @@ export class BlockService {
     this.db = db;
     this.blockRoot = opts?.blockRoot || new BlockRoot();
     this.stateRoot = opts?.stateRoot || new StateRoot();
-    this.nextBlock = new NextBlock(this.getAccount);
   }
   db: Skfs;
   blockRoot: BlockRoot;
@@ -35,7 +39,8 @@ export class BlockService {
   private headerBlockNumber = 0n;
 
   private preLoadAccount: Map<string, Account> = new Map();
-  nextBlock: NextBlock;
+  // 在 transaction 之后初始化
+  nextBlock!: NextBlock;
 
   getBlockByNumber = async (number: bigint): Promise<BlockMeta | undefined> => {
     const blockCid = await this.blockRoot.getBlockCidByNumber(number);
@@ -47,8 +52,12 @@ export class BlockService {
       }
     }
   };
-  getHeaderBlock = async (): Promise<BlockMeta | undefined> => {
-    return await this.getBlockByNumber(this.headerBlockNumber);
+  getHeaderBlock = async (): Promise<BlockMeta> => {
+    const headerBlock = await this.getBlockByNumber(this.headerBlockNumber);
+    if (!headerBlock) {
+      throw new Error('header block not found');
+    }
+    return headerBlock;
   };
 
   addBlock = async (block: Block): Promise<void> => {
@@ -234,6 +243,37 @@ export class BlockService {
   //   }
   // };
 
+  /**
+   * 在交易执行前做数据准备
+   * @param trans meta Transaction
+   */
+  preLoadByTrans = async (trans: Transaction): Promise<void> => {
+    if (trans.payload) {
+      // 调用智能合约
+      if (trans.payload.mothed === 'constructor') {
+        // 新建合约账户
+        // console.log(trans);
+        const storageRoot = await createEmptyStorageRoot();
+        const codeCbor = await createCborBlock(trans.payload.args[0]);
+        const account = newAccount(
+          trans.recipient.did,
+          storageRoot,
+          codeCbor.cid,
+          trans.from.did,
+        );
+        this.preLoadAccount.set(account.account.did, account);
+      }
+    }
+  };
+
+  getExistAccount = async (did: string): Promise<Account> => {
+    const account = await this.getAccount(did);
+    if (!account) {
+      throw Error('account must exist');
+    }
+    return account;
+  };
+
   getAccount = async (did: string): Promise<Account | undefined> => {
     const cid = await this.stateRoot.get(did);
     if (cid) {
@@ -243,6 +283,12 @@ export class BlockService {
         return account;
       }
     }
+  };
+
+  goToNextBlock = async (): Promise<void> => {
+    this.nextBlock = new NextBlock(this.getExistAccount);
+    const headerBlock = await this.getHeaderBlock();
+    await this.nextBlock.initNextBlock(headerBlock);
   };
 
   // 从块头向下查询某个交易发生的块

@@ -1,22 +1,22 @@
-import type BigNumber from 'bignumber.js';
-import { accountOpCodes, errorCodes } from '../contract/code';
-import type { Ipld, UpdateAccountI } from './../ipld/index';
+import { accountOpCodes, errorCodes } from '../contract/code.js';
+import type { BlockService } from '../ipld/blockService/blockService.js';
+import type { UpdateAccountI } from '../ipld/blockService/nextBlock.js';
 export interface TransactionContractParam {
   from: string;
   recipient: string;
-  amount: BigNumber;
+  amount: bigint;
 }
 
 // 仅仅是demo阶段的交易处理逻辑，通过js实现,并在浏览器的js runtime执行
 // 将来正式版用cwjsr执行智能合约实现
 export const transDemoFn = async (
   trans: TransactionContractParam,
-  getAccount: Ipld['getAccount'],
+  getAccount: BlockService['getExistAccount'],
 ): Promise<UpdateAccountI[]> => {
   const fromAccount = await getAccount(trans.from);
   const _toAccount = await getAccount(trans.recipient);
 
-  if (fromAccount.getBlance().minus(trans.amount).isLessThan(0)) {
+  if (fromAccount.getBlance() - trans.amount >= 0n) {
     return [
       {
         account: trans.from,

@@ -5,7 +5,7 @@ import { chainState } from './lib/state/index.js';
 import { version } from './config/index.js';
 // import { skCacheKeys } from './lib/ipfs/key';
 // import { SKDB } from './lib/ipfs/ipfs.interface';
-// import { TransactionAction } from './lib/transaction/index.js';
+import { TransactionAction } from './lib/transaction/index.js';
 // import { Ipld } from './lib/ipld';
 // import { Consensus } from './lib/consensus';
 import { Genesis } from './lib/genesis/index.js';
@@ -48,7 +48,7 @@ export class SKChain {
       option?.genesis || testNetGenesis,
     );
     this.consensus = new Consensus(this.db, this.blockService);
-    // this.transAction = new TransactionAction();
+    this.transAction = new TransactionAction(this);
     // this.transTest = new TransactionTest(this);
     // this.pinService = new PinService(this);
 
@@ -63,7 +63,7 @@ export class SKChain {
   // 创世配置
   genesis: Genesis;
   // // 交易
-  // transAction: TransactionAction;
+  transAction: TransactionAction;
   // transTest: TransactionTest;
   // // 数据操作
   // ipld: Ipld;
@@ -96,13 +96,10 @@ export class SKChain {
       // await this.db.swarm.connect(
       //   '/ip4/47.99.47.82/tcp/4003/ws/p2p/12D3KooWDd6gAZ1Djtt4bhAG7djGKM32ETxiiiJCCWnH5ypK2csa',
       // );
-      // this.chainState.send('CHANGE', {
-      //   event: LifecycleStap.initingTransaction,
-      // });
-      // await this.transAction.init();
-      // this.chainState.send('CHANGE', {
-      //   event: LifecycleStap.initedTransaction,
-      // });
+
+      await this.transAction.init();
+      await this.blockService.goToNextBlock();
+
       await this.consensus.init();
       this.chainState.send('STARTED');
     } catch (error) {
@@ -111,12 +108,9 @@ export class SKChain {
   };
 
   stop = async (): Promise<void> => {
+    await this.transAction.stop();
     await this.blockService.close();
     await this.db.close();
     this.chainState.send('STOP');
   };
-
-  // getHeaderBlock = async () => {
-  //   return await this.blockService.getHeaderBlock();
-  // };
 }
