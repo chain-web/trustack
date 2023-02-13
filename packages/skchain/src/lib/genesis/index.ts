@@ -56,13 +56,10 @@ export class Genesis {
         accounts.push(account);
       }
     }
-    const initStateRoot = this.blockService.stateRoot;
-
     for (const account of accounts) {
-      const blockData = await account.toCborBlock();
-      await initStateRoot.put(account.account.did, blockData.cid.toString());
+      await this.blockService.addAccount(account);
     }
-    return initStateRoot.root;
+    return this.blockService.stateRoot.root;
   };
 
   // 检查链合法性

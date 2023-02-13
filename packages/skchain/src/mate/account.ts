@@ -6,7 +6,7 @@ import { createCborBlock, takeBlockValue } from './utils.js';
 interface AccountMeta {
   codeCid: Account['codeCid'];
   owner: Account['owner'];
-  account: Account['account'];
+  address: Account['address'];
   contribute: Account['contribute'];
   nonce: Account['nonce'];
   balance: Account['balance'];
@@ -29,13 +29,13 @@ export class Account {
     // TODO cannot use
     this.nonce = meta.nonce;
     this.balance = meta.balance;
-    this.account = meta.account;
+    this.address = meta.address;
     this.contribute = meta.contribute;
     this.storageRoot = meta.storageRoot;
     this.codeCid = meta.codeCid;
     this.owner = meta.owner;
   }
-  account: Address;
+  address: Address;
   // 当前账户交易次数
   nonce: bigint;
 
@@ -66,7 +66,7 @@ export class Account {
       bl[ele[0]] = BigInt(ele[1]);
     });
     const accountMeta: AccountMeta = {
-      account: new Address(accountData[0]),
+      address: new Address(accountData[0]),
       balance: bl,
       contribute: BigInt(accountData[3]),
       owner: accountData[4],
@@ -148,7 +148,7 @@ export class Account {
 
   toCborBlock = async (): Promise<DefaultBlockType<AccountBinaryMeta>> => {
     const block = await createCborBlock<AccountBinaryMeta>([
-      this.account.did,
+      this.address.did,
       Object.keys(this.balance).map((key) => {
         return [key, this.balance[key].toString()];
       }),
@@ -169,7 +169,7 @@ export const newAccount = (
   owner: string | null = null,
 ): Account => {
   return new Account({
-    account: new Address(did),
+    address: new Address(did),
     contribute: 0n,
     nonce: 0n,
     balance: {},
