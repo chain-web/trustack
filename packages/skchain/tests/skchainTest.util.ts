@@ -17,3 +17,11 @@ export const createTestSkChain = async (name: string): Promise<SKChain> => {
 
   return chain;
 };
+
+export const sleep = async (timeout: number): Promise<boolean> => {
+  return new Promise((reslove) => {
+    setTimeout(() => {
+      reslove(true);
+    }, timeout);
+  });
+};

@@ -1,3 +1,4 @@
+import { testAccounts } from '../../../../tests/testAccount.js';
 import { genesis } from '../../../config/testnet.config.js';
 import {
   closeTestBlockService,
@@ -18,6 +19,12 @@ describe('Genesis', () => {
       if (block0) {
         expect(block0.header.number).toEqual(0n);
       }
+
+      const account = await blockService.getExistAccount(testAccounts[0].id);
+      expect((await account.toCborBlock()).cid.toString()).toEqual(
+        (await blockService.stateRoot.get(account.address.did))?.toString(),
+      );
+
       await closeTestBlockService(blockService);
     });
   });

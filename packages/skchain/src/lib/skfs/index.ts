@@ -72,12 +72,12 @@ export class Skfs {
    * @returns
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  putBlock = async (block: DefaultBlockType<any>): Promise<void> => {
+  putCborBlock = async (block: DefaultBlockType<any>): Promise<void> => {
     const key = new Key(block.cid.toString());
     return await this.store.put(key, block.bytes);
   };
 
-  get = async (cid: string | Uint8Array): Promise<Uint8Array | undefined> => {
+  get = async (cid: string): Promise<Uint8Array | undefined> => {
     const key = new Key(cid);
     try {
       const data = await this.store.get(key);

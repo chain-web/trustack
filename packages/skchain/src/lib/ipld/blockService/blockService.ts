@@ -74,11 +74,19 @@ export class BlockService {
     }
     // save block
     const blockData = await block.toCborBlock();
-    await this.db.putBlock(blockData);
+    await this.db.putCborBlock(blockData);
     await this.blockRoot.addBlockToRootNode(
       blockData.cid.toString(),
       block.header.number,
     );
+    // TODO
+    // await this.chain.pinService.pin(cid);
+  };
+
+  addAccount = async (account: Account): Promise<void> => {
+    const accountBinary = await account.toCborBlock();
+    await this.stateRoot.put(account.address.did, accountBinary.cid.toString());
+    await this.db.putCborBlock(accountBinary);
     // TODO
     // await this.chain.pinService.pin(cid);
   };
@@ -261,7 +269,7 @@ export class BlockService {
           codeCbor.cid,
           trans.from.did,
         );
-        this.preLoadAccount.set(account.account.did, account);
+        this.preLoadAccount.set(account.address.did, account);
       }
     }
   };
@@ -277,7 +285,7 @@ export class BlockService {
   getAccount = async (did: string): Promise<Account | undefined> => {
     const cid = await this.stateRoot.get(did);
     if (cid) {
-      const data = await this.db.get(cid.bytes);
+      const data = await this.db.get(cid.toString());
       if (data) {
         const account = await Account.fromBinary(data);
         return account;

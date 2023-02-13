@@ -27,7 +27,7 @@ describe('Skfs', () => {
         const skfs = await createFn();
         const blockVal = { user: testDid };
         const block = await createCborBlock(blockVal);
-        await skfs.putBlock(block);
+        await skfs.putCborBlock(block);
         const cid = block.cid.toString();
         const backData = await skfs.get(cid);
         expect(backData).not.toEqual(undefined);

@@ -1,4 +1,5 @@
 import { genesis } from '../../../../config/testnet.config.js';
+import { createTestAccount } from '../../../../mate/__tests__/metaTest.util.js';
 import { createGenesisBlock } from '../../../genesis/genesis.util.js';
 import {
   closeTestBlockService,
@@ -26,6 +27,24 @@ describe('block service', () => {
       if (blockBack) {
         expect(blockBack.hash).toEqual(block.hash);
       }
+      await closeTestBlockService(blockService);
+    });
+    it('should add account ok', async () => {
+      const blockService = await createTestBlockService({
+        name: 'test__account_add',
+      });
+      await blockService.init();
+      const account = await createTestAccount();
+
+      await blockService.addAccount(account);
+      const accountSaved = await blockService.getExistAccount(
+        account.address.did,
+      );
+      const accountCbor = await accountSaved.toCborBlock();
+
+      const savedCid = await blockService.stateRoot.get(account.address.did);
+
+      expect(accountCbor.cid.bytes).toEqual(savedCid?.bytes);
       await closeTestBlockService(blockService);
     });
   });

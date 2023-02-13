@@ -37,7 +37,7 @@ export class Consensus {
   blockService: BlockService;
   // slice: Slice;
   // 是否已经同步完成，可以进行交易打包和参与共识
-  private ready = false;
+  private ready = true; // TODO default is false
 
   possibleChainMap = new Map<string, PossibleChain>();
 

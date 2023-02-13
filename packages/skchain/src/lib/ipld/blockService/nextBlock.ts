@@ -20,7 +20,7 @@ export type UpdateAccountI = {
   opCode: UpdateOpCode;
   value: string | bigint | object;
 } & {
-  account: Account['account']['did'];
+  account: Account['address']['did'];
 };
 
 export class NextBlock {
@@ -133,7 +133,7 @@ export class NextBlock {
         message.error('unknown op code');
         break;
     }
-    this.updates.set(account.account.did, account);
+    this.updates.set(account.address.did, account);
   };
 
   addTransaction = async (trans: Transaction): Promise<string> => {
