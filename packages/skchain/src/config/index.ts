@@ -2,6 +2,11 @@ import pkg from '../../package.json' assert { type: 'json' };
 import * as mainConfig from './mainnet.config.js';
 import * as testConfig from './testnet.config.js';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(BigInt.prototype as any).toJSON = function () {
+  return this.toString();
+};
+
 export const configMap = {
   mainnet: mainConfig,
   testnet: testConfig,
