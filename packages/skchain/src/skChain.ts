@@ -48,36 +48,36 @@ export class SKChain {
       option?.genesis || testNetGenesis,
     );
     this.consensus = new Consensus(this.db, this.blockService);
-    this.transAction = new TransactionAction(this);
+    this.transAction = new TransactionAction(this.blockService, this.consensus);
     // this.transTest = new TransactionTest(this);
     // this.pinService = new PinService(this);
 
     // 对外暴露的一些方法
-    // this.transaction = this.transAction.transaction;
+    this.transaction = this.transAction.transaction;
     // this.deploy = this.transAction.deploy;
   }
 
   version = version;
   // 数据存取服务
-  db: Skfs;
+  private db: Skfs;
   // 创世配置
-  genesis: Genesis;
+  private genesis: Genesis;
   // // 交易
   transAction: TransactionAction;
   // transTest: TransactionTest;
   // // 数据操作
   // ipld: Ipld;
 
-  blockService: BlockService;
+  private blockService: BlockService;
   // pinService: PinService;
 
   // // 共识
-  consensus: Consensus;
+  private consensus: Consensus;
   // did of current node
   did!: string;
 
   // // public methods
-  // transaction;
+  transaction;
   // deploy;
 
   chainState = chainState;

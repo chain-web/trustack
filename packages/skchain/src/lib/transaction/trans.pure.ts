@@ -2,17 +2,16 @@ import { bytes } from 'multiformats';
 import type { transMeta } from '../../mate/transaction.js';
 import { Transaction } from '../../mate/transaction.js';
 import { message } from '../../utils/message.js';
-import { skCacheKeys } from '../ipfs/key.js';
 import { signById } from '../p2p/did.js';
 import { chainState } from '../state/index.js';
-import type { SKChain } from './../../skChain.js';
 import { Address } from './../../mate/address.js';
 
 export const genTransMeta = async (
   tm: Pick<transMeta, 'amount' | 'recipient'> & {
     payload?: Transaction['payload'];
   },
-  chain: SKChain,
+  did: string,
+  priv: string,
 ): Promise<transMeta | undefined> => {
   // 只是做交易检查和预处理
   if (!chainState.getSnapshot().matches('active')) {
@@ -26,17 +25,14 @@ export const genTransMeta = async (
   }
   const signMeta = {
     ...tm,
-    from: new Address(chain.did),
+    from: new Address(did),
     ts: Date.now(),
     cu: BigInt(100), // todo
   };
   const transMeta: transMeta = {
     ...signMeta,
     // 这里使用交易原始信息通过ipfs存储后的cid进行签名会更好？
-    signature: await signById(
-      await chain.db.cacheGetExist(skCacheKeys.accountPrivKey),
-      bytes.fromString(JSON.stringify(signMeta)),
-    ),
+    signature: await signById(priv, bytes.fromString(JSON.stringify(signMeta))),
   };
   return transMeta;
 };

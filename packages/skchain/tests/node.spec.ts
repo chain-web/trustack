@@ -1,37 +1,37 @@
-import { genesis } from '../src/config/testnet.config.js';
-import { createTestBlockService } from '../src/lib/ipld/blockService/__tests__/blockService.util.js';
-import { createTestDiskSkfs } from '../src/lib/skfs/__tests__/utils.js';
-import { SKChain } from '../src/skChain.js';
+import { TransStatus } from '../src/lib/transaction/index.js';
+import { Address } from '../src/mate/address.js';
+import { createTestSkChain } from './skchainTest.util.js';
 import { testAccounts } from './testAccount.js';
 
 describe('SkChain', () => {
   describe('test', () => {
-    it('should create skchain ok', () => {
-      const chain = new SKChain({
-        genesis: genesis,
-        datastorePath: 'test__skfs',
-      });
+    it('should create skchain ok', async () => {
+      const chain = await createTestSkChain('create');
       expect(
         chain.chainState.getSnapshot().matches('inactive.initializing'),
       ).toEqual(true);
     });
     it('should init skchain ok', async () => {
-      const skfs = await createTestDiskSkfs('test__init_skchain_fs');
-      const blockService = await createTestBlockService({
-        name: 'test__init_skchain_bs',
-        skfs,
-      });
-      const chain = new SKChain({
-        genesis: genesis,
-        db: skfs,
-        blockService,
-      });
-      await chain.db.clear();
+      const chain = await createTestSkChain('init');
       await chain.run({ user: testAccounts[0] });
       expect(chain.chainState.getSnapshot().matches('active')).toEqual(true);
       expect(chain.did).toEqual(testAccounts[0].id);
       await chain.stop();
       expect(chain.chainState.getSnapshot().matches('inactive')).toEqual(true);
+    });
+    it('should transaction ok', async () => {
+      const chain = await createTestSkChain('init');
+      await chain.run({ user: testAccounts[0] });
+      const { trans } = await chain.transaction({
+        amount: 10n,
+        recipient: new Address(testAccounts[4].id),
+      });
+      expect(trans).not.toEqual(undefined);
+      if (trans) {
+        const status = await chain.transAction.transStatus(trans.hash);
+        expect(status.status).toEqual(TransStatus.waiting);
+      }
+      await chain.stop();
     });
   });
 });
