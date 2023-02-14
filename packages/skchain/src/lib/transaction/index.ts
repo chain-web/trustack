@@ -186,7 +186,8 @@ export class TransactionAction {
       // console.log(res);
 
       // 更新一个交易的结果到当前块状态机
-      // await this.chain.ipld.addUpdates(trans, update, index);
+      await this.blockService.nextBlock.addUpdates(trans, update, index);
+      this.transingArr = [];
     }
 
     // 生成新块
@@ -240,8 +241,11 @@ export class TransactionAction {
    */
   transStatus = async (
     tx: string,
-    deep: number = 0,
+    deep?: bigint,
   ): Promise<{ status: TransStatus; block?: BlockHeaderData }> => {
+    if (deep === undefined) {
+      deep = this.blockService.checkedBlockHeight;
+    }
     let isWait = false;
     // search from waitTransMap
     this.waitTransMap.forEach((ele) => {
@@ -278,10 +282,10 @@ export class TransactionAction {
     }
   };
 
-  handelTransaction = (trans: Transaction): void => {
+  handelTransaction = async (trans: Transaction): Promise<void> => {
     // 处理接受到的或者本地发起的交易
 
-    this.add(trans);
+    await this.add(trans);
     // test contract
     // const res = this.contract.runFunction(transContract, {
     //   from: trans.from,
@@ -324,7 +328,7 @@ export class TransactionAction {
     ) {
       // 交易签名验证通过
       const trans = await genTransactionClass(tm);
-      this.handelTransaction(trans);
+      await this.handelTransaction(trans);
     } else {
       message.info('trans unlow');
     }

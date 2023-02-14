@@ -74,7 +74,7 @@ export class Consensus {
     await this.blockService.addBlock(nextBlock);
     chainState.send('CHANGE', {
       event: LifecycleStap.newBlock,
-      data: [blockCid.toString(), nextBlock],
+      data: [blockCid.cid.toString(), nextBlock.header.number],
     });
   };
 

@@ -15,8 +15,7 @@ export const transDemoFn = async (
 ): Promise<UpdateAccountI[]> => {
   const fromAccount = await getAccount(trans.from);
   const _toAccount = await getAccount(trans.recipient);
-
-  if (fromAccount.getBlance() - trans.amount >= 0n) {
+  if (fromAccount.getBlance() < trans.amount) {
     return [
       {
         account: trans.from,
