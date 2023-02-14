@@ -64,12 +64,13 @@ export class BlockService {
     if (block.header.number > 0n) {
       // check block
       const prevBlock = await this.getBlockByNumber(block.header.number - 1n);
-      if (this.checkOneBlock(block, prevBlock)) {
+      if (!this.checkOneBlock(block, prevBlock)) {
         throw new Error('checkOneBlock faild');
       }
       // update checked block
       if (block.header.number - 1n === this.checkedBlockHeight) {
         this.checkedBlockHeight = block.header.number;
+        this.headerBlockNumber = block.header.number;
       }
     }
     // save block
@@ -89,6 +90,15 @@ export class BlockService {
     await this.db.putCborBlock(accountBinary);
     // TODO
     // await this.chain.pinService.pin(cid);
+  };
+
+  updateAccount = async (account: Account): Promise<void> => {
+    const accountCborBlock = await account.toCborBlock();
+    await this.stateRoot.put(
+      account.address.did,
+      accountCborBlock.cid.toString(),
+    );
+    await this.db.putCborBlock(accountCborBlock);
   };
   // /**
   //  * @description 添加或更新指定块的cid
@@ -271,6 +281,19 @@ export class BlockService {
         );
         this.preLoadAccount.set(account.address.did, account);
       }
+    } else {
+      const hasSendAccount = await this.stateRoot.get(trans.from.did);
+      const hasRecipientAccount = await this.stateRoot.get(trans.recipient.did);
+      if (!hasSendAccount) {
+        throw new Error('no send account');
+      }
+      if (!hasRecipientAccount) {
+        const account = newAccount(
+          trans.recipient.did,
+          await createEmptyStorageRoot(),
+        );
+        this.preLoadAccount.set(account.address.did, account);
+      }
     }
   };
 
@@ -283,6 +306,9 @@ export class BlockService {
   };
 
   getAccount = async (did: string): Promise<Account | undefined> => {
+    if (this.preLoadAccount.has(did)) {
+      return this.preLoadAccount.get(did);
+    }
     const cid = await this.stateRoot.get(did);
     if (cid) {
       const data = await this.db.get(cid.toString());
@@ -294,7 +320,12 @@ export class BlockService {
   };
 
   goToNextBlock = async (): Promise<void> => {
-    this.nextBlock = new NextBlock(this.getExistAccount);
+    this.nextBlock = new NextBlock(
+      this.getExistAccount,
+      this.updateAccount,
+      this.stateRoot,
+      this.db.putCborBlock,
+    );
     const headerBlock = await this.getHeaderBlock();
     await this.nextBlock.initNextBlock(headerBlock);
   };
@@ -302,12 +333,12 @@ export class BlockService {
   // 从块头向下查询某个交易发生的块
   findTxBlockWidthDeep = async (
     tx: string,
-    deep: number,
+    deep: bigint,
   ): Promise<Omit<Block, 'body'> | undefined> => {
     let headerNumber = this.checkedBlockHeight;
     while (deep >= 0 && headerNumber >= 0n) {
       const currBlock = await this.getBlockByNumber(headerNumber);
-      if (currBlock && (await isTxInBlock(tx, currBlock.header))) {
+      if (currBlock && (await isTxInBlock(tx, currBlock.header, this.db.get))) {
         return currBlock;
       }
       headerNumber = headerNumber - 1n;

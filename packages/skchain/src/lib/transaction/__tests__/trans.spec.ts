@@ -24,6 +24,7 @@ describe('transcation', () => {
         recipient: new Address(testAccounts[4].id),
       });
       expect(trans).not.toEqual(undefined);
+      expect(transAction.status.waitTransCount).toEqual(1);
       if (trans) {
         const status = await transAction.transStatus(trans.hash);
         expect(status.status).toEqual(TransStatus.waiting);

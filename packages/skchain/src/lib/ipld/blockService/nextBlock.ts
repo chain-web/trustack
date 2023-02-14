@@ -1,14 +1,14 @@
-import { bytes } from 'multiformats';
 import type { Account } from '../../../mate/account.js';
 import type { BlockMeta } from '../../../mate/block.js';
 import { Block } from '../../../mate/block.js';
+import type { StateRoot } from '../../../mate/mpts/stateRoot.js';
 import { Receipt } from '../../../mate/receipt.js';
 import type { Transaction } from '../../../mate/transaction.js';
 import { createCborBlock } from '../../../mate/utils.js';
 import type { ValueOf } from '../../../types.js';
 import { message } from '../../../utils/message.js';
 import { accountOpCodes, errorCodes } from '../../contract/code.js';
-import { Mpt } from '../../skfs/mpt.js';
+import type { Skfs } from '../../skfs/index.js';
 import { BloomFilter } from '../logsBloom/bloomFilter.js';
 import type { BlockService } from './blockService.js';
 
@@ -24,25 +24,35 @@ export type UpdateAccountI = {
 };
 
 export class NextBlock {
-  constructor(getAccount: BlockService['getExistAccount']) {
+  constructor(
+    getAccount: BlockService['getExistAccount'],
+    updateAccount: BlockService['updateAccount'],
+    stateRoot: StateRoot,
+    addCborBlock: Skfs['putCborBlock'],
+  ) {
     this.getAccount = getAccount;
+    this.updateAccount = updateAccount;
+    this.stateRoot = stateRoot;
+    this.addCborBlock = addCborBlock;
   }
 
   getAccount: BlockService['getExistAccount'];
+  updateAccount: BlockService['updateAccount'];
+  stateRoot: StateRoot;
+  addCborBlock: Skfs['putCborBlock'];
   // 下一个块
   nextBlock!: Block;
 
   // 下一个块的body transaction
   nextBlockBodyTrans: string[] = [];
 
-  nextTransactionMpt!: Mpt;
-  nextReceiptsMpt!: Mpt;
+  nextTransactions: string[] = [];
+  nextReceipts: string[] = [];
 
   // 缓存未写入block的账户数据
   private updates: Map<string, Account> = new Map();
 
   initNextBlock = async (headerBlock: BlockMeta): Promise<void> => {
-    await this.initMpt();
     this.nextBlock = new Block({
       number: headerBlock.header.number + 1n,
       parent: headerBlock.hash,
@@ -60,15 +70,6 @@ export class NextBlock {
     });
   };
 
-  initMpt = async (): Promise<void> => {
-    // init transactionMpt
-    this.nextTransactionMpt = new Mpt('nextTransactionMpt', { useMemDb: true });
-    await this.nextTransactionMpt.initRootTree();
-
-    // init receiptsMpt
-    this.nextReceiptsMpt = new Mpt('nextReceiptsMpt', { useMemDb: true });
-    await this.nextReceiptsMpt.initRootTree();
-  };
   /**
    * 接收智能合约的执行结果，批量更新账户数据
    * @param account
@@ -120,59 +121,64 @@ export class NextBlock {
         break;
       case accountOpCodes.minus:
         account.minusBlance(update.value as bigint);
+        this.updates.set(account.address.did, account);
+
         break;
       case accountOpCodes.plus:
         account.plusBlance(update.value as bigint, trans.ts.toString());
+        this.updates.set(account.address.did, account);
+
         break;
       case accountOpCodes.updateState:
         // TODO con not use
         // const cid = await this.chain.db.dag.put([update.value]);
         // account.updateState(cid);
+        this.updates.set(account.address.did, account);
+
         break;
       default:
         message.error('unknown op code');
         break;
     }
-    this.updates.set(account.address.did, account);
   };
 
   addTransaction = async (trans: Transaction): Promise<string> => {
     const transCbor = await trans.toCborBlock();
-    this.nextTransactionMpt.put(trans.hash, transCbor.cid.toString());
+    await this.addCborBlock(transCbor);
+    this.nextBlock.header.logsBloom.add(trans.hash);
+    this.nextTransactions.push(trans.hash);
     return trans.hash;
   };
 
   addReceipts = async (tx: string, receipt: Receipt): Promise<void> => {
     const receiptsCbor = await receipt.toCborBlock();
-    this.nextReceiptsMpt.put(tx, receiptsCbor.cid.toString());
+    await this.addCborBlock(receiptsCbor);
+    this.nextReceipts.push(tx);
   };
 
   /**
    * 提交当前区块的数据，进行打包
    */
   commit = async (): Promise<Block> => {
-    // for (const account of this.updates) {
-    //   // TODO 不是所有的账户都有更新，只有有更新的账户才会更新
-    //   const newCid = await account[1].commit(this.chain.db);
-    //   await this.stateMpt.updateKey(account[0], newCid);
-    // }
+    for (const account of this.updates) {
+      await this.updateAccount(account[1]);
+    }
 
-    // // block body
-    // const body = await this.chain.db.dag.put(this.nextBlockBodyTrans);
-    // this.nextBlock.header.body = body.toString();
-    // this.nextBlock.body = {
-    //   transactions: this.nextBlockBodyTrans,
-    // };
+    // block body
+    const body = await createCborBlock(this.nextBlockBodyTrans);
+    this.nextBlock.header.body = body.cid;
+    this.nextBlock.body = {
+      transactions: this.nextBlockBodyTrans,
+    };
 
     // 新块的三棵树
-    // const stateRoot = await this.stateMpt.save();
-    // const transactionsRoot = await this.transactionMpt.save();
-    // const receiptRoot = await this.receiptsMpt.save();
-    // this.nextBlock.header.stateRoot = stateRoot.toString();
-    this.nextBlock.header.transactionsRoot = bytes.toHex(
-      this.nextTransactionMpt.root,
-    );
-    this.nextBlock.header.receiptsRoot = bytes.toHex(this.nextReceiptsMpt.root);
+    this.nextBlock.header.stateRoot = this.stateRoot.root;
+    const transCbor = await createCborBlock(this.nextTransactions);
+    await this.addCborBlock(transCbor);
+    this.nextBlock.header.transactionsRoot = transCbor.cid.toString();
+    const receiptsCbor = await createCborBlock(this.nextReceipts);
+    await this.addCborBlock(receiptsCbor);
+    this.nextBlock.header.receiptsRoot = receiptsCbor.cid.toString();
 
     this.nextBlock.header.ts = Date.now();
     await this.nextBlock.genHash();

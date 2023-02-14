@@ -1,3 +1,5 @@
+import { newAccount } from '../../../mate/account.js';
+import { createEmptyStorageRoot } from '../../../mate/utils.js';
 import { createTestConsensus } from '../../consensus/__tests__/consensusTest.util.js';
 import { skCacheKeys } from '../../ipfs/key.js';
 import { createTestBlockService } from '../../ipld/blockService/__tests__/blockService.util.js';
@@ -15,6 +17,9 @@ export const createTestTransAction = async (
   });
   await bs.db.cachePut(skCacheKeys.accountId, user.id);
   await bs.db.cachePut(skCacheKeys.accountPrivKey, user.privKey);
+
+  await bs.addAccount(newAccount(user.id, await createEmptyStorageRoot()));
+
   await consensus.init();
   const transAction = new TransactionAction(bs, consensus);
   return transAction;

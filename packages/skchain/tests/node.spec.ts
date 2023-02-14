@@ -26,12 +26,18 @@ describe('SkChain', () => {
         amount: 10n,
         recipient: new Address(testAccounts[4].id),
       });
-      // await sleep(7000);
-      // expect(trans).not.toEqual(undefined);
-      // if (trans) {
-      //   const status = await chain.transAction.transStatus(trans.hash);
-      //   expect(status.status).toEqual(TransStatus.waiting);
-      // }
+      expect(chain.transAction.status.waitTransCount).toEqual(1);
+      if (trans) {
+        const status = await chain.transAction.transStatus(trans.hash);
+        expect(status.status).toEqual(TransStatus.waiting);
+      }
+      // wait to stack
+      await sleep(5000);
+      expect(trans).not.toEqual(undefined);
+      if (trans) {
+        const status = await chain.transAction.transStatus(trans.hash);
+        expect(status.status).toEqual(TransStatus.transed);
+      }
       await chain.stop();
     }, 10000);
   });
