@@ -1,0 +1,3 @@
+[submodule "packages/skboa"]
+	path = packages/skboa
+	url = git@github.com:chain-web/boa.git
