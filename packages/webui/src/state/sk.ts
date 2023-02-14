@@ -1,5 +1,5 @@
-import { SKChain } from 'skchain';
+import type { SKChain } from 'skchain';
 
-export const chain = new SKChain();
+export const chain = {} as unknown as SKChain;
 
 export const chainState = chain.chainState;
