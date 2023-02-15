@@ -1,5 +1,6 @@
 export { genetateDid } from './lib/p2p/did.js';
 export type { DidJson } from './lib/p2p/did.js';
+export { evalFunction } from './lib/contract/skvm.js';
 
 export { SKChain } from './skChain.js';
 export { Address } from './mate/address.js';
