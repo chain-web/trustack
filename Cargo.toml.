@@ -1,0 +1,24 @@
+[workspace]
+members = [
+  "packages/skvm",
+  "packages/skboa",
+]
+
+[package]
+name = "faith-stack"
+version = "0.1.0"
+
+[profile.release]
+# lto = true
+
+[profile.bench]
+debug = true
+# lto = true
+
+# Without this, printing diff consumes more than a minute.
+
+[profile.dev.package.pretty_assertions]
+opt-level = 3
+
+[profile.test.package.pretty_assertions]
+opt-level = 3
