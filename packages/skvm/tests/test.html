@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    test js run time
+  </body>
+  <script type="module">
+    import init, { evaluate } from '../pkg/web/cwjsr.js';
+    function testcc() {
+      let num = Math.random();
+      if (num > 0.5) {
+        return 1;
+      } else {
+        return 2;
+      }
+    }
+    let num = Math.random();
+    console.log(num);
+    window.__sk__ipld__getAccounts = (arg) => {
+      const accs = arg.split(',');
+      let ojb = {};
+      accs.forEach((acc) => {
+        ojb[acc] = {
+          balance: Math.random(),
+        };
+      });
+      return ojb;
+    };
+    init().then(() => {
+      const accounts = ['aswqs', 'sas', 'sasd', 'sdsad'];
+      const str = accounts.join(',');
+      console.log(str);
+      const result = evaluate(
+        `
+        "use strict";
+        const test = () => {
+            const __sk__ = __init__sk__();
+            return __sk__.genDagHash(
+                JSON.stringify({
+                a: 1,
+                b: 2,
+                c: 3
+            })
+            );
+        }
+        test()
+        `,
+        1000n,
+        {},
+      );
+      console.log(result);
+    });
+  </script>
+</html>

@@ -30,7 +30,9 @@
     "firsttris.vscode-jest-runner",
     "eamodio.gitlens",
     "GitHub.vscode-pull-request-github",
-    "ms-playwright.playwright"
+    "ms-playwright.playwright",
+    "rust-lang.rust-analyzer",
+    "bungcip.better-toml"
   ],
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
