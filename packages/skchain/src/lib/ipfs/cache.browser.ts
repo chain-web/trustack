@@ -5,9 +5,11 @@ export class Cache {
   path: string;
 
   put = (key: string, value: string): void => {
-    localStorage.setItem(`${this.path}-_-${key}`, value);
+    (globalThis as any).localStorage?.setItem(`${this.path}-_-${key}`, value);
   };
   get = (key: string): string => {
-    return localStorage.getItem(`${this.path}-_-${key}`) as string;
+    return (globalThis as any).localStorage?.getItem(
+      `${this.path}-_-${key}`,
+    ) as string;
   };
 }

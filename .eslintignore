@@ -2,3 +2,4 @@ dist
 builder.ts
 skboa/
 pkg/
+*.contract.js
