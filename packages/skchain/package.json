@@ -7,6 +7,7 @@
     "test": ""
   },
   "type": "module",
+  "typings": "./src/index.ts",
   "keywords": [],
   "author": "scc",
   "license": "ISC",
@@ -20,6 +21,7 @@
   "dependencies": {
     "@chain-web/network": "workspace:*",
     "@ethereumjs/trie": "^5.0.2",
+    "@faithstack/contract": "workspace:^1.0.0",
     "@ipld/dag-cbor": "^8.0.0",
     "@ipld/dag-pb": "^4.0.0",
     "abstract-level": "^1.0.3",
@@ -33,11 +35,11 @@
     "memory-level": "^1.0.0",
     "multiformats": "^10.0.2",
     "peer-id": "^0.16.0",
+    "@faithstack/vm": "workspace:^1.0.0",
     "ts-node": "^10.9.1",
     "tweetnacl": "^1.0.3",
     "typescript": "^4.9.3",
     "uint8arrays": "^4.0.2",
-    "skvm": "workspace:^1.0.0",
     "xstate": "^4.35.0"
   }
 }

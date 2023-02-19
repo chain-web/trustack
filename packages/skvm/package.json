@@ -1,5 +1,5 @@
 {
-  "name": "skvm",
+  "name": "@faithstack/vm",
   "version": "1.0.0",
   "description": "",
   "main": "node.js",

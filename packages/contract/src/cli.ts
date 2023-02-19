@@ -1,8 +1,12 @@
+#!/usr/bin/env node
+/* eslint-disable node/shebang */
+
 import { cac } from 'cac';
 import chalk from 'chalk';
-import { version } from '../../../package.json';
+import pkg from '../package.json' assert { type: 'json' };
 import { builder } from './builder.js';
-const cli = cac('sk-builder');
+const version = pkg.version;
+const cli = cac('sk-contract-builder');
 
 export interface BuildOption {
   output?: string;
@@ -19,7 +23,8 @@ cli
   .action(async (input: string, opt: BuildOption) => {
     try {
       await builder(input, opt);
-    } catch (e: { stack: string }) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
       chalk.red(`error when build contract:\n${e.stack}`);
       process.exit(1);
     }
