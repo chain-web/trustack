@@ -19,7 +19,8 @@
 
     init().then(() => {
       document.querySelector('#run').addEventListener('click', () => {
-        const res = evaluate(`
+        const res = evaluate(
+          `
         
         function testcc () {
         let num = Math.random()
@@ -31,7 +32,9 @@
     }
     testcc()
         
-        `);
+        `,
+          100n,
+        );
 
         console.log(res);
       });

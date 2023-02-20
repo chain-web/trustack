@@ -3,9 +3,10 @@
 /**
  * Evaluate the given ECMAScript code.
  * @param {string} src
+ * @param {bigint} cu_limit
  * @returns {string}
  */
-export function evaluate(src: string): string;
+export function evaluate(src: string, cu_limit: bigint): string;
 /**
  * Handler for `console.log` invocations.
  *

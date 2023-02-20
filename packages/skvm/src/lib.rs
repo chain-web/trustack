@@ -67,11 +67,11 @@ use utils::set_panic_hook;
 
 /// Evaluate the given ECMAScript code.
 #[wasm_bindgen]
-pub fn evaluate(src: &str) -> Result<String, JsValue> {
+pub fn evaluate(src: &str, cu_limit: u64) -> Result<String, JsValue> {
     set_panic_hook();
     js_console_log("__sk__ inited");
     // Setup executor
-    let mut ctx = Context::builder().build_sk(1000).expect("Building the default context should not fail");
+    let mut ctx = Context::builder().build_sk(cu_limit).expect("Building the default context should not fail");
     let res = ctx.eval_script(Source::from_bytes(src))
         .map_err(|e| JsValue::from(format!("Uncaught {e}")))
         .map(|v| v.display().to_string());

@@ -7,7 +7,7 @@ export const evalFunction = async (codeStr: string): Promise<string> => {
     const evalFn = ${codeStr}
     evalFn()
   `;
-  return evaluate(codeStr);
+  return evaluate(codeStr, 1000n);
 };
 
 export const evalClass = async (
@@ -23,5 +23,5 @@ export const evalClass = async (
     __run__class__.${method}(${params?.join(',')});
   
   `;
-  return evaluate(codeStr);
+  return evaluate(codeStr, 1000n);
 };
