@@ -6,7 +6,7 @@ test('start node', async ({ page }) => {
   await startBtn.click();
   await page.screenshot({ path: './playwright-report/start.png' });
   const passed = page.getByTestId('passed');
-  await page.waitForTimeout(2000);
+  await page.waitForTimeout(3000);
   await expect(passed).toHaveText('true');
 });
 
@@ -16,6 +16,6 @@ test('skvm', async ({ page }) => {
   await startBtn.click();
   await page.screenshot({ path: './playwright-report/skvm.png' });
   const passed = page.getByTestId('skvm_passed');
-  await page.waitForTimeout(2000);
+  await page.waitForTimeout(3000);
   await expect(passed).toHaveText('true');
 });
