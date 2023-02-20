@@ -64,18 +64,24 @@ use getrandom as _;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_test::__rt::js_console_log;
 use utils::set_panic_hook;
+use js_sys::Array;
+
+fn vec_to_js_array(vec: Vec<String>) -> Array {
+    vec.into_iter().map(JsValue::from).collect()    
+}
 
 /// Evaluate the given ECMAScript code.
 #[wasm_bindgen]
-pub fn evaluate(src: &str, cu_limit: u64) -> Result<String, JsValue> {
+pub fn evaluate(src: &str, cu_limit: u64) -> Result<Array, JsValue> {
     set_panic_hook();
     js_console_log("__sk__ inited");
     // Setup executor
     let mut ctx = Context::builder().build_sk(cu_limit).expect("Building the default context should not fail");
-    let res = ctx.eval_script(Source::from_bytes(src))
-        .map_err(|e| JsValue::from(format!("Uncaught {e}")))
-        .map(|v| v.display().to_string());
+    let result = ctx.eval_script(Source::from_bytes(src));
     let cu_cost = ctx.get_cu_used().to_string();
-    js_console_log(&format!("cu cost: {}", cu_cost));
-    res
+    // js_console_log(&format!("cu cost: {}", cu_cost));
+    match result {
+        Ok(v) => Ok(vec_to_js_array(vec![v.display().to_string(), cu_cost])),
+        Err(e) => Err(JsValue::from(format!("Uncaught {}", e)))
+    }
 }

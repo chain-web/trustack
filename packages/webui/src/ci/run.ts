@@ -18,5 +18,5 @@ export const runSkvmTest = async (): Promise<boolean> => {
     return 1 + 1;
   };
   const res = await evalFunction(add.toString());
-  return res === '2';
+  return res[0] === '2';
 };

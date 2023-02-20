@@ -28,8 +28,8 @@ export function _dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen
   c: number,
 ): void;
 export function __wbindgen_add_to_stack_pointer(a: number): number;
-export function __wbindgen_free(a: number, b: number): void;
 export function __wbindgen_exn_store(a: number): void;
+export function __wbindgen_free(a: number, b: number): void;
 export function wasm_bindgen__convert__closures__invoke3_mut__h0dcf3c62e8540416(
   a: number,
   b: number,
