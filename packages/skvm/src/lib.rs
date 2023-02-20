@@ -71,8 +71,11 @@ pub fn evaluate(src: &str) -> Result<String, JsValue> {
     set_panic_hook();
     js_console_log("__sk__ inited");
     // Setup executor
-    Context::default()
-        .eval_script(Source::from_bytes(src))
+    let mut ctx = Context::builder().build_sk(1000).expect("Building the default context should not fail");
+    let res = ctx.eval_script(Source::from_bytes(src))
         .map_err(|e| JsValue::from(format!("Uncaught {e}")))
-        .map(|v| v.display().to_string())
+        .map(|v| v.display().to_string());
+    let cu_cost = ctx.get_cu_used().to_string();
+    js_console_log(&format!("cu cost: {}", cu_cost));
+    res
 }
