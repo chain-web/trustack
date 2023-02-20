@@ -3,9 +3,10 @@
 /**
  * Evaluate the given ECMAScript code.
  * @param {string} src
+ * @param {bigint} cu_limit
  * @returns {string}
  */
-export function evaluate(src: string): string;
+export function evaluate(src: string, cu_limit: bigint): string;
 /**
  * Handler for `console.log` invocations.
  *
@@ -86,7 +87,7 @@ export type InitInput =
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly evaluate: (a: number, b: number, c: number) => void;
+  readonly evaluate: (a: number, b: number, c: number, d: number) => void;
   readonly __wbg_wasmbindgentestcontext_free: (a: number) => void;
   readonly wasmbindgentestcontext_new: () => number;
   readonly wasmbindgentestcontext_args: (

@@ -168,9 +168,10 @@ function __wbg_adapter_28(arg0, arg1, arg2) {
 /**
  * Evaluate the given ECMAScript code.
  * @param {string} src
+ * @param {bigint} cu_limit
  * @returns {string}
  */
-export function evaluate(src) {
+export function evaluate(src, cu_limit) {
   try {
     const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
     const ptr0 = passStringToWasm0(
@@ -179,7 +180,7 @@ export function evaluate(src) {
       wasm.__wbindgen_realloc,
     );
     const len0 = WASM_VECTOR_LEN;
-    wasm.evaluate(retptr, ptr0, len0);
+    wasm.evaluate(retptr, ptr0, len0, cu_limit);
     var r0 = getInt32Memory0()[retptr / 4 + 0];
     var r1 = getInt32Memory0()[retptr / 4 + 1];
     var r2 = getInt32Memory0()[retptr / 4 + 2];
