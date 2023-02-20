@@ -9,7 +9,8 @@ describe('vm', () => {
         return 1 + 1;
       };
       const res = await evalFunction(simpleAdd.toString());
-      expect(res).toEqual('2');
+      expect(res[0]).toEqual('2');
+      expect(res[1]).toEqual('34');
     });
     it('should simple class ok', async () => {
       const codeStr = `
@@ -19,7 +20,7 @@ describe('vm', () => {
       const res = await evalClass(codeStr, 'getBalance', [
         `{did: '${testCoinContractDid}'}`,
       ]);
-      expect(res).toEqual('10000n');
+      expect(res[0]).toEqual('10000n');
     });
   });
 });

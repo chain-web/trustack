@@ -169,7 +169,7 @@ function __wbg_adapter_28(arg0, arg1, arg2) {
  * Evaluate the given ECMAScript code.
  * @param {string} src
  * @param {bigint} cu_limit
- * @returns {string}
+ * @returns {Array<any>}
  */
 export function evaluate(src, cu_limit) {
   try {
@@ -184,18 +184,12 @@ export function evaluate(src, cu_limit) {
     var r0 = getInt32Memory0()[retptr / 4 + 0];
     var r1 = getInt32Memory0()[retptr / 4 + 1];
     var r2 = getInt32Memory0()[retptr / 4 + 2];
-    var r3 = getInt32Memory0()[retptr / 4 + 3];
-    var ptr1 = r0;
-    var len1 = r1;
-    if (r3) {
-      ptr1 = 0;
-      len1 = 0;
-      throw takeObject(r2);
+    if (r2) {
+      throw takeObject(r1);
     }
-    return getStringFromWasm0(ptr1, len1);
+    return takeObject(r0);
   } finally {
     wasm.__wbindgen_add_to_stack_pointer(16);
-    wasm.__wbindgen_free(ptr1, len1);
   }
 }
 
@@ -302,7 +296,7 @@ export function __wbgtest_console_error(args) {
   }
 }
 
-function __wbg_adapter_78(arg0, arg1, arg2, arg3, arg4) {
+function __wbg_adapter_80(arg0, arg1, arg2, arg3, arg4) {
   wasm.wasm_bindgen__convert__closures__invoke3_mut__h0dcf3c62e8540416(
     arg0,
     arg1,
@@ -312,7 +306,7 @@ function __wbg_adapter_78(arg0, arg1, arg2, arg3, arg4) {
   );
 }
 
-function __wbg_adapter_97(arg0, arg1, arg2, arg3) {
+function __wbg_adapter_101(arg0, arg1, arg2, arg3) {
   wasm.wasm_bindgen__convert__closures__invoke2_mut__h3dccb3e59e78a9da(
     arg0,
     arg1,
@@ -396,6 +390,10 @@ export function __wbindgen_string_new(arg0, arg1) {
   return addHeapObject(ret);
 }
 
+export function __wbindgen_object_drop_ref(arg0) {
+  takeObject(arg0);
+}
+
 export function __wbg_crypto_e1d53a1d73fb10b8(arg0) {
   const ret = getObject(arg0).crypto;
   return addHeapObject(ret);
@@ -415,10 +413,6 @@ export function __wbg_process_038c26bf42b093f8(arg0) {
 export function __wbg_versions_ab37218d2f0b24a8(arg0) {
   const ret = getObject(arg0).versions;
   return addHeapObject(ret);
-}
-
-export function __wbindgen_object_drop_ref(arg0) {
-  takeObject(arg0);
 }
 
 export function __wbg_node_080f4b19d15bc1fe(arg0) {
@@ -580,6 +574,11 @@ export function __wbindgen_cb_drop(arg0) {
   return ret;
 }
 
+export function __wbg_new_b525de17f44a8943() {
+  const ret = new Array();
+  return addHeapObject(ret);
+}
+
 export function __wbindgen_is_function(arg0) {
   const ret = typeof getObject(arg0) === 'function';
   return ret;
@@ -637,7 +636,7 @@ export function __wbg_forEach_c070c0d203ce2e51(arg0, arg1, arg2) {
       const a = state0.a;
       state0.a = 0;
       try {
-        return __wbg_adapter_78(a, state0.b, arg0, arg1, arg2);
+        return __wbg_adapter_80(a, state0.b, arg0, arg1, arg2);
       } finally {
         state0.a = a;
       }
@@ -646,6 +645,11 @@ export function __wbg_forEach_c070c0d203ce2e51(arg0, arg1, arg2) {
   } finally {
     state0.a = state0.b = 0;
   }
+}
+
+export function __wbg_push_49c286f04dd3bf59(arg0, arg1) {
+  const ret = getObject(arg0).push(getObject(arg1));
+  return ret;
 }
 
 export function __wbg_message_a95c3ef248e4b57a(arg0) {
@@ -687,7 +691,7 @@ export function __wbg_new_9d3a9ce4282a18a8(arg0, arg1) {
       const a = state0.a;
       state0.a = 0;
       try {
-        return __wbg_adapter_97(a, state0.b, arg0, arg1);
+        return __wbg_adapter_101(a, state0.b, arg0, arg1);
       } finally {
         state0.a = a;
       }
@@ -747,7 +751,7 @@ export function __wbindgen_memory() {
   return addHeapObject(ret);
 }
 
-export function __wbindgen_closure_wrapper3914(arg0, arg1, arg2) {
-  const ret = makeMutClosure(arg0, arg1, 1191, __wbg_adapter_28);
+export function __wbindgen_closure_wrapper3919(arg0, arg1, arg2) {
+  const ret = makeMutClosure(arg0, arg1, 1190, __wbg_adapter_28);
   return addHeapObject(ret);
 }

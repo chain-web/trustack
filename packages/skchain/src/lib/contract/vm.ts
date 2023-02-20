@@ -1,7 +1,10 @@
+import type { EvaluateResult } from '@faithstack/vm';
 import { evaluate, init } from '@faithstack/vm';
 import { CONSTRUCTOR_METHOD, CONTRACT_CLASS_NAME } from '@faithstack/contract';
 
-export const evalFunction = async (codeStr: string): Promise<string> => {
+export const evalFunction = async (
+  codeStr: string,
+): Promise<EvaluateResult> => {
   await init();
   codeStr = `
     const evalFn = ${codeStr}
@@ -14,7 +17,7 @@ export const evalClass = async (
   codeStr: string,
   method: string,
   params: string[] = [],
-): Promise<string> => {
+): Promise<EvaluateResult> => {
   await init();
   codeStr = `
     ${codeStr}

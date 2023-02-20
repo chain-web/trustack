@@ -4,9 +4,9 @@
  * Evaluate the given ECMAScript code.
  * @param {string} src
  * @param {bigint} cu_limit
- * @returns {string}
+ * @returns {Array<any>}
  */
-export function evaluate(src: string, cu_limit: bigint): string;
+export function evaluate(src: string, cu_limit: bigint): Array<any>;
 /**
  * Handler for `console.log` invocations.
  *
@@ -114,8 +114,8 @@ export interface InitOutput {
     c: number,
   ) => void;
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
-  readonly __wbindgen_free: (a: number, b: number) => void;
   readonly __wbindgen_exn_store: (a: number) => void;
+  readonly __wbindgen_free: (a: number, b: number) => void;
   readonly wasm_bindgen__convert__closures__invoke3_mut__h0dcf3c62e8540416: (
     a: number,
     b: number,

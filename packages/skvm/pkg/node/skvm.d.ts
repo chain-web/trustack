@@ -4,9 +4,9 @@
  * Evaluate the given ECMAScript code.
  * @param {string} src
  * @param {bigint} cu_limit
- * @returns {string}
+ * @returns {Array<any>}
  */
-export function evaluate(src: string, cu_limit: bigint): string;
+export function evaluate(src: string, cu_limit: bigint): Array<any>;
 /**
  * Handler for `console.log` invocations.
  *
