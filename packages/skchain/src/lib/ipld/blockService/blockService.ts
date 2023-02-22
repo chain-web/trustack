@@ -268,7 +268,7 @@ export class BlockService {
   preLoadByTrans = async (trans: Transaction): Promise<void> => {
     if (trans.payload) {
       // 调用智能合约
-      if (trans.payload.mothed === 'constructor') {
+      if (trans.payload.method === 'constructor') {
         // 新建合约账户
         // console.log(trans);
         const storageRoot = await createEmptyStorageRoot();

@@ -1,4 +1,4 @@
-import { baseContractCode } from '../codeSnippet.js';
+import { generateBaseContractCode } from '../codeSnippet.js';
 import { evalClass, evalFunction } from '../vm.js';
 import { testCoinContract, testCoinContractDid } from './contractTest.util.js';
 
@@ -14,7 +14,7 @@ describe('vm', () => {
     });
     it('should simple class ok', async () => {
       const codeStr = `
-        ${baseContractCode}
+        ${generateBaseContractCode()}
         ${testCoinContract}
       `;
       const res = await evalClass(codeStr, 'getBalance', [

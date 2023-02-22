@@ -50,7 +50,7 @@ export class Transaction {
   recipient: Address;
   amount: bigint;
   payload?: {
-    mothed: 'constructor' | string;
+    method: 'constructor' | string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     args: any[];
   };

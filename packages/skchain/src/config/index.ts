@@ -26,3 +26,5 @@ export const version = pkg.version;
 export const MAX_TRANS_LIMIT = 50; // 每个block能打包的交易上限
 export const WAIT_TIME_LIMIT = 4 * 1000; // 每个交易从被发出到能进行打包的最短时间间隔 ms
 export const BLOCK_INTERVAL_TIME_LIMIT = 4 * 1000; // 两个块之间打包的最短时间间隔 ms
+
+export const LOAD_CONTRACT_DATA_FUNC = '__vm__load_data';
