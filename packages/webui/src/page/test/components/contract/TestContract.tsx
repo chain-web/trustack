@@ -60,7 +60,7 @@ export const TestContract = (CodeClass: any, _contractCode: Uint8Array) => {
               //     amount: new BigNumber(0),
               //     recipient: account!,
               //     payload: {
-              //       mothed: func,
+              //       method: func,
               //       args: [...arg.split(',')],
               //     },
               //   })

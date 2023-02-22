@@ -1,18 +1,5 @@
-import { Address } from '../address.js';
 import { Transaction } from '../transaction.js';
-
-const testDid = '12D3KooWL8qb3L8nKPjDtQmJU8jge5Qspsn6YLSBei9MsbTjJDr8';
-const createTestTranscation = () => {
-  return new Transaction({
-    from: new Address(testDid),
-    accountNonce: 1n,
-    cu: 1n,
-    cuLimit: 10n,
-    recipient: new Address(testDid),
-    amount: 1n,
-    ts: Date.now(),
-  });
-};
+import { createTestTranscation } from './metaTest.util.js';
 
 describe('Transaction', () => {
   describe('test', () => {

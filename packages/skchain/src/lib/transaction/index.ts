@@ -381,7 +381,7 @@ export class TransactionAction {
   //     amount: BigInt(0),
   //     recipient: account.account,
   //     payload: {
-  //       mothed: 'constructor',
+  //       method: 'constructor',
   //       args: [meta.payload],
   //     },
   //   });

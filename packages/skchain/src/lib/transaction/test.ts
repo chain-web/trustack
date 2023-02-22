@@ -104,7 +104,7 @@ export class TransactionTest extends SKChainLibBase {
       amount: new BigNumber(0),
       recipient: account.account,
       payload: {
-        mothed: 'constructor',
+        method: 'constructor',
         args: [meta.payload],
       },
     });
