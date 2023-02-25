@@ -32,7 +32,7 @@ describe('SkChain', () => {
         expect(status.status).toEqual(TransStatus.waiting);
       }
       // wait to stack
-      await sleep(5000);
+      await sleep(6000);
       expect(trans).not.toEqual(undefined);
       if (trans) {
         const status = await chain.transAction.transStatus(trans.hash);

@@ -8,17 +8,18 @@ import type {
   Module,
   Span,
 } from '@swc/core';
-import {
-  CONSTRUCTOR_METHOD,
-  CONTRACT_CLASS_NAME,
-  MAIN_PACKAGE,
-} from './index.js';
+
+export const BUILDER_NAMES = {
+  MAIN_PACKAGE: 'skchain',
+  CONSTRUCTOR_METHOD: '__constructor__',
+  CONTRACT_CLASS_NAME: '__contract_class_name__',
+};
 
 export const walkTop = (ast: Module): Module => {
   // 处理import
   while (ast.body[0].type === 'ImportDeclaration') {
     const node = ast.body[0];
-    if (node.source.value === MAIN_PACKAGE) {
+    if (node.source.value === BUILDER_NAMES.MAIN_PACKAGE) {
       ast.body.shift();
     }
   }
@@ -38,7 +39,7 @@ export const walkTop = (ast: Module): Module => {
   const constructorExpressionStatements: ExpressionStatement[] = [];
   ast.body = ast.body.map((topNode, i) => {
     if (topNode.type === 'ClassDeclaration') {
-      topNode.identifier.value = CONTRACT_CLASS_NAME;
+      topNode.identifier.value = BUILDER_NAMES.CONTRACT_CLASS_NAME;
       topNode.body = topNode.body.map((classNode) => {
         if (classNode.type === 'Constructor') {
           // chnage constructor to __constructor
@@ -70,7 +71,7 @@ export const walkTop = (ast: Module): Module => {
         key: {
           type: 'Identifier',
           span: emptySpan(),
-          value: CONSTRUCTOR_METHOD,
+          value: BUILDER_NAMES.CONSTRUCTOR_METHOD,
           optional: false,
         },
         value: {

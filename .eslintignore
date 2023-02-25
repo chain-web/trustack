@@ -3,3 +3,4 @@ builder.ts
 skboa/
 pkg/
 *.contract.js
+proto_ts/

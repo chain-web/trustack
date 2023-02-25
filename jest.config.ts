@@ -21,6 +21,7 @@ const config = {
       testMatch: [
         '<rootDir>/packages/skchain/tests/**/?(*.)+(spec|test).[jt]s?(x)',
         '<rootDir>/packages/skchain/**/__tests__/**/?(*.)+(spec|test).[jt]s?(x)',
+        '<rootDir>/packages/contract/tests/**/?(*.)+(spec|test).[jt]s?(x)',
       ],
       testPathIgnorePatterns: ['/dist/'],
     },

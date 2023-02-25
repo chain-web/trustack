@@ -1,7 +1,17 @@
-export const MAIN_PACKAGE = 'skchain';
-export const CONSTRUCTOR_METHOD = '__constructor__';
-export const CONTRACT_CLASS_NAME = '__contract_class_name__';
+export * from '@faithstack/contract_builder';
 
-export const buildeCodeString = (code: string): { code: string } => {
-  return { code };
+import { evaluate as evalFn } from '@faithstack/vm';
+import { EvalResult } from './proto_ts/eval_result.js';
+export { init } from '@faithstack/vm';
+
+export { EvalResult } from './proto_ts/eval_result.js';
+export interface EvaluateParams {
+  codeString: string;
+  cuLimit: bigint;
+  storage: Uint8Array;
+}
+
+export const evaluate = (opts: EvaluateParams): EvalResult => {
+  const pbRes = evalFn(opts.codeString, opts.cuLimit, opts.storage);
+  return EvalResult.fromBinary(pbRes);
 };

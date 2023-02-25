@@ -49,3 +49,7 @@ RUN set -eux; \
     rustc --version;
 
 RUN curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+# protoc
+RUN apt-get install protobuf-compiler -y
+RUN su node -c "cargo install protobuf-codegen"
