@@ -28,7 +28,7 @@
     single_use_lifetimes,
     trivial_casts,
     trivial_numeric_casts,
-    unreachable_pub,
+    // unreachable_pub,
     unsafe_op_in_unsafe_fn,
     unused_crate_dependencies,
     unused_import_braces,
@@ -57,31 +57,50 @@
     clippy::nursery,
 )]
 
+mod proto_rs;
 mod utils;
 
 use boa_engine::{Context, Source};
 use getrandom as _;
+use js_sys::Uint8Array;
+use proto_rs::eval_result;
+use protobuf::{Message, SpecialFields};
+use utils::set_panic_hook;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_test::__rt::js_console_log;
-use utils::set_panic_hook;
-use js_sys::Array;
 
-fn vec_to_js_array(vec: Vec<String>) -> Array {
-    vec.into_iter().map(JsValue::from).collect()    
-}
+// pub fn vec_to_js_array(vec: Vec<String>) -> Array {
+//     vec.into_iter().map(JsValue::from).collect()
+// }
 
 /// Evaluate the given ECMAScript code.
 #[wasm_bindgen]
-pub fn evaluate(src: &str, cu_limit: u64) -> Result<Array, JsValue> {
+pub fn evaluate(src: &str, cu_limit: u64, storage: Uint8Array) -> Result<Uint8Array, JsValue> {
     set_panic_hook();
     js_console_log("__sk__ inited");
+    storage.to_vec();
     // Setup executor
-    let mut ctx = Context::builder().build_sk(cu_limit).expect("Building the default context should not fail");
+    let mut ctx = Context::builder()
+        .build_sk(cu_limit)
+        .expect("Building the default context should not fail");
     let result = ctx.eval_script(Source::from_bytes(src));
     let cu_cost = ctx.get_cu_used().to_string();
     // js_console_log(&format!("cu cost: {}", cu_cost));
+
     match result {
-        Ok(v) => Ok(vec_to_js_array(vec![v.display().to_string(), cu_cost])),
-        Err(e) => Err(JsValue::from(format!("Uncaught {}", e)))
+        Ok(v) => {
+            let res_pb = eval_result::EvalResult {
+                cu_cost,
+                func_result: v.display().to_string(),
+                storage: "".to_string().as_bytes().to_vec(),
+                special_fields: SpecialFields::new(),
+            }
+            .write_to_bytes()
+            .expect("EvalResult to bytes error");
+            let js_u8a = Uint8Array::new_with_length(res_pb.len() as u32);
+            js_u8a.copy_from(&res_pb);
+            Ok(js_u8a)
+        }
+        Err(e) => Err(JsValue::from(format!("Uncaught {}", e))),
     }
 }

@@ -1,3 +1,6 @@
 .pnpm-store
 pnpm-lock.yaml
 skboa
+proto_ts/
+pkg/
+

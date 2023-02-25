@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test('start node', async ({ page }) => {
   await page.goto('/ci');
+  await page.waitForTimeout(1000);
   const startBtn = page.getByTestId('start');
   await startBtn.click();
   await page.screenshot({ path: './playwright-report/start.png' });
@@ -12,6 +13,7 @@ test('start node', async ({ page }) => {
 
 test('skvm', async ({ page }) => {
   await page.goto('/ci');
+  await page.waitForTimeout(1000);
   const startBtn = page.getByTestId('start_skvm');
   await startBtn.click();
   await page.screenshot({ path: './playwright-report/skvm.png' });

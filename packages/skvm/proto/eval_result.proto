@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+message EvalResult {
+  string cu_cost = 1;
+  string func_result = 2;
+  bytes storage = 3;
+}

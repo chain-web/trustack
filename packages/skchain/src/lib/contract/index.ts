@@ -1,6 +1,5 @@
-import { CONTRACT_CLASS_NAME } from '@faithstack/contract';
-import type { EvaluateResult } from '@faithstack/vm';
-import { evaluate, init } from '@faithstack/vm';
+import type { EvalResult } from '@faithstack/contract';
+import { BUILDER_NAMES, evaluate, init } from '@faithstack/contract';
 import { bytes } from 'multiformats';
 import { LOAD_CONTRACT_DATA_FUNC } from '../../config/index.js';
 import type { Transaction } from '../../mate/transaction.js';
@@ -38,7 +37,7 @@ export class Contract {
     trans: Transaction,
     cuLimit: bigint,
     storage: Uint8Array,
-  ): EvaluateResult => {
+  ): EvalResult => {
     const codeStr = bytes.toString(code);
     const method = trans.payload?.method;
     if (!method) {
@@ -46,7 +45,7 @@ export class Contract {
     }
     const args = trans.payload?.args || [];
     const funcCallCode = `
-      const __run__class__ = new ${CONTRACT_CLASS_NAME}()
+      const __run__class__ = new ${BUILDER_NAMES.CONTRACT_CLASS_NAME}()
       __run__class__.${method}(${args.join(',')})
     `;
     const loadDataCode = `${LOAD_CONTRACT_DATA_FUNC}()`;
@@ -56,7 +55,7 @@ export class Contract {
       // ${loadDataCode}
       ${funcCallCode}
     `;
-    const result = this.evaluate(allCode, cuLimit);
+    const result = this.evaluate({ codeString: allCode, cuLimit, storage });
     return result;
   };
 

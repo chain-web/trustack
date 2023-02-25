@@ -1,4 +1,4 @@
-import { CONSTRUCTOR_METHOD } from '@faithstack/contract';
+import { BUILDER_NAMES } from '@faithstack/contract';
 import { bytes } from 'multiformats';
 import { testAccounts } from '../../../../tests/testAccount.js';
 import { Address, Transaction } from '../../../index.js';
@@ -19,7 +19,7 @@ describe('contract', () => {
         amount: 1n,
         ts: Date.now(),
         payload: {
-          method: CONSTRUCTOR_METHOD,
+          method: BUILDER_NAMES.CONSTRUCTOR_METHOD,
           args: [],
         },
       });
@@ -29,7 +29,7 @@ describe('contract', () => {
         10000n,
         bytes.fromString(''),
       );
-      expect(res[0]).toEqual('undefined');
+      expect(res.funcResult).toEqual('undefined');
     });
   });
 });
