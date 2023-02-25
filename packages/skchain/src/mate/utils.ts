@@ -2,6 +2,7 @@ import type { BlockView, CID } from 'multiformats';
 import * as Block from 'multiformats/block';
 import * as codec from '@ipld/dag-cbor';
 import { sha256 as hasher } from 'multiformats/hashes/sha2';
+import * as rawCodec from 'multiformats/codecs/raw';
 
 // 113 = codec of @ipld/dag-cbor
 // 18 = sha256 hasher code
@@ -10,6 +11,14 @@ export type DefaultBlockHasher = 18;
 export type DefaultBlockType<T> = BlockView<
   T,
   DefaultBlockCodec,
+  DefaultBlockHasher,
+  1
+>;
+
+export type RawBlockCodec = 85;
+export type RawBlockType = BlockView<
+  Uint8Array,
+  RawBlockCodec,
   DefaultBlockHasher,
   1
 >;
@@ -38,4 +47,20 @@ export const takeBlockValue = async <T>(data: Uint8Array): Promise<T> => {
     hasher,
   });
   return value.value;
+};
+
+export const createRawBlock = async (
+  value: Uint8Array,
+): Promise<RawBlockType> => {
+  const block = await Block.encode<
+    Uint8Array,
+    RawBlockCodec,
+    DefaultBlockHasher
+  >({
+    value,
+    codec: rawCodec,
+    hasher,
+  });
+
+  return block;
 };
