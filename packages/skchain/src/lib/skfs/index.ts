@@ -4,7 +4,7 @@ import type { LevelDb } from 'datastore-level';
 import type { AbstractLevel, AbstractSublevel } from 'abstract-level';
 import { LevelDatastore } from 'datastore-level';
 import { Level } from 'level';
-import type { DefaultBlockType } from '../../mate/utils.js';
+import type { DefaultBlockType, RawBlockType } from '../../mate/utils.js';
 // import type { SKFSNetwork } from './network/index.js';
 
 export interface SkfsOptions {
@@ -75,6 +75,11 @@ export class Skfs {
   putCborBlock = async (block: DefaultBlockType<any>): Promise<void> => {
     const key = new Key(block.cid.toString());
     return await this.store.put(key, block.bytes);
+  };
+
+  putRawBlock = async (block: RawBlockType): Promise<void> => {
+    const key = new Key(block.cid.toString());
+    return await this.store.put(key, block.value);
   };
 
   get = async (cid: string): Promise<Uint8Array | undefined> => {

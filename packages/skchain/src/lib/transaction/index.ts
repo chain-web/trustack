@@ -1,9 +1,9 @@
 import { bytes } from 'multiformats';
+import { BUILDER_NAMES } from '@faithstack/contract';
 import type { Transaction, transMeta } from '../../mate/transaction.js';
-import { verifyById } from '../p2p/did.js';
+import { genetateDid, verifyById } from '../p2p/did.js';
 import { message } from '../../utils/message.js';
 import { transDemoFn } from '../contracts/transaction_demo.js';
-import type { SKChain } from '../../skChain.js';
 import type { BlockHeaderData } from '../../mate/block.js';
 import { chainState } from '../state/index.js';
 import { LifecycleStap } from '../state/lifecycle.js';
@@ -16,6 +16,12 @@ import type { UpdateAccountI } from '../ipld/blockService/nextBlock.js';
 import type { BlockService } from '../ipld/blockService/blockService.js';
 import type { Consensus } from '../consensus/index.js';
 import { skCacheKeys } from '../ipfs/key.js';
+import { createEmptyStorageRoot, createRawBlock } from '../../mate/utils.js';
+import { newAccount } from '../../mate/account.js';
+import type { Address } from '../../mate/address.js';
+import { Contract } from '../contract/index.js';
+import { tryParseJson } from '../../utils/utils.js';
+import { accountOpCodes } from '../contract/code.js';
 import { genTransMeta, genTransactionClass } from './trans.pure.js';
 
 export enum TransStatus {
@@ -28,7 +34,7 @@ export enum TransStatus {
 // 处理交易活动
 export class TransactionAction {
   constructor(blockService: BlockService, consensus: Consensus) {
-    // this.contract = new Contract();
+    this.contract = new Contract();
     this.blockService = blockService;
     this.consensus = consensus;
   }
@@ -41,7 +47,7 @@ export class TransactionAction {
   private transQueue: Transaction[] = []; // 当前块可执行的交易队列
   private transTaskInterval?: NodeJS.Timeout;
 
-  // private contract: Contract;
+  private contract: Contract;
   taskInProgress = false; // 是否正在执行智能合约\打包
 
   private breakNextBlock = false; // 是否中断下一个块的打包
@@ -67,7 +73,7 @@ export class TransactionAction {
       event: LifecycleStap.initingTransaction,
     });
     await this.initTransactionListen();
-    // await this.contract.init();
+    await this.contract.init();
     await this.startTransTask();
     chainState.send('CHANGE', {
       event: LifecycleStap.initedTransaction,
@@ -153,18 +159,22 @@ export class TransactionAction {
       // 依次执行交易的合约
       if (trans.payload) {
         // 调用合约
-        // const account = await this.chain.blockService.getAccount(
-        //   trans.recipient.did,
-        // );
-        // if (account) {
-        //   const res = await runContract(
-        //     account,
-        //     trans,
-        //     this.chain,
-        //     this.contract,
-        //   );
-        //   update.push(res);
-        // }
+        const account = await this.blockService.getExistAccount(
+          trans.recipient.did,
+        );
+
+        const res = await this.callContract({
+          caller: account.address,
+          contract: account.address,
+          mothed: trans.payload.method,
+          args: trans.payload.args,
+          cuLimit: trans.cuLimit,
+        });
+        update.push({
+          opCode: accountOpCodes.updateState,
+          value: res.result,
+          account: account.address.did,
+        });
       } else {
         // 普通转账
         update = await transDemoFn(
@@ -363,27 +373,67 @@ export class TransactionAction {
     return {};
   };
 
-  // deploy contract
-  // deploy = async (meta: { payload: Uint8Array }): Promise<{Transaction}> => {
-  //   // TODO 要不要加update code 的接口
-  //   const newDid = await genetateDid();
-  //   const storageRoot = await createEmptyStorageRoot(this.chain.db);
+  getContractCode = async (did: string): Promise<Uint8Array> => {
+    const contract = await this.blockService.getExistAccount(did);
+    if (!contract.codeCid) {
+      throw new Error('Address do not have contract');
+    }
+    const contractCode = await this.blockService.db.get(
+      contract.codeCid.toString(),
+    );
+    if (!contractCode) {
+      throw new Error('contract code not found at db');
+    }
+    return contractCode;
+  };
 
-  //   const codeCid = await this.chain.db.block.put(meta.payload);
-  //   const account = newAccount(
-  //     newDid.id,
-  //     storageRoot,
-  //     codeCid.toV1(),
-  //     this.chain.did,
-  //   );
-  //   await account.commit(this.chain.db);
-  //   return await this.transaction({
-  //     amount: BigInt(0),
-  //     recipient: account.account,
-  //     payload: {
-  //       method: 'constructor',
-  //       args: [meta.payload],
-  //     },
-  //   });
-  // };
+  callContract = async (params: {
+    caller: Address;
+    contract: Address;
+    mothed: string;
+    args?: string[];
+    cuLimit: bigint;
+  }): Promise<{
+    result: string | object;
+    cuCost: bigint;
+  }> => {
+    const contractCode = await this.getContractCode(params.contract.did);
+    const result = this.contract.runContract(contractCode, {
+      cuLimit: params.cuLimit,
+      method: params.mothed,
+      storage: new Uint8Array(), // TODO get from storageRoot
+      args: params.args,
+    });
+
+    return {
+      cuCost: BigInt(result.cuCost),
+      result: tryParseJson(result.funcResult),
+    };
+  };
+
+  // deploy contract
+  deploy = async (meta: {
+    payload: Uint8Array;
+  }): Promise<ReturnType<TransactionAction['transaction']>> => {
+    // TODO 要不要加update code 的接口
+    const newDid = await genetateDid();
+    const storageRoot = await createEmptyStorageRoot();
+    const codeRawBlock = await createRawBlock(meta.payload);
+    await this.blockService.db.putRawBlock(codeRawBlock);
+    const account = newAccount(
+      newDid.id,
+      storageRoot,
+      codeRawBlock.cid,
+      await this.blockService.db.cacheGetExist(skCacheKeys.accountId),
+    );
+    await this.blockService.addAccount(account);
+    return await this.transaction({
+      amount: BigInt(0),
+      recipient: account.address,
+      payload: {
+        method: BUILDER_NAMES.CONSTRUCTOR_METHOD,
+        args: [meta.payload],
+      },
+    });
+  };
 }

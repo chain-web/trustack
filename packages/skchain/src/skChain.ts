@@ -54,7 +54,7 @@ export class SKChain {
 
     // 对外暴露的一些方法
     this.transaction = this.transAction.transaction;
-    // this.deploy = this.transAction.deploy;
+    this.deploy = this.transAction.deploy;
   }
 
   version = version;
@@ -78,7 +78,7 @@ export class SKChain {
 
   // // public methods
   transaction;
-  // deploy;
+  deploy;
 
   chainState = chainState;
 
