@@ -2,7 +2,6 @@ import type { EvalResult } from '@faithstack/contract';
 import { BUILDER_NAMES, evaluate, init } from '@faithstack/contract';
 import { bytes } from 'multiformats';
 import { LOAD_CONTRACT_DATA_FUNC } from '../../config/index.js';
-import type { Transaction } from '../../mate/transaction.js';
 import { message } from '../../utils/message.js';
 import { chainState } from '../state/index.js';
 import { LifecycleStap } from '../state/lifecycle.js';
@@ -11,6 +10,13 @@ import { generateBaseContractCode } from './codeSnippet.js';
 export interface ContractResult {
   saves: ContractResultSaveItem[];
   funcReturn: any;
+}
+
+export interface RunContractOptions {
+  cuLimit: bigint;
+  storage: Uint8Array;
+  method: string;
+  args?: string[];
 }
 
 export interface ContractResultSaveItem {
@@ -32,18 +38,13 @@ export class Contract {
     });
   };
 
-  runContract = (
-    code: Uint8Array,
-    trans: Transaction,
-    cuLimit: bigint,
-    storage: Uint8Array,
-  ): EvalResult => {
+  runContract = (code: Uint8Array, opts: RunContractOptions): EvalResult => {
     const codeStr = bytes.toString(code);
-    const method = trans.payload?.method;
+    const method = opts.method;
     if (!method) {
       throw new Error('no contract call method');
     }
-    const args = trans.payload?.args || [];
+    const args = opts.args || [];
     const funcCallCode = `
       const __run__class__ = new ${BUILDER_NAMES.CONTRACT_CLASS_NAME}()
       __run__class__.${method}(${args.join(',')})
@@ -55,8 +56,21 @@ export class Contract {
       // ${loadDataCode}
       ${funcCallCode}
     `;
-    const result = this.evaluate({ codeString: allCode, cuLimit, storage });
-    return result;
+    try {
+      const result = this.evaluate({
+        codeString: allCode,
+        cuLimit: opts.cuLimit,
+        storage: opts.storage,
+      });
+      return result;
+    } catch (error) {
+      message.info({
+        codeString: allCode,
+        cuLimit: opts.cuLimit,
+        storage: opts.storage,
+      });
+      throw new Error(error as string);
+    }
   };
 
   // /**

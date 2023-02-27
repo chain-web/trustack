@@ -18,7 +18,7 @@ export const genTransMeta = async (
     message.error('wait for inited');
     return;
   }
-  if (!tm.amount || !tm.recipient) {
+  if (tm.amount === undefined || tm.recipient === undefined) {
     // 校验
     message.error('need trans amount and recipient');
     return;
