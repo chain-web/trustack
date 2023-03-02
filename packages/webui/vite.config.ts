@@ -74,7 +74,7 @@ export default defineConfig({
     },
   },
   plugins: [
-    react(),
+    react({ tsDecorators: true }),
     vitePluginImp({
       libList: [
         {

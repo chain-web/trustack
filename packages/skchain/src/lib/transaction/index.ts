@@ -22,6 +22,10 @@ import type { Address } from '../../mate/address.js';
 import { Contract } from '../contract/index.js';
 import { tryParseJson } from '../../utils/utils.js';
 import { accountOpCodes } from '../contract/code.js';
+import {
+  logClassPerformance,
+  logPerformance,
+} from '../../utils/performance.js';
 import { genTransMeta, genTransactionClass } from './trans.pure.js';
 
 export enum TransStatus {
@@ -32,6 +36,7 @@ export enum TransStatus {
 }
 
 // 处理交易活动
+@logClassPerformance()
 export class TransactionAction {
   constructor(blockService: BlockService, consensus: Consensus) {
     this.contract = new Contract();
@@ -52,6 +57,7 @@ export class TransactionAction {
 
   private breakNextBlock = false; // 是否中断下一个块的打包
 
+  @logPerformance
   get status(): {
     transingArr: Transaction[];
     waitTransCount: number;
@@ -68,7 +74,7 @@ export class TransactionAction {
     };
   }
 
-  init = async (): Promise<void> => {
+  async init(): Promise<void> {
     chainState.send('CHANGE', {
       event: LifecycleStap.initingTransaction,
     });
@@ -78,9 +84,9 @@ export class TransactionAction {
     chainState.send('CHANGE', {
       event: LifecycleStap.initedTransaction,
     });
-  };
+  }
 
-  private startTransTask = async (): Promise<void> => {
+  private async startTransTask(): Promise<void> {
     // 检查是否要执行打包任务
     this.transTaskInterval = setInterval(async () => {
       if (!this.consensus.isReady()) {
@@ -108,9 +114,9 @@ export class TransactionAction {
       await this.doTransTask();
       this.taskInProgress = false;
     }, 1000);
-  };
+  }
 
-  private doTransTask = async (): Promise<void> => {
+  private async doTransTask(): Promise<void> {
     // 执行打包任务
     const cArr: { contribute: bigint; did: string }[] = [];
     for (const did of this.waitTransMap.keys()) {
@@ -229,9 +235,9 @@ export class TransactionAction {
     await this.consensus.pubNewBlock(nextBlock);
     // 初始化下一个区块的ipld
     await this.blockService.goToNextBlock();
-  };
+  }
 
-  private add = async (trans: Transaction) => {
+  private async add(trans: Transaction) {
     await this.blockService.preLoadByTrans(trans);
     const hasedTrans = this.waitTransMap.get(trans.from.did);
     if (hasedTrans) {
@@ -241,7 +247,7 @@ export class TransactionAction {
       transMap.set(trans.ts, trans);
       this.waitTransMap.set(trans.from.did, transMap);
     }
-  };
+  }
 
   /**
    * @description 查询一个tx的状态
@@ -249,10 +255,10 @@ export class TransactionAction {
    * @param deep 从块头向下查询的区块数，默认为0，如果传Infinity会一直查到创世块
    * @returns
    */
-  transStatus = async (
+  async transStatus(
     tx: string,
     deep?: bigint,
-  ): Promise<{ status: TransStatus; block?: BlockHeaderData }> => {
+  ): Promise<{ status: TransStatus; block?: BlockHeaderData }> {
     if (deep === undefined) {
       deep = this.blockService.checkedBlockHeight;
     }
@@ -278,21 +284,21 @@ export class TransactionAction {
       return { status: TransStatus.transed, block: block.header };
     }
     return { status: TransStatus.err_tx };
-  };
+  }
 
   // 检查是否要继续执行打包操作
-  private checkIsBreakTransTask = (): boolean => {
+  private checkIsBreakTransTask(): boolean {
     return !this.breakNextBlock;
-  };
+  }
 
   // 终止本次打包，可能是因为收到了广播出来的最新块，被调用
-  stopThisBlock = (): void => {
+  stopThisBlock(): void {
     if (this.taskInProgress) {
       this.breakNextBlock = true;
     }
-  };
+  }
 
-  handelTransaction = async (trans: Transaction): Promise<void> => {
+  async handelTransaction(trans: Transaction): Promise<void> {
     // 处理接受到的或者本地发起的交易
 
     await this.add(trans);
@@ -303,18 +309,18 @@ export class TransactionAction {
     //   amount: trans.amount,
     // });
     // message.info(res);
-  };
+  }
 
-  private initTransactionListen = async () => {
+  private async initTransactionListen() {
     // 接收交易
     // await this.chain.db.pubsub.subscribe(
     //   peerEvent.transaction,
     //   this.receiveTransaction,
     // );
-  };
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private receiveTransaction = async (data: any) => {
+  private async receiveTransaction(data: any) {
     // 接收p2p网络里的交易，并塞到交易列表
     if (
       data.from === this.blockService.db.cacheGetExist(skCacheKeys.accountId)
@@ -342,18 +348,18 @@ export class TransactionAction {
     } else {
       message.info('trans unlow');
     }
-  };
+  }
 
-  stop = async (): Promise<void> => {
+  async stop(): Promise<void> {
     clearInterval(this.transTaskInterval);
     //  unbindTransactionListen
-  };
+  }
 
-  transaction = async (
+  async transaction(
     tm: Pick<transMeta, 'amount' | 'recipient'> & {
       payload?: Transaction['payload'];
     },
-  ): Promise<{ trans?: Transaction | undefined }> => {
+  ): Promise<{ trans?: Transaction | undefined }> {
     // 供外部调用的发起交易方法
     const transMeta = await genTransMeta(
       tm,
@@ -371,9 +377,9 @@ export class TransactionAction {
       return { trans };
     }
     return {};
-  };
+  }
 
-  getContractCode = async (did: string): Promise<Uint8Array> => {
+  async getContractCode(did: string): Promise<Uint8Array> {
     const contract = await this.blockService.getExistAccount(did);
     if (!contract.codeCid) {
       throw new Error('Address do not have contract');
@@ -385,9 +391,9 @@ export class TransactionAction {
       throw new Error('contract code not found at db');
     }
     return contractCode;
-  };
+  }
 
-  callContract = async (params: {
+  async callContract(params: {
     caller: Address;
     contract: Address;
     mothed: string;
@@ -396,7 +402,7 @@ export class TransactionAction {
   }): Promise<{
     result: string | object;
     cuCost: bigint;
-  }> => {
+  }> {
     const contractCode = await this.getContractCode(params.contract.did);
     const result = this.contract.runContract(contractCode, {
       cuLimit: params.cuLimit,
@@ -409,12 +415,12 @@ export class TransactionAction {
       cuCost: BigInt(result.cuCost),
       result: tryParseJson(result.funcResult),
     };
-  };
+  }
 
   // deploy contract
-  deploy = async (meta: {
+  async deploy(meta: {
     payload: Uint8Array;
-  }): Promise<ReturnType<TransactionAction['transaction']>> => {
+  }): Promise<ReturnType<TransactionAction['transaction']>> {
     // TODO 要不要加update code 的接口
     const newDid = await genetateDid();
     const storageRoot = await createEmptyStorageRoot();
@@ -435,5 +441,5 @@ export class TransactionAction {
         args: [meta.payload],
       },
     });
-  };
+  }
 }

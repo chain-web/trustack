@@ -14,9 +14,17 @@ class testClass {
       this.str += Math.random().toFixed(5);
     }
   }
-  @logPerformance
   toBytes() {
     return bytes.fromString(this.str);
+  }
+
+  @logPerformance
+  get strlen() {
+    return this.str.length;
+  }
+
+  set strlen(len: number) {
+    len;
   }
 }
 
@@ -27,6 +35,12 @@ describe('logPerformance', () => {
       tc.init();
       expect(tc.str.length).toBeGreaterThan(100000);
       const _bts = tc.toBytes();
+      tc.strlen = 100;
+      tc.strlen;
+      if (!performanceCollecter.enabled) {
+        return;
+      }
+      performanceCollecter.print();
       const toBytesLog = performanceCollecter.logs.find(
         (log) => log.funcName === 'toBytes',
       );
