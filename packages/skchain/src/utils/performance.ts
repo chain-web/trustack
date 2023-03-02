@@ -10,6 +10,21 @@ export const getNow = (): bigint => {
   }
 };
 
+export const getStack = (): string[] => {
+  const stack: string[] = [];
+  const err = new Error();
+  if (err.stack) {
+    err.stack.split('\n').forEach((line) => {
+      const call = line.match(/(?<=at\s)([\w.\s])+(?=\s\()/);
+      if (call && call[0]) {
+        stack.unshift(call[0]);
+      }
+    });
+  }
+  stack.pop();
+  return stack;
+};
+
 export function logPerformance(
   _target: any,
   _name: string,
@@ -26,6 +41,8 @@ export function logPerformance(
       } catch (e) {
         throw e;
       } finally {
+        // const stack = getStack();
+        // console.log(stack);
         const end = getNow();
         console.log([{ _target, _name, args, performance: end - start }]);
       }
@@ -59,13 +76,17 @@ export function logClassPerformance(): Function {
             throw e;
           } finally {
             const end = getNow();
-            console.log([
-              {
-                func: propName,
-                params,
-                cost: `${Number(end - start) / 1000}ms`,
-              },
-            ]);
+            const stack = getStack();
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            stack.push(stack.pop()!.split('.')[0]);
+            stack.push(propName);
+            performanceCollecter.addLog({
+              start,
+              end,
+              funcName: propName,
+              params: JSON.stringify(params),
+              stack,
+            });
           }
         };
 
@@ -78,6 +99,14 @@ export function logClassPerformance(): Function {
   };
 }
 
+interface PerformanceLogItem {
+  funcName: string;
+  start: bigint;
+  end: bigint;
+  params: string;
+  stack: string[];
+}
+
 class PerformanceCollecter {
   private _enabled: boolean = false;
 
@@ -87,6 +116,17 @@ class PerformanceCollecter {
 
   set enabled(value: boolean) {
     this._enabled = value;
+  }
+
+  logs: PerformanceLogItem[] = [];
+
+  addLog(log: PerformanceLogItem): void {
+    this.logs.push(log);
+  }
+
+  print() {
+    // eslint-disable-next-line no-console
+    console.log(this.logs);
   }
 }
 
