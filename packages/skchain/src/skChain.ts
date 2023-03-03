@@ -16,6 +16,7 @@ import { skCacheKeys } from './lib/ipfs/key.js';
 import type { DidJson } from './lib/p2p/did.js';
 import { genetateDid } from './lib/p2p/did.js';
 import { Consensus } from './lib/consensus/index.js';
+import { logClassPerformance } from './utils/performance.js';
 // import { TransactionTest } from './lib/transaction/test';
 // import { message } from './utils/message';
 // import { BlockService } from './lib/ipld/blockService/blockService';
@@ -32,6 +33,7 @@ export interface SKChainRunOpts {
   user?: DidJson;
 }
 
+@logClassPerformance()
 export class SKChain {
   constructor(option?: SKChainOption) {
     this.chainState.send('INITIALIZE');
@@ -53,8 +55,8 @@ export class SKChain {
     // this.pinService = new PinService(this);
 
     // 对外暴露的一些方法
-    this.transaction = this.transAction.transaction;
-    this.deploy = this.transAction.deploy;
+    this.transaction = this.transAction.transaction.bind(this.transAction);
+    this.deploy = this.transAction.deploy.bind(this.transAction);
   }
 
   version = version;
@@ -82,7 +84,7 @@ export class SKChain {
 
   chainState = chainState;
 
-  run = async (opts?: SKChainRunOpts): Promise<void> => {
+  async run(opts?: SKChainRunOpts): Promise<void> {
     this.chainState.send('START');
     this.chainState.send('CHANGE', { event: LifecycleStap.startCreateSKChain });
     const user = opts?.user || (await genetateDid());
@@ -105,12 +107,12 @@ export class SKChain {
     } catch (error) {
       message.error('init error', error as string);
     }
-  };
+  }
 
-  stop = async (): Promise<void> => {
+  async stop(): Promise<void> {
     await this.transAction.stop();
     await this.blockService.close();
     await this.db.close();
     this.chainState.send('STOP');
-  };
+  }
 }

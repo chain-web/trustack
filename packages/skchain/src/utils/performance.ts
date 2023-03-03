@@ -15,9 +15,13 @@ export const getStack = (): string[] => {
   const err = new Error();
   if (err.stack) {
     err.stack.split('\n').forEach((line) => {
-      const call = line.match(/(?<=at\s)([\w.\s])+(?=\s\()/);
+      const call = line.match(/(?<=at\s)([\s\S])+(?=\s\()/);
       if (call && call[0]) {
         stack.unshift(call[0]);
+      } else {
+        if (line.match('at ')) {
+          throw new Error(`no stack match: ${line}`);
+        }
       }
     });
   }
@@ -27,24 +31,36 @@ export const getStack = (): string[] => {
 
 export function logPerformance(
   _target: any,
-  _name: string,
+  name: string,
   descriptor: any,
 ): any {
-  const original = descriptor && descriptor.value;
-  if (typeof original === 'function') {
-    descriptor.value = function (...args: any) {
+  if (!performanceCollecter.enabled) {
+    return descriptor;
+  }
+  const originalGet = descriptor && descriptor.get;
+  if (typeof originalGet === 'function') {
+    descriptor.get = function () {
       const start = getNow();
       try {
-        const result = original.apply(this, args);
+        const result = originalGet.apply(this);
         return result;
         // eslint-disable-next-line no-useless-catch
       } catch (e) {
         throw e;
       } finally {
-        // const stack = getStack();
-        // console.log(stack);
+        const stack = getStack();
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        stack.push(stack.pop()!.split('.')[0]);
+        stack.push(`get ${name}`);
         const end = getNow();
-        console.log([{ _target, _name, args, performance: end - start }]);
+        performanceCollecter.addLog({
+          start,
+          end,
+          cost: end - start,
+          funcName: name,
+          params: '[]',
+          stack,
+        });
       }
     };
   }
@@ -53,6 +69,9 @@ export function logPerformance(
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export function logClassPerformance(): Function {
+  if (!performanceCollecter.enabled) {
+    return () => {};
+  }
   return function (Class: any) {
     const propertyNames = Object.getOwnPropertyNames(Class.prototype);
     Object.keys(propertyNames).forEach((key) => {
@@ -65,35 +84,47 @@ export function logClassPerformance(): Function {
         throw new Error('nodescriptor ');
       }
       if (propName !== 'constructor') {
-        const decorateFunction = function (...params: any[]) {
-          const start = getNow();
-          try {
-            // @ts-ignore
-            const result = descriptor.value.apply(this, params);
-            return result;
-            // eslint-disable-next-line no-useless-catch
-          } catch (e) {
-            throw e;
-          } finally {
-            const end = getNow();
-            const stack = getStack();
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            stack.push(stack.pop()!.split('.')[0]);
-            stack.push(propName);
-            performanceCollecter.addLog({
-              start,
-              end,
-              funcName: propName,
-              params: JSON.stringify(params),
-              stack,
-            });
-          }
-        };
-
-        Object.defineProperty(Class.prototype, propName, {
-          ...descriptor,
-          value: decorateFunction,
-        });
+        if (descriptor.value) {
+          const decorateFunction = function (...params: any[]) {
+            const start = getNow();
+            try {
+              // @ts-ignore
+              const result = descriptor.value.apply(this, params);
+              return result;
+              // eslint-disable-next-line no-useless-catch
+            } catch (e) {
+              throw e;
+            } finally {
+              const end = getNow();
+              const stack = getStack();
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              stack.push(stack.pop()!.split('.')[0]);
+              stack.push(propName);
+              performanceCollecter.addLog({
+                start,
+                end,
+                cost: end - start,
+                funcName: propName,
+                params: JSON.stringify(params),
+                stack,
+              });
+            }
+          };
+          Object.defineProperty(Class.prototype, propName, {
+            ...descriptor,
+            value: decorateFunction,
+          });
+        }
+        // if (descriptor.get) {
+        //   descriptor.get = genDescriptorFunc('get');
+        //   Object.defineProperty(Class.prototype, propName, {
+        //     ...descriptor,
+        //     get: function () {
+        //       // @ts-ignore
+        //       return descriptor.get.apply(this);
+        //     },
+        //   });
+        // }
       }
     });
   };
@@ -103,12 +134,16 @@ interface PerformanceLogItem {
   funcName: string;
   start: bigint;
   end: bigint;
+  cost: bigint;
   params: string;
   stack: string[];
 }
 
 class PerformanceCollecter {
   private _enabled: boolean = false;
+  //  Boolean(
+  //   (globalThis as any).__pc__ || globalThis.process?.env?.TS_JEST,
+  // );
 
   get enabled(): boolean {
     return this._enabled;
