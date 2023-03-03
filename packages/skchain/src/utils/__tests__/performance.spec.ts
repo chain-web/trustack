@@ -1,4 +1,5 @@
 import { bytes } from 'multiformats';
+import { sleep } from '../../../tests/skchainTest.util.js';
 import {
   logClassPerformance,
   logPerformance,
@@ -16,6 +17,9 @@ class testClass {
   }
   toBytes() {
     return bytes.fromString(this.str);
+  }
+  async timer() {
+    await sleep(1100);
   }
 
   @logPerformance
@@ -37,18 +41,26 @@ describe('logPerformance', () => {
       const _bts = tc.toBytes();
       tc.strlen = 100;
       tc.strlen;
-      if (!performanceCollecter.enabled) {
-        return;
+      await tc.timer();
+      if (performanceCollecter.enabled) {
+        // performanceCollecter.print();
+        const toBytesLog = performanceCollecter.logs.find(
+          (log) => log.funcName === 'toBytes',
+        );
+        if (!toBytesLog) {
+          throw new Error('no toBytesLog');
+        }
+        expect(toBytesLog.stack.pop()).toEqual('toBytes');
+        expect(toBytesLog.stack.pop()).toEqual('testClass');
+
+        const timerLog = performanceCollecter.logs.find(
+          (log) => log.funcName === 'timer',
+        );
+        if (!timerLog) {
+          throw new Error('no timerLog');
+        }
+        expect(timerLog.cost).toBeGreaterThan(1 * 1e9);
       }
-      performanceCollecter.print();
-      const toBytesLog = performanceCollecter.logs.find(
-        (log) => log.funcName === 'toBytes',
-      );
-      if (!toBytesLog) {
-        throw new Error('no toBytesLog');
-      }
-      expect(toBytesLog.stack.pop()).toEqual('toBytes');
-      expect(toBytesLog.stack.pop()).toEqual('testClass');
-    });
+    }, 2000);
   });
 });
