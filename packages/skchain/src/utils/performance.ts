@@ -85,11 +85,11 @@ export function logClassPerformance(): Function {
       }
       if (propName !== 'constructor') {
         if (descriptor.value) {
-          const decorateFunction = function (...params: any[]) {
+          const decorateFunction = async function (...params: any[]) {
             const start = getNow();
             try {
               // @ts-ignore
-              const result = descriptor.value.apply(this, params);
+              const result = await descriptor.value.apply(this, params);
               return result;
               // eslint-disable-next-line no-useless-catch
             } catch (e) {
@@ -140,10 +140,9 @@ interface PerformanceLogItem {
 }
 
 class PerformanceCollecter {
-  private _enabled: boolean = false;
-  //  Boolean(
-  //   (globalThis as any).__pc__ || globalThis.process?.env?.TS_JEST,
-  // );
+  private _enabled: boolean = Boolean(
+    (globalThis as any).__pc__ || globalThis.process?.env?.TS_JEST,
+  );
 
   get enabled(): boolean {
     return this._enabled;
