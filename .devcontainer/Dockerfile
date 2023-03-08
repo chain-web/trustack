@@ -53,3 +53,11 @@ RUN curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 # protoc
 RUN apt-get install protobuf-compiler -y
 RUN su node -c "cargo install protobuf-codegen"
+
+# RUN su node -c "chsh -s $(which zsh)"
+# Default powerline10k theme, no plugins installed
+RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v1.1.5/zsh-in-docker.sh)" -- \
+    -t robbyrussell \
+    -p 'history-substring-search' \
+    -p https://github.com/zsh-users/zsh-autosuggestions \
+    -p https://github.com/zsh-users/zsh-completions

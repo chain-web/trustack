@@ -9,6 +9,7 @@
       "VARIANT": "18"
     }
   },
+  "runArgs": ["--memory=8gb"],
 
   // Set *default* container specific settings.json values on container create.
   "settings": {
