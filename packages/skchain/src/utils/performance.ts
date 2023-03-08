@@ -13,6 +13,7 @@ export const getNow = (): bigint => {
 export const getStack = (): string[] => {
   const stack: string[] = [];
   const err = new Error();
+  // console.log(err.stack);
   if (err.stack) {
     err.stack.split('\n').forEach((line) => {
       const call = line.match(/(?<=at\s)([\s\S])+(?=\s\()/);
@@ -26,6 +27,17 @@ export const getStack = (): string[] => {
     });
   }
   stack.pop();
+  return stack;
+};
+
+const processStack = (funcName: string, stack: string[]): string[] => {
+  // console.log(stack);
+  const last = stack.pop();
+  if (last?.match('.')) {
+    stack.push(last.split('.')[0]);
+  }
+  stack.push(funcName);
+
   return stack;
 };
 
@@ -48,10 +60,7 @@ export function logPerformance(
       } catch (e) {
         throw e;
       } finally {
-        const stack = getStack();
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        stack.push(stack.pop()!.split('.')[0]);
-        stack.push(`get ${name}`);
+        const stack = processStack(`get ${name}`, getStack());
         const end = getNow();
         performanceCollecter.addLog({
           start,
@@ -96,10 +105,7 @@ export function logClassPerformance(): Function {
               throw e;
             } finally {
               const end = getNow();
-              const stack = getStack();
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              stack.push(stack.pop()!.split('.')[0]);
-              stack.push(propName);
+              const stack = processStack(propName, getStack());
               performanceCollecter.addLog({
                 start,
                 end,
@@ -139,6 +145,11 @@ interface PerformanceLogItem {
   stack: string[];
 }
 
+interface logTree {
+  name: string;
+  children: logTree[];
+}
+
 class PerformanceCollecter {
   private _enabled: boolean = Boolean(
     (globalThis as any).__pc__ || globalThis.process?.env?.TS_JEST,
@@ -153,9 +164,16 @@ class PerformanceCollecter {
   }
 
   logs: PerformanceLogItem[] = [];
+  tree: logTree = {
+    name: 'root',
+    children: [],
+  };
 
   addLog(log: PerformanceLogItem): void {
     this.logs.push(log);
+  }
+  genTree() {
+    return this.tree;
   }
 
   print() {
@@ -163,5 +181,4 @@ class PerformanceCollecter {
     console.log(this.logs);
   }
 }
-
 export const performanceCollecter = new PerformanceCollecter();
