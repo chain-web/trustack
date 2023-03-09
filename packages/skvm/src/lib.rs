@@ -58,6 +58,7 @@
 )]
 
 mod proto_rs;
+mod sk;
 mod utils;
 
 use boa_engine::{Context, Source};
@@ -65,6 +66,7 @@ use getrandom as _;
 use js_sys::Uint8Array;
 use proto_rs::eval_result;
 use protobuf::{Message, SpecialFields};
+use sk::window_sk::init_sk;
 use utils::set_panic_hook;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_test::__rt::js_console_log;
@@ -83,6 +85,7 @@ pub fn evaluate(src: &str, cu_limit: u64, storage: Uint8Array) -> Result<Uint8Ar
     let mut ctx = Context::builder()
         .build_sk(cu_limit)
         .expect("Building the default context should not fail");
+    init_sk(&mut ctx).expect("init sk error");
     let result = ctx.eval_script(Source::from_bytes(src));
     let cu_cost = ctx.get_cu_used().to_string();
     // js_console_log(&format!("cu cost: {}", cu_cost));
