@@ -23,6 +23,15 @@
           `
         
         function testcc () {
+          let bn = {a: 11n};
+          let bns = JSON.stringify(bn);
+          __sk_utils__.log(bns)
+          let str = '{"a": 1n}'
+          const a= JSON.parse(bns);
+          __sk_utils__.log(a.a)
+          __sk_utils__.log(a.a === 11)
+          __sk_utils__.log(a.a === 11n)
+
         let num = Math.random()
         if (num > 0.5) {
             return 1
@@ -33,7 +42,7 @@
     testcc()
         
         `,
-          100n,
+          1000n,
           new Uint8Array([]),
         );
 
