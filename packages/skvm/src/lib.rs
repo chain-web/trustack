@@ -67,6 +67,7 @@ use js_sys::Uint8Array;
 use proto_rs::eval_result;
 use protobuf::{Message, SpecialFields};
 use sk::window_sk::init_sk;
+use std::cell::RefCell;
 use utils::set_panic_hook;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_test::__rt::js_console_log;
@@ -75,17 +76,18 @@ use wasm_bindgen_test::__rt::js_console_log;
 //     vec.into_iter().map(JsValue::from).collect()
 // }
 
+static mut SAVED_STORAGE: RefCell<Vec<u8>> = RefCell::new(Vec::<u8>::new());
+
 /// Evaluate the given ECMAScript code.
 #[wasm_bindgen]
 pub fn evaluate(src: &str, cu_limit: u64, storage: Uint8Array) -> Result<Uint8Array, JsValue> {
     set_panic_hook();
     js_console_log("__sk__ inited");
-    storage.to_vec();
     // Setup executor
     let mut ctx = Context::builder()
         .build_sk(cu_limit)
         .expect("Building the default context should not fail");
-    init_sk(&mut ctx).expect("init sk error");
+    init_sk(&mut ctx, storage).expect("init sk error");
     let result = ctx.eval_script(Source::from_bytes(src));
     let cu_cost = ctx.get_cu_used().to_string();
     // js_console_log(&format!("cu cost: {}", cu_cost));
@@ -95,7 +97,7 @@ pub fn evaluate(src: &str, cu_limit: u64, storage: Uint8Array) -> Result<Uint8Ar
             let res_pb = eval_result::EvalResult {
                 cu_cost,
                 func_result: v.display().to_string(),
-                storage: "".to_string().as_bytes().to_vec(),
+                storage: unsafe { SAVED_STORAGE.get_mut().to_vec() },
                 special_fields: SpecialFields::new(),
             }
             .write_to_bytes()
