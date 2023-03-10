@@ -23,14 +23,17 @@
           `
         
         function testcc () {
-          let bn = {a: 11n};
+          let bn = {a: 11n, b: 111111111n,c:66562555555n,d:5458452115n,r:55555555555555n};
           let bns = JSON.stringify(bn);
           __sk_utils__.log(bns)
+          __sk_utils__.save_storage(bns)
           let str = '{"a": 1n}'
           const a= JSON.parse(bns);
           __sk_utils__.log(a.a)
           __sk_utils__.log(a.a === 11)
           __sk_utils__.log(a.a === 11n)
+
+          __sk_utils__.log(__sk_utils__.storage)
 
         let num = Math.random()
         if (num > 0.5) {
@@ -43,9 +46,14 @@
         
         `,
           1000n,
-          new Uint8Array([]),
+          new Uint8Array([
+            123, 34, 97, 34, 58, 49, 49, 110, 44, 34, 98, 34, 58, 49, 49, 49,
+            49, 49, 49, 49, 49, 110, 44, 34, 99, 34, 58, 54, 54, 53, 54, 50, 53,
+            53, 53, 53, 110, 44, 34, 100, 34, 58, 53, 52, 53, 56, 52, 53, 50,
+            49, 49, 53, 110, 44, 34, 114, 34, 58, 53, 53, 53, 53, 53, 53, 53,
+            53, 53, 53, 53, 53, 53, 53, 53, 125,
+          ]),
         );
-
         console.log(res);
       });
     });
