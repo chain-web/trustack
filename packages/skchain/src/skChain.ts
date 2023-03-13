@@ -57,11 +57,12 @@ export class SKChain {
     // 对外暴露的一些方法
     this.transaction = this.transAction.transaction.bind(this.transAction);
     this.deploy = this.transAction.deploy.bind(this.transAction);
+    this.getAccount = this.blockService.getAccount.bind(this.blockService);
   }
 
   version = version;
   // 数据存取服务
-  private db: Skfs;
+  db: Skfs;
   // 创世配置
   private genesis: Genesis;
   // // 交易
@@ -81,6 +82,7 @@ export class SKChain {
   // // public methods
   transaction;
   deploy;
+  getAccount;
 
   chainState = chainState;
 

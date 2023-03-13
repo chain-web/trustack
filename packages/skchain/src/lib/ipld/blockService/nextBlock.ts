@@ -4,7 +4,7 @@ import { Block } from '../../../mate/block.js';
 import type { StateRoot } from '../../../mate/mpts/stateRoot.js';
 import { Receipt } from '../../../mate/receipt.js';
 import type { Transaction } from '../../../mate/transaction.js';
-import { createCborBlock } from '../../../mate/utils.js';
+import { createCborBlock, createRawBlock } from '../../../mate/utils.js';
 import type { ValueOf } from '../../../types.js';
 import { message } from '../../../utils/message.js';
 import { accountOpCodes, errorCodes } from '../../contract/code.js';
@@ -18,7 +18,7 @@ export type UpdateOpCode =
 
 export type UpdateAccountI = {
   opCode: UpdateOpCode;
-  value: string | bigint | object;
+  value: string | bigint | object | Uint8Array;
 } & {
   account: Account['address']['did'];
 };
@@ -29,17 +29,20 @@ export class NextBlock {
     updateAccount: BlockService['updateAccount'],
     stateRoot: StateRoot,
     addCborBlock: Skfs['putCborBlock'],
+    addRawBlock: Skfs['putRawBlock'],
   ) {
     this.getAccount = getAccount;
     this.updateAccount = updateAccount;
     this.stateRoot = stateRoot;
     this.addCborBlock = addCborBlock;
+    this.addRawBlock = addRawBlock;
   }
 
   getAccount: BlockService['getExistAccount'];
   updateAccount: BlockService['updateAccount'];
   stateRoot: StateRoot;
   addCborBlock: Skfs['putCborBlock'];
+  addRawBlock: Skfs['putRawBlock'];
   // 下一个块
   nextBlock!: Block;
 
@@ -130,17 +133,23 @@ export class NextBlock {
 
         break;
       case accountOpCodes.updateState:
-        // TODO con not use
-        // const cid = await this.chain.db.dag.put([update.value]);
-        // account.updateState(cid);
-        this.updates.set(account.address.did, account);
-
+        await this.updateContractAccount(account, update);
         break;
       default:
         message.error('unknown op code');
         break;
     }
   };
+
+  async updateContractAccount(
+    account: Account,
+    update: UpdateAccountI,
+  ): Promise<void> {
+    const storage = await createRawBlock(update.value as Uint8Array);
+    await this.addRawBlock(storage);
+    account.updateState(storage.cid);
+    this.updates.set(account.address.did, account);
+  }
 
   addTransaction = async (trans: Transaction): Promise<string> => {
     const transCbor = await trans.toCborBlock();

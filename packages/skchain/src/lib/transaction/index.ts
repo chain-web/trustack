@@ -178,7 +178,7 @@ export class TransactionAction {
         });
         update.push({
           opCode: accountOpCodes.updateState,
-          value: res.result,
+          value: res.storage,
           account: account.address.did,
         });
       } else {
@@ -192,14 +192,6 @@ export class TransactionAction {
           this.blockService.getExistAccount,
         );
       }
-
-      // run trans as contract
-      // const res = this.contract.runFunction(transContract, {
-      //   from: trans.from,
-      //   recipient: trans.recipient,
-      //   amount: trans.amount,
-      // });
-      // console.log(res);
 
       // 更新一个交易的结果到当前块状态机
       await this.blockService.nextBlock.addUpdates(trans, update, index);
@@ -402,6 +394,7 @@ export class TransactionAction {
   }): Promise<{
     result: string | object;
     cuCost: bigint;
+    storage: Uint8Array;
   }> {
     const contractCode = await this.getContractCode(params.contract.did);
     const result = this.contract.runContract(contractCode, {
@@ -414,6 +407,7 @@ export class TransactionAction {
     return {
       cuCost: BigInt(result.cuCost),
       result: tryParseJson(result.funcResult),
+      storage: result.storage,
     };
   }
 

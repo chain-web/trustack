@@ -72,7 +72,7 @@ const chainMachine = createMachine<ChainContext, ChainEvents>(
   {
     actions: {
       update: (ctx, e) => {
-        message.info('starting: ', e, ...(e.data || []));
+        message.info('state event: ', e, ...(e.data || []));
         if (e.event) {
           ctx.eventQueue.push({ event: e.event, data: e.data });
         }

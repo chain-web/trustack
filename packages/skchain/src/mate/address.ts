@@ -3,4 +3,8 @@ export class Address {
     this.did = address;
   }
   did: string;
+
+  toParam(): string {
+    return `{did: '${this.did}'}`;
+  }
 }

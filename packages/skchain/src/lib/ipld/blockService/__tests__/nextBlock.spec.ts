@@ -8,6 +8,7 @@ const createTestNextBlock = async (name: string) => {
     blockService.addAccount,
     blockService.stateRoot,
     blockService.db.putCborBlock,
+    blockService.db.putRawBlock,
   );
 };
 

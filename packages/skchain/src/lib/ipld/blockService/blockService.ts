@@ -325,6 +325,7 @@ export class BlockService {
       this.updateAccount,
       this.stateRoot,
       this.db.putCborBlock,
+      this.db.putRawBlock,
     );
     const headerBlock = await this.getHeaderBlock();
     await this.nextBlock.initNextBlock(headerBlock);
