@@ -2,6 +2,7 @@ import type { EvalResult } from '@faithstack/contract';
 import { BUILDER_NAMES, evaluate, init } from '@faithstack/contract';
 import { bytes } from 'multiformats';
 import { LOAD_CONTRACT_DATA_FUNC } from '../../config/index.js';
+import type { Address } from '../../mate/address.js';
 import { message } from '../../utils/message.js';
 import { chainState } from '../state/index.js';
 import { LifecycleStap } from '../state/lifecycle.js';
@@ -16,7 +17,7 @@ export interface RunContractOptions {
   cuLimit: bigint;
   storage: Uint8Array;
   method: string;
-  args?: string[];
+  args?: (string | Address)[];
 }
 
 export interface ContractResultSaveItem {
@@ -44,17 +45,50 @@ export class Contract {
     if (!method) {
       throw new Error('no contract call method');
     }
-    const args = opts.args || [];
-    const funcCallCode = `
-      const __run__class__ = new ${BUILDER_NAMES.CONTRACT_CLASS_NAME}()
-      __run__class__.${method}(${args.join(',')})
+    let args =
+      opts.args?.map((arg) => {
+        if ((arg as Address).toParam) {
+          return (arg as Address).toParam();
+        }
+        return arg;
+      }) || [];
+    if (method === BUILDER_NAMES.CONSTRUCTOR_METHOD) {
+      args = [];
+    }
+
+    const initClassCode = `
+    const __run__class__ = new ${BUILDER_NAMES.CONTRACT_CLASS_NAME}()
+  `;
+    const loadDataCode = `
+      const ${LOAD_CONTRACT_DATA_FUNC} = () => {
+        // __sk_utils__.log(__sk_utils__.storage)
+        const data = JSON.parse(__sk_utils__.storage || '{}');
+        Object.keys(data).map(item => {
+          __run__class__[item] = data[item]
+        })
+      }
+      ${LOAD_CONTRACT_DATA_FUNC}()
     `;
-    const loadDataCode = `${LOAD_CONTRACT_DATA_FUNC}()`;
+
+    const funcCallCode = `
+      const __run__class__result__ = __run__class__.${method}(${args.join(',')})
+    `;
+
+    const saveStorageCode = `
+      const storage = {};
+      Object.getOwnPropertyNames(__run__class__).map(prop => {
+        storage[prop] = __run__class__[prop];
+      })
+      __sk_utils__.save_storage(JSON.stringify(storage));
+    `;
     const allCode = `
       ${generateBaseContractCode()}
       ${codeStr}
-      // ${loadDataCode}
+      ${initClassCode}
+      ${loadDataCode}
       ${funcCallCode}
+      ${saveStorageCode}
+      __run__class__result__;
     `;
     try {
       const result = this.evaluate({
@@ -65,7 +99,7 @@ export class Contract {
       return result;
     } catch (error) {
       message.info({
-        codeString: allCode,
+        codeString: allCode.toString(),
         cuLimit: opts.cuLimit,
         storage: opts.storage,
       });

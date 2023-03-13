@@ -57,18 +57,36 @@ describe('SkChain', () => {
         throw new Error('no trans');
       }
       // wait to stack
-      await sleep(7000);
+      await sleep(6000);
       const status = await chain.transAction.transStatus(trans.hash);
       expect(status.status).toEqual(TransStatus.transed);
+      const account = await chain.getAccount(trans.recipient.did);
+      if (!account) {
+        throw new Error('no contract account');
+      }
+      const storage = await chain.db.get(account.storageRoot.toString());
+      if (!storage) {
+        throw new Error('no storage');
+      }
+      expect(
+        Boolean(
+          bytes
+            .toString(storage)
+            .match('12D3KooWHdhPrGCqsjD8j6yiHfumdzxfRxyYNPxJKN99RfgtoRuq'),
+        ),
+      ).toEqual(true);
 
-      // const res = await chain.callContract({
-      //   caller: new Address(testAccounts[0].id),
-      //   cuLimit: 10000n,
-      //   mothed: 'getBalance',
-      //   contract: trans.recipient,
+      // const res = await chain.transaction({
+      //   amount: 0n,
+      //   recipient: trans.recipient,
+      //   payload: {
+      //     method: 'getBalance',
+      //     args: [new Address(testAccounts[0].id)],
+      //   },
       // });
+      // await sleep(6000);
       // expect(res.result).toEqual('10000n');
       await chain.stop();
-    }, 12000);
+    }, 13000);
   });
 });
