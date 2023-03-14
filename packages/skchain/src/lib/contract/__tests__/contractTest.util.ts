@@ -7,7 +7,7 @@ class __contract_class_name__ extends BaseContract {
       super();
   }
   send = (receiver, amount)=>{
-      if (this.balances[receiver.did] > amount) {
+      if (this.balances[this.msg.sender.did] < amount) {
           return;
       }
       if (!this.balances[receiver.did]) {

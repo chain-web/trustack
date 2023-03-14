@@ -5,8 +5,8 @@ export const createTestSkMpt = (): Mpt => {
   return new Mpt('test_mpt', { useMemDb: true });
 };
 
-export const createTestDiskSkMpt = (name: string): Mpt => {
-  rmDbFile(name);
+export const createTestDiskSkMpt = async (name: string): Promise<Mpt> => {
+  await rmDbFile(name);
   const mpt = new Mpt(name);
   return mpt;
 };
@@ -25,7 +25,7 @@ export const createTestSkfs = async (): Promise<Skfs> => {
 
 export const createTestDiskSkfs = async (name?: string): Promise<Skfs> => {
   name = name || 'test__skfs';
-  rmDbFile(name);
+  await rmDbFile(name);
   const skfs = new Skfs({
     path: name,
   });
@@ -36,18 +36,19 @@ export const createTestDiskSkfs = async (name?: string): Promise<Skfs> => {
   return skfs;
 };
 
-const rmDbFile = (name: string = '') => {
+const rmDbFile = async (name: string = '') => {
   let isNodejs = false;
   try {
     // eslint-disable-next-line import/no-nodejs-modules
-    require('fs');
+    await import('fs');
     isNodejs = true;
   } catch (error) {}
   if (isNodejs) {
     // eslint-disable-next-line import/no-nodejs-modules
-    const { resolve } = require('path');
+    const { resolve } = (await import('path')).default;
     // eslint-disable-next-line import/no-nodejs-modules
-    const { existsSync, rmSync } = require('fs');
+    const { existsSync, rmSync } = (await import('fs')).default;
+
     const dbFile = resolve(process.cwd(), `.leveldb/${name}`);
     if (existsSync(dbFile)) {
       rmSync(dbFile, { recursive: true, force: true });

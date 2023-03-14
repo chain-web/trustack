@@ -47,7 +47,7 @@ describe('SkChain', () => {
     }, 12000);
     it('should deploy and call contract ok', async () => {
       const chain = await createTestSkChain('contract');
-      await chain.run({ user: testAccounts[1] });
+      await chain.run({ user: testAccounts[2] });
 
       const { trans } = await chain.deploy({
         payload: bytes.fromString(testCoinContract),
@@ -60,7 +60,7 @@ describe('SkChain', () => {
       await sleep(6000);
       const status = await chain.transAction.transStatus(trans.hash);
       expect(status.status).toEqual(TransStatus.transed);
-      const account = await chain.getAccount(trans.recipient.did);
+      let account = await chain.getAccount(trans.recipient.did);
       if (!account) {
         throw new Error('no contract account');
       }
@@ -76,17 +76,32 @@ describe('SkChain', () => {
         ),
       ).toEqual(true);
 
-      // const res = await chain.transaction({
-      //   amount: 0n,
-      //   recipient: trans.recipient,
-      //   payload: {
-      //     method: 'getBalance',
-      //     args: [new Address(testAccounts[0].id)],
-      //   },
-      // });
-      // await sleep(6000);
-      // expect(res.result).toEqual('10000n');
+      const { trans: trans2 } = await chain.transaction({
+        amount: 0n,
+        recipient: trans.recipient,
+        payload: {
+          method: 'send',
+          args: [new Address(testAccounts[0].id).toParam(), 100n],
+        },
+      });
+      if (!trans2) {
+        throw new Error('no trans2');
+      }
+      await sleep(6000);
+      account = await chain.getAccount(trans.recipient.did);
+      if (!account) {
+        throw new Error('no contract account');
+      }
+      const storage2 = await chain.db.get(account.storageRoot.toString());
+      if (!storage2) {
+        throw new Error('no storage');
+      }
+      const status2 = await chain.transAction.transStatus(trans2.hash);
+      expect(status2.status).toEqual(TransStatus.transed);
+      expect(
+        Boolean(bytes.toString(storage2).match(`"${testAccounts[0].id}":100n`)),
+      ).toEqual(true);
       await chain.stop();
-    }, 13000);
+    }, 15000);
   });
 });

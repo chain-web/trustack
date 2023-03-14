@@ -8,6 +8,7 @@ thumbs.db
 .fun/*
 .pnpm-store
 .leveldb
+__contract_code__.js
 
 .eslintcache
 

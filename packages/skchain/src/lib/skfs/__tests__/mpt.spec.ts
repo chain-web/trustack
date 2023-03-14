@@ -17,7 +17,7 @@ describe('SkMpt', () => {
       }
     });
     it('should disk get put ok', async () => {
-      const mpt = createTestDiskSkMpt('test__mpt');
+      const mpt = await createTestDiskSkMpt('test__mpt');
       mpt.initRootTree();
       await mpt.put('testKey', 'testValue');
       const res = await mpt.get('testKey');

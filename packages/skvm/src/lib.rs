@@ -82,7 +82,7 @@ static mut SAVED_STORAGE: RefCell<Vec<u8>> = RefCell::new(Vec::<u8>::new());
 #[wasm_bindgen]
 pub fn evaluate(src: &str, cu_limit: u64, storage: Uint8Array) -> Result<Uint8Array, JsValue> {
     set_panic_hook();
-    js_console_log("__sk__ inited");
+    // js_console_log("__sk__ inited");
     // Setup executor
     let mut ctx = Context::builder()
         .build_sk(cu_limit)

@@ -1,3 +1,5 @@
+import { testAccounts } from '../../../../tests/testAccount.js';
+import { Address } from '../../../mate/address.js';
 import { generateBaseContractCode } from '../codeSnippet.js';
 import { evalClass, evalFunction } from '../vm.js';
 import { testCoinContract, testCoinContractDid } from './contractTest.util.js';
@@ -14,7 +16,7 @@ describe('vm', () => {
     });
     it('should simple class ok', async () => {
       const codeStr = `
-        ${generateBaseContractCode()}
+        ${generateBaseContractCode(new Address(testAccounts[0].id))}
         ${testCoinContract}
       `;
       const res = await evalClass(codeStr, 'getBalance', [

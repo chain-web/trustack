@@ -3,23 +3,23 @@ import { createTestBlockRoot } from './blockService.util.js';
 describe('SkMpt', () => {
   describe('test', () => {
     it('should create block root ok', async () => {
-      const root = createTestBlockRoot();
+      const root = await createTestBlockRoot();
       await root.closeDb();
     });
     it('should get index ok', async () => {
-      const root = createTestBlockRoot();
+      const root = await createTestBlockRoot();
       const res = root.getIndex(100_0001n);
       expect(res.curIndex).toEqual(1n);
       expect(res.setIndex).toEqual(1n);
       await root.closeDb();
     });
     it('should addBlockToRootNode ok', async () => {
-      const root = createTestBlockRoot();
+      const root = await createTestBlockRoot();
       await root.addBlockToRootNode('test_cid', 10n);
       await root.closeDb();
     });
     it('should getBlockCidByNumber ok', async () => {
-      const root = createTestBlockRoot();
+      const root = await createTestBlockRoot();
       await root.addBlockToRootNode('test_cid', 10n);
       const res = await root.getBlockCidByNumber(10n);
       expect(res).toEqual('test_cid');

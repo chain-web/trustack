@@ -7,6 +7,7 @@ import { message } from '../../utils/message.js';
 import { chainState } from '../state/index.js';
 import { LifecycleStap } from '../state/lifecycle.js';
 import { generateBaseContractCode } from './codeSnippet.js';
+import { writeCodeToFile } from './__tests__/utils.js';
 
 export interface ContractResult {
   saves: ContractResultSaveItem[];
@@ -17,6 +18,7 @@ export interface RunContractOptions {
   cuLimit: bigint;
   storage: Uint8Array;
   method: string;
+  sender: Address;
   args?: (string | Address)[];
 }
 
@@ -39,7 +41,10 @@ export class Contract {
     });
   };
 
-  runContract = (code: Uint8Array, opts: RunContractOptions): EvalResult => {
+  runContract = async (
+    code: Uint8Array,
+    opts: RunContractOptions,
+  ): Promise<EvalResult> => {
     const codeStr = bytes.toString(code);
     const method = opts.method;
     if (!method) {
@@ -61,7 +66,7 @@ export class Contract {
   `;
     const loadDataCode = `
       const ${LOAD_CONTRACT_DATA_FUNC} = () => {
-        // __sk_utils__.log(__sk_utils__.storage)
+        // __sk_utils__.log(JSON.stringify(__sk_utils__.storage))
         const data = JSON.parse(__sk_utils__.storage || '{}');
         Object.keys(data).map(item => {
           __run__class__[item] = data[item]
@@ -77,12 +82,14 @@ export class Contract {
     const saveStorageCode = `
       const storage = {};
       Object.getOwnPropertyNames(__run__class__).map(prop => {
-        storage[prop] = __run__class__[prop];
+        if (prop !== 'msg') {
+          storage[prop] = __run__class__[prop];
+        }
       })
       __sk_utils__.save_storage(JSON.stringify(storage));
     `;
     const allCode = `
-      ${generateBaseContractCode()}
+      ${generateBaseContractCode(opts.sender)}
       ${codeStr}
       ${initClassCode}
       ${loadDataCode}
@@ -98,6 +105,7 @@ export class Contract {
       });
       return result;
     } catch (error) {
+      await writeCodeToFile(allCode.toString());
       message.info({
         codeString: allCode.toString(),
         cuLimit: opts.cuLimit,
