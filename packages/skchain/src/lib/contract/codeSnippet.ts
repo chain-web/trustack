@@ -1,6 +1,15 @@
-export const generateBaseContractCode = (): string => {
+import type { Address } from '../../mate/address.js';
+
+export const generateBaseContractCode = (sender: Address): string => {
   return `
-    class BaseContract {}
+    class BaseContract {
+      constructor () {
+        this.msg = {
+          sender: ${sender.toParam()}
+        }
+      }
+      msg = {sender: {}}
+    }
   `;
 };
 

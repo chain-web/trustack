@@ -7,9 +7,11 @@ import {
 import { BlockRoot } from '../blockRoot.js';
 import { BlockService } from '../blockService.js';
 
-export const createTestBlockRoot = (name?: string): BlockRoot => {
+export const createTestBlockRoot = async (
+  name?: string,
+): Promise<BlockRoot> => {
   name = name || 'test__block_root_mot';
-  const mpt = createTestDiskSkMpt(name);
+  const mpt = await createTestDiskSkMpt(name);
   const root = new BlockRoot({ mpt });
   return root;
 };
@@ -22,8 +24,8 @@ export const createTestBlockService = async (opts?: {
   if (!skfs) {
     skfs = await createTestDiskSkfs(opts?.name);
   }
-  const blockRoot = createTestBlockRoot(`${opts?.name}_blockRoot`);
-  const stateRoot = createTestStateRoot(`${opts?.name}_stateRoot`);
+  const blockRoot = await createTestBlockRoot(`${opts?.name}_blockRoot`);
+  const stateRoot = await createTestStateRoot(`${opts?.name}_stateRoot`);
   const root = new BlockService(skfs, { blockRoot, stateRoot });
   return root;
 };

@@ -120,13 +120,19 @@ export class TransactionAction {
     // 执行打包任务
     const cArr: { contribute: bigint; did: string }[] = [];
     for (const did of this.waitTransMap.keys()) {
-      const account = await this.blockService.getAccount(did);
-      if (account) {
-        cArr.push({
-          contribute: account.contribute,
-          did,
-        });
+      let account = await this.blockService.getAccount(did);
+      if (!account) {
+        // create new account
+        account = newAccount(
+          (await genetateDid()).id,
+          await createEmptyStorageRoot(),
+        );
+        await this.blockService.addAccount(account);
       }
+      cArr.push({
+        contribute: account.contribute,
+        did,
+      });
     }
     const sortedArr = cArr.sort((a, b) =>
       a.contribute < b.contribute ? -1 : 1,
@@ -170,11 +176,14 @@ export class TransactionAction {
         );
 
         const res = await this.callContract({
-          caller: account.address,
+          caller: trans.from,
           contract: account.address,
           mothed: trans.payload.method,
           args: trans.payload.args,
           cuLimit: trans.cuLimit,
+          storage:
+            (await this.blockService.db.get(account.storageRoot.toString())) ||
+            new Uint8Array(),
         });
         update.push({
           opCode: accountOpCodes.updateState,
@@ -391,17 +400,19 @@ export class TransactionAction {
     mothed: string;
     args?: string[];
     cuLimit: bigint;
+    storage: Uint8Array;
   }): Promise<{
     result: string | object;
     cuCost: bigint;
     storage: Uint8Array;
   }> {
     const contractCode = await this.getContractCode(params.contract.did);
-    const result = this.contract.runContract(contractCode, {
+    const result = await this.contract.runContract(contractCode, {
       cuLimit: params.cuLimit,
       method: params.mothed,
-      storage: new Uint8Array(), // TODO get from storageRoot
+      storage: params.storage,
       args: params.args,
+      sender: params.caller,
     });
 
     return {

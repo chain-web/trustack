@@ -7,6 +7,11 @@ import * as testConfig from './testnet.config.js';
   return this.toString();
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(BigInt.prototype as any).toParam = function () {
+  return this.toString() + 'n';
+};
+
 export const configMap = {
   mainnet: mainConfig,
   testnet: testConfig,
