@@ -70,7 +70,7 @@ use sk::window_sk::init_sk;
 use std::cell::RefCell;
 use utils::set_panic_hook;
 use wasm_bindgen::prelude::*;
-use wasm_bindgen_test::__rt::js_console_log;
+// use wasm_bindgen_test::__rt::js_console_log;
 
 // pub fn vec_to_js_array(vec: Vec<String>) -> Array {
 //     vec.into_iter().map(JsValue::from).collect()

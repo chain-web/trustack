@@ -165,9 +165,9 @@ export class TransactionAction {
       // 如果没有可打包的交易，退出
       return;
     }
+    // console.log(this.transingArr);
     for (let index = 0; index < this.transingArr.length; index++) {
       const trans = this.transingArr[index];
-      let update: UpdateAccountI[] = [];
       // 依次执行交易的合约
       if (trans.payload) {
         // 调用合约
@@ -185,14 +185,20 @@ export class TransactionAction {
             (await this.blockService.db.get(account.storageRoot.toString())) ||
             new Uint8Array(),
         });
-        update.push({
-          opCode: accountOpCodes.updateState,
-          value: res.storage,
-          account: account.address.did,
-        });
+        await this.blockService.nextBlock.addUpdates(
+          trans,
+          [
+            {
+              opCode: accountOpCodes.updateState,
+              value: res.storage,
+              account: account.address.did,
+            },
+          ],
+          index,
+        );
       } else {
         // 普通转账
-        update = await transDemoFn(
+        const update = await transDemoFn(
           {
             from: trans.from.did,
             recipient: trans.recipient.did,
@@ -200,13 +206,11 @@ export class TransactionAction {
           },
           this.blockService.getExistAccount,
         );
+        await this.blockService.nextBlock.addUpdates(trans, update, index);
       }
-
-      // 更新一个交易的结果到当前块状态机
-      await this.blockService.nextBlock.addUpdates(trans, update, index);
-      this.transingArr = [];
     }
 
+    this.transingArr = [];
     // 生成新块
     const nextBlock = await this.blockService.nextBlock.commit();
 

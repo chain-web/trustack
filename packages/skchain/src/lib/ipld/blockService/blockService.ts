@@ -1,7 +1,6 @@
 import type { BlockMeta } from '../../../mate/block.js';
 import { Block } from '../../../mate/block.js';
 import { skCacheKeys } from '../../ipfs/key.js';
-import { message } from '../../../utils/message.js';
 import { LifecycleStap } from '../../state/lifecycle.js';
 import { StateRoot } from '../../../mate/mpts/stateRoot.js';
 import type { Skfs } from '../../skfs/index.js';
@@ -15,6 +14,7 @@ import {
 import { isTxInBlock } from './util.js';
 import { BlockRoot } from './blockRoot.js';
 import { NextBlock } from './nextBlock.js';
+import { AccountCache } from './accountCache.js';
 
 // 管理、已经存储的块索引
 export class BlockService {
@@ -28,17 +28,18 @@ export class BlockService {
     this.db = db;
     this.blockRoot = opts?.blockRoot || new BlockRoot();
     this.stateRoot = opts?.stateRoot || new StateRoot();
+    this.accountCache = new AccountCache();
   }
   db: Skfs;
   blockRoot: BlockRoot;
   stateRoot: StateRoot;
+  accountCache: AccountCache;
 
   // 连续的已经验证通过的块高，在节点同步完成后是最新块
   checkedBlockHeight = 0n;
 
   private headerBlockNumber = 0n;
 
-  private preLoadAccount: Map<string, Account> = new Map();
   // 在 transaction 之后初始化
   nextBlock!: NextBlock;
 
@@ -279,7 +280,7 @@ export class BlockService {
           codeCbor.cid,
           trans.from.did,
         );
-        this.preLoadAccount.set(account.address.did, account);
+        this.accountCache.addPreLoadAccount(account);
       }
     } else {
       const hasSendAccount = await this.stateRoot.get(trans.from.did);
@@ -292,7 +293,7 @@ export class BlockService {
           trans.recipient.did,
           await createEmptyStorageRoot(),
         );
-        this.preLoadAccount.set(account.address.did, account);
+        this.accountCache.addPreLoadAccount(account);
       }
     }
   };
@@ -306,8 +307,9 @@ export class BlockService {
   };
 
   getAccount = async (did: string): Promise<Account | undefined> => {
-    if (this.preLoadAccount.has(did)) {
-      return this.preLoadAccount.get(did);
+    const cachedAccount = this.accountCache.getCachedAccount(did);
+    if (cachedAccount) {
+      return cachedAccount;
     }
     const cid = await this.stateRoot.get(did);
     if (cid) {
@@ -326,6 +328,7 @@ export class BlockService {
       this.stateRoot,
       this.db.putCborBlock,
       this.db.putRawBlock,
+      this.accountCache,
     );
     const headerBlock = await this.getHeaderBlock();
     await this.nextBlock.initNextBlock(headerBlock);
