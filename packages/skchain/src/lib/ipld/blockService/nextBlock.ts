@@ -10,6 +10,7 @@ import { message } from '../../../utils/message.js';
 import { accountOpCodes, errorCodes } from '../../contract/code.js';
 import type { Skfs } from '../../skfs/index.js';
 import { BloomFilter } from '../logsBloom/bloomFilter.js';
+import type { AccountCache } from './accountCache.js';
 import type { BlockService } from './blockService.js';
 
 export type UpdateOpCode =
@@ -30,12 +31,14 @@ export class NextBlock {
     stateRoot: StateRoot,
     addCborBlock: Skfs['putCborBlock'],
     addRawBlock: Skfs['putRawBlock'],
+    accountCache: AccountCache,
   ) {
     this.getAccount = getAccount;
     this.updateAccount = updateAccount;
     this.stateRoot = stateRoot;
     this.addCborBlock = addCborBlock;
     this.addRawBlock = addRawBlock;
+    this.accountCache = accountCache;
   }
 
   getAccount: BlockService['getExistAccount'];
@@ -43,6 +46,8 @@ export class NextBlock {
   stateRoot: StateRoot;
   addCborBlock: Skfs['putCborBlock'];
   addRawBlock: Skfs['putRawBlock'];
+  accountCache: AccountCache;
+
   // 下一个块
   nextBlock!: Block;
 
@@ -51,9 +56,6 @@ export class NextBlock {
 
   nextTransactions: string[] = [];
   nextReceipts: string[] = [];
-
-  // 缓存未写入block的账户数据
-  private updates: Map<string, Account> = new Map();
 
   initNextBlock = async (headerBlock: BlockMeta): Promise<void> => {
     this.nextBlock = new Block({
@@ -124,12 +126,12 @@ export class NextBlock {
         break;
       case accountOpCodes.minus:
         account.minusBlance(update.value as bigint);
-        this.updates.set(account.address.did, account);
+        this.accountCache.addUpdateAccount(account);
 
         break;
       case accountOpCodes.plus:
         account.plusBlance(update.value as bigint, trans.ts.toString());
-        this.updates.set(account.address.did, account);
+        this.accountCache.addUpdateAccount(account);
 
         break;
       case accountOpCodes.updateState:
@@ -148,7 +150,7 @@ export class NextBlock {
     const storage = await createRawBlock(update.value as Uint8Array);
     await this.addRawBlock(storage);
     account.updateState(storage.cid);
-    this.updates.set(account.address.did, account);
+    this.accountCache.addUpdateAccount(account);
   }
 
   addTransaction = async (trans: Transaction): Promise<string> => {
@@ -169,7 +171,8 @@ export class NextBlock {
    * 提交当前区块的数据，进行打包
    */
   commit = async (): Promise<Block> => {
-    for (const account of this.updates) {
+    const updates = this.accountCache.getAllUpdateAccount();
+    for (const account of updates) {
       await this.updateAccount(account[1]);
     }
 

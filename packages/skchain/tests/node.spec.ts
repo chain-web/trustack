@@ -45,7 +45,7 @@ describe('SkChain', () => {
       await chain.stop();
       performanceCollecter.enabled && performanceCollecter.print();
     }, 12000);
-    it('should deploy and call contract ok', async () => {
+    it('should deploy and call contract at two ok', async () => {
       const chain = await createTestSkChain('contract');
       await chain.run({ user: testAccounts[2] });
 
@@ -103,5 +103,45 @@ describe('SkChain', () => {
       ).toEqual(true);
       await chain.stop();
     }, 15000);
+    it('should deploy and call contract at one block ok', async () => {
+      const chain = await createTestSkChain('contract');
+      await chain.run({ user: testAccounts[2] });
+
+      const { trans } = await chain.deploy({
+        payload: bytes.fromString(testCoinContract),
+      });
+
+      if (!trans) {
+        throw new Error('no trans');
+      }
+      const { trans: trans2 } = await chain.transaction({
+        amount: 0n,
+        recipient: trans.recipient,
+        payload: {
+          method: 'send',
+          args: [new Address(testAccounts[0].id).toParam(), 100n],
+        },
+      });
+      if (!trans2) {
+        throw new Error('no trans2');
+      }
+      await sleep(8000);
+      const account = await chain.getAccount(trans.recipient.did);
+      if (!account) {
+        throw new Error('no contract account');
+      }
+      const storage2 = await chain.db.get(account.storageRoot.toString());
+      if (!storage2) {
+        throw new Error('no storage');
+      }
+      const status = await chain.transAction.transStatus(trans.hash);
+      expect(status.status).toEqual(TransStatus.transed);
+      const status2 = await chain.transAction.transStatus(trans2.hash);
+      expect(status2.status).toEqual(TransStatus.transed);
+      expect(
+        Boolean(bytes.toString(storage2).match(`"${testAccounts[0].id}":100n`)),
+      ).toEqual(true);
+      await chain.stop();
+    }, 10000);
   });
 });

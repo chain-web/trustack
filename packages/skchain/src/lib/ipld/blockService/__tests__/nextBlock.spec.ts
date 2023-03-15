@@ -9,6 +9,7 @@ const createTestNextBlock = async (name: string) => {
     blockService.stateRoot,
     blockService.db.putCborBlock,
     blockService.db.putRawBlock,
+    blockService.accountCache,
   );
 };
 
