@@ -1,4 +1,5 @@
 import { chainState } from '../index.js';
+import { LifecycleStap } from '../lifecycle.js';
 
 describe('chainState', () => {
   describe('test', () => {
@@ -41,6 +42,37 @@ describe('chainState', () => {
       const state3 = chainState.getSnapshot().context;
       expect(state3.eventQueue[2].event).toEqual('test_event3');
       expect(state3.eventQueue.length).toEqual(3);
+    });
+    it('should listen lifecycle event ok', async () => {
+      let eventData: string[] = [];
+      chainState.onLifecycle(LifecycleStap.newBlock, (data) => {
+        if (!data) {
+          throw new Error('no data');
+        }
+        eventData = data;
+      });
+      chainState.send('CHANGE', {
+        event: LifecycleStap.newBlock,
+        data: ['test'],
+      });
+      expect(eventData[0]).toEqual('test');
+
+      setTimeout(() => {
+        chainState.send('CHANGE', {
+          event: LifecycleStap.syncingHeaderBlock,
+          data: ['test'],
+        });
+      }, 1000);
+
+      const result = await chainState.waitForLifecycle(
+        LifecycleStap.syncingHeaderBlock,
+      );
+
+      if (!result) {
+        throw new Error('no result');
+      }
+
+      expect(result[0]).toEqual('test');
     });
   });
 });

@@ -81,6 +81,39 @@ const chainMachine = createMachine<ChainContext, ChainEvents>(
   },
 );
 
-export const chainState = interpret(chainMachine)
-  // .onEvent((state) => console.log(state))
-  .start();
+const chainStateInterpret = interpret(chainMachine);
+
+class ChainState {
+  constructor() {
+    this.state.start();
+    this.send = this.state.send;
+  }
+  state = chainStateInterpret;
+  send: (typeof chainStateInterpret)['send'];
+
+  onLifecycle(step: LifecycleStap, cb: (data?: string[]) => void): void {
+    this.state.onEvent((event) => {
+      const chainEvent = event as ChainEvents;
+      if (chainEvent.type === 'CHANGE') {
+        if (chainEvent.event === step) {
+          cb(chainEvent.data);
+        }
+      }
+    });
+  }
+
+  async waitForLifecycle(step: LifecycleStap): Promise<string[] | undefined> {
+    const res = await new Promise<string[] | undefined>((reslove) => {
+      this.onLifecycle(step, (data) => {
+        reslove(data);
+      });
+    });
+    return res;
+  }
+
+  getSnapshot() {
+    return this.state.getSnapshot();
+  }
+}
+
+export const chainState = new ChainState();
