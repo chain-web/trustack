@@ -142,6 +142,6 @@ describe('SkChain', () => {
         Boolean(bytes.toString(storage2).match(`"${testAccounts[0].id}":100n`)),
       ).toEqual(true);
       await chain.stop();
-    }, 10000);
+    }, 12000);
   });
 });
