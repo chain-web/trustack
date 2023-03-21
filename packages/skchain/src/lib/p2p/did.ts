@@ -1,5 +1,7 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { create, createFromB58String, createFromPrivKey } from 'peer-id';
+import { createEd25519PeerId } from '@libp2p/peer-id-factory';
+import { unmarshalPrivateKey, unmarshalPublicKey } from '@libp2p/crypto/keys';
+
+import { toString } from 'uint8arrays/to-string';
 import { bytes } from 'multiformats';
 import * as nacl from 'tweetnacl';
 import { base58btc } from 'multiformats/bases/base58';
@@ -21,13 +23,13 @@ export interface DidJson {
 
 // 生成 libp2p de did
 export const genetateDid = async (): Promise<DidJson> => {
-  const did = await create({ keyType: 'Ed25519' });
+  const did = await createEd25519PeerId();
   // message.info(did.toJSON(), did);
-  const simpleDid = did.toJSON();
   const didJson: DidJson = {
-    id: simpleDid.id, // remove first z
-    privKey: simpleDid.privKey!,
-    pubKey: simpleDid.pubKey!,
+    id: base58btc.encode(did.multihash.bytes).slice(1), // remove first z
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    privKey: toString(did.privateKey!, 'base64pad'),
+    pubKey: toString(did.publicKey, 'base64pad'),
   };
   return didJson;
 };
@@ -38,8 +40,8 @@ export const signById = async (
   priv: string,
   data: Uint8Array,
 ): Promise<string> => {
-  const PeerId = await createFromPrivKey(priv);
-  const signature = new Uint8Array(await PeerId.privKey.sign(data));
+  const PK = await unmarshalPrivateKey(uint8ArrayFromString(priv, 'base64pad'));
+  const signature = new Uint8Array(await PK.sign(data));
   // message.info(signature);
   const signStr = bytes.toHex(signature);
   // message.info(bytes.fromHex(signStr));
@@ -53,8 +55,8 @@ export const verifyById = async (
   data: Uint8Array,
 ): Promise<boolean> => {
   // message.info(signature);
-  const PeerId = await createFromB58String(id);
-  const verifyed = await PeerId.pubKey.verify(data, bytes.fromHex(signature));
+  const PUK = unmarshalPublicKey(uint8ArrayFromString(`${id}`, 'base58btc'));
+  const verifyed = await PUK.verify(data, bytes.fromHex(signature));
   return verifyed;
 };
 
