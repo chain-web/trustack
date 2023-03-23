@@ -1,6 +1,5 @@
 import { Key } from 'interface-datastore';
 import { MemoryLevel } from 'memory-level';
-import type { LevelDb } from 'datastore-level';
 import type { AbstractLevel, AbstractSublevel } from 'abstract-level';
 import { LevelDatastore } from 'datastore-level';
 import { Level } from 'level';
@@ -13,41 +12,34 @@ export interface SkfsOptions {
   // net: SKFSNetwork;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type DefaultLevel = AbstractLevel<any, string, Uint8Array>;
+
+export type DefaultSunLevel = AbstractSublevel<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  AbstractLevel<any, string, Uint8Array>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  any,
+  string,
+  string
+>;
+
 export const leveldb_prefix = '.leveldb/';
 
 export class Skfs {
   constructor(options: SkfsOptions) {
-    this._db = this.generateDb(options);
-    this.store = new LevelDatastore(this._db);
+    this._db = generateLevelDb(options);
+    this.store = new LevelDatastore(
+      this._db as unknown as Level<string, Uint8Array>,
+    );
     this.skCache = this._db.sublevel('sk_cache_db');
   }
 
   store: LevelDatastore;
   // default db
-  _db: LevelDb;
+  _db: DefaultLevel;
   // origin kv store
-  skCache: AbstractSublevel<
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    AbstractLevel<any, string, Uint8Array>,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    any,
-    string,
-    string
-  >;
-
-  generateDb = (options: SkfsOptions): LevelDb => {
-    if (options.useMemoryBb) {
-      return new MemoryLevel({
-        keyEncoding: 'utf8',
-        valueEncoding: 'view',
-      });
-    }
-
-    return new Level<string, Uint8Array>(`${leveldb_prefix}${options.path}`, {
-      keyEncoding: 'utf8',
-      valueEncoding: 'view',
-    }) as unknown as LevelDb;
-  };
+  skCache: DefaultSunLevel;
 
   open = async (): Promise<void> => {
     await this._db.open();
@@ -138,3 +130,25 @@ export class Skfs {
     await this._db.close();
   };
 }
+
+export const generateLevelDb = <
+  KDefault = string,
+  VDefault = Uint8Array,
+>(options: {
+  useMemoryBb?: boolean;
+  path: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+}): AbstractLevel<any, KDefault, VDefault> => {
+  if (options.useMemoryBb) {
+    return new MemoryLevel({
+      keyEncoding: 'utf8',
+      valueEncoding: 'view',
+    });
+  }
+
+  return new Level<KDefault, VDefault>(`${leveldb_prefix}${options.path}`, {
+    keyEncoding: 'utf8',
+    valueEncoding: 'view',
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  }) as unknown as AbstractLevel<any, KDefault, VDefault>;
+};
