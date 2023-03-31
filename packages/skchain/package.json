@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "src/index",
+  "types": "src/index.ts",
   "scripts": {
     "test": ""
   },
   "type": "module",
-  "typings": "./src/index.ts",
   "keywords": [],
   "author": "scc",
   "license": "ISC",
@@ -16,23 +16,27 @@
   },
   "devDependencies": {
     "@types/libsodium-wrappers-sumo": "^0.7.5",
-    "@types/node": "^18.15.5"
+    "@types/node": "^18.15.11"
   },
   "dependencies": {
-    "@chain-web/network": "workspace:*",
     "@ethereumjs/trie": "^5.0.4",
     "@faithstack/contract": "workspace:^1.0.0",
     "@ipld/dag-cbor": "^9.0.0",
     "@ipld/dag-pb": "^4.0.2",
     "@libp2p/crypto": "^1.0.14",
+    "@libp2p/interface-peer-id": "^2.0.1",
+    "@libp2p/interface-pubsub": "^3.0.6",
     "@libp2p/peer-id-factory": "^2.0.3",
+    "@trustack/network": "workspace:^1.0.0",
     "abstract-level": "^1.0.3",
     "bitset": "^5.1.1",
+    "blockstore-level": "^1.1.0",
     "cac": "^6.7.14",
     "chalk": "^5.2.0",
-    "datastore-core": "^9.0.3",
-    "datastore-level": "^10.0.1",
-    "interface-datastore": "^8.1.1",
+    "datastore-core": "^9.1.0",
+    "datastore-level": "^10.1.0",
+    "interface-datastore": "^8.2.0",
+    "ipfs-bitswap": "^17.0.0",
     "level": "^8.0.0",
     "libsodium-wrappers-sumo": "^0.7.11",
     "memory-level": "^1.0.0",
@@ -41,6 +45,6 @@
     "tweetnacl": "^1.0.3",
     "typescript": "^4.9.5",
     "uint8arrays": "^4.0.3",
-    "xstate": "^4.37.0"
+    "xstate": "^4.37.1"
   }
 }

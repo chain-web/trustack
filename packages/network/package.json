@@ -1,9 +1,9 @@
 {
-  "name": "@chain-web/network",
+  "name": "@trustack/network",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "module": "./src/index",
+  "main": "src/index",
+  "types": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,13 +13,14 @@
   "license": "ISC",
   "dependencies": {
     "@chainsafe/libp2p-gossipsub": "^6.2.0",
-    "@chainsafe/libp2p-noise": "^10.2.0",
+    "@chainsafe/libp2p-noise": "^11.0.2",
     "@libp2p/interface-peer-id": "^2.0.1",
+    "@libp2p/kad-dht": "^8.0.4",
     "@libp2p/mplex": "^7.1.2",
-    "@libp2p/tcp": "^6.1.4",
+    "@libp2p/tcp": "^6.1.5",
     "@multiformats/multiaddr": "^11.6.1",
-    "interface-datastore": "^8.1.1",
-    "libp2p": "^0.42.2",
+    "interface-datastore": "^8.2.0",
+    "libp2p": "^0.43.3",
     "uint8arrays": "^4.0.3"
   }
 }

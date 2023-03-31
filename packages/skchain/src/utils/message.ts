@@ -1,4 +1,5 @@
 import { version } from '../config/index.js';
+import { getNow } from './performance.js';
 
 /* eslint-disable no-console */
 type simpleConsoleVal = string | number | boolean | object | undefined | null;
@@ -14,10 +15,10 @@ export class SKMessage {
   error: BaseSKMessageFunc;
 
   static logger = (...msg: simpleConsoleVal[]): void => {
-    console.log(`sk-v${version}:`, ...msg);
+    console.log(`sk-v${version}-${getNow()}:`, ...msg);
   };
   static error = (...msg: simpleConsoleVal[]): void => {
-    console.error(`sk-v${version}:`, ...msg);
+    console.error(`sk-v${version}-${getNow()}:`, ...msg);
   };
 
   static defaultInfo: BaseSKMessageFunc = (...msg) => {

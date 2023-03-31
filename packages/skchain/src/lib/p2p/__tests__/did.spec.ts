@@ -1,5 +1,10 @@
 import { bytes } from 'multiformats';
-import { genetateDid, signById, verifyById } from '../did.js';
+import {
+  createPeerIdFromDidJson,
+  genetateDid,
+  signById,
+  verifyById,
+} from '../did.js';
 
 describe('peer id', () => {
   describe('test', () => {
@@ -9,6 +14,9 @@ describe('peer id', () => {
       expect(didJson.id).not.toEqual(undefined);
       expect(didJson.privKey).not.toEqual(undefined);
       expect(didJson.pubKey).not.toEqual(undefined);
+
+      const peerId = await createPeerIdFromDidJson(didJson);
+      expect(peerId.toString()).toEqual(didJson.id);
     });
     it('should sign verify ok', async () => {
       const didJson = await genetateDid();

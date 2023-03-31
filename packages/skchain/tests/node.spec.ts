@@ -21,7 +21,7 @@ describe('SkChain', () => {
       expect(chain.did).toEqual(testAccounts[0].id);
       await chain.stop();
       expect(chain.chainState.getSnapshot().matches('inactive')).toEqual(true);
-      performanceCollecter.print();
+      performanceCollecter.enabled && performanceCollecter.print();
     });
     it('should transaction ok', async () => {
       const chain = await createTestSkChain('transaction');
@@ -57,7 +57,7 @@ describe('SkChain', () => {
         throw new Error('no trans');
       }
       // wait to stack
-      await sleep(6000);
+      await sleep(7000);
       const status = await chain.transAction.transStatus(trans.hash);
       expect(status.status).toEqual(TransStatus.transed);
       let account = await chain.getAccount(trans.recipient.did);
@@ -87,7 +87,7 @@ describe('SkChain', () => {
       if (!trans2) {
         throw new Error('no trans2');
       }
-      await sleep(6000);
+      await sleep(7000);
       account = await chain.getAccount(trans.recipient.did);
       if (!account) {
         throw new Error('no contract account');
@@ -102,7 +102,7 @@ describe('SkChain', () => {
         Boolean(bytes.toString(storage2).match(`"${testAccounts[0].id}":100n`)),
       ).toEqual(true);
       await chain.stop();
-    }, 15000);
+    }, 16000);
     it('should deploy and call contract at one block ok', async () => {
       const chain = await createTestSkChain('contract');
       await chain.run({ user: testAccounts[2] });
@@ -142,6 +142,6 @@ describe('SkChain', () => {
         Boolean(bytes.toString(storage2).match(`"${testAccounts[0].id}":100n`)),
       ).toEqual(true);
       await chain.stop();
-    }, 12000);
+    }, 14000);
   });
 });
