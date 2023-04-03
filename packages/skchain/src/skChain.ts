@@ -29,6 +29,7 @@ export interface SKChainOption {
   blockService?: BlockService;
   datastorePath?: string;
   tcpPort?: number;
+  wsPort?: number;
 }
 
 export interface SKChainRunOpts {
@@ -44,7 +45,10 @@ export class SKChain {
       new Skfs({
         path: option?.datastorePath || 'skfs',
       });
-    this.network = new SkNetwork(option?.tcpPort || 4003);
+    this.network = new SkNetwork({
+      tcpPort: option?.tcpPort || 4003,
+      wsPort: option?.wsPort || 6004,
+    });
     this.blockService = option?.blockService || new BlockService(this.db);
     // this.did = this.db.cache.get(skCacheKeys.accountId);
     this.genesis = new Genesis(

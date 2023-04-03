@@ -9,14 +9,17 @@ describe('Sknetwork', () => {
     it('should sknetwork pub sub ok', async () => {
       const { network: n1, close: c1 } = await createTestSkNetWork(
         4020,
+        6632,
         testAccounts[0],
       );
       const { network: n2, close: c2 } = await createTestSkNetWork(
         4120,
+        6732,
         testAccounts[1],
       );
       const { network: n3, close: c3 } = await createTestSkNetWork(
         4320,
+        6932,
         testAccounts[2],
       );
       // console.log('create network ok');
@@ -59,6 +62,6 @@ describe('Sknetwork', () => {
       await c1();
       await c2();
       await c3();
-    }, 8000);
+    }, 12000);
   });
 });

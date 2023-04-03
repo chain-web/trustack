@@ -6,7 +6,7 @@ export const getNow = (): bigint => {
     return globalThis.process.hrtime.bigint();
   } else {
     // browser
-    return BigInt(globalThis.performance.now());
+    return BigInt(globalThis.performance.now().toFixed(0));
   }
 };
 

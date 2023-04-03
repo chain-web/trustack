@@ -1,4 +1,4 @@
-import { Network } from '@trustack/network';
+import { Network, createConfig } from '@trustack/network';
 import type { LevelDatastore } from 'datastore-level';
 import type { Message } from '@libp2p/interface-pubsub';
 import type { DidJson } from '../p2p/did.js';
@@ -9,11 +9,13 @@ export enum PubsubTopic {
 }
 
 export class SkNetwork {
-  constructor(tcpPort: number) {
-    this.tcpPort = tcpPort;
+  constructor(opts: { tcpPort: number; wsPort: number }) {
+    this.tcpPort = opts.tcpPort;
+    this.wsPort = opts.wsPort;
   }
 
   private tcpPort: number;
+  private wsPort: number;
   private _network!: Network;
   get network(): Network {
     if (!this._network) {
@@ -29,10 +31,11 @@ export class SkNetwork {
     this._network = new Network({
       peerId,
       datastore,
-      tcpPort: this.tcpPort,
     });
 
-    await this.network.init();
+    await this.network.init(
+      createConfig({ tcpPort: this.tcpPort, wsPort: this.wsPort }),
+    );
     await this.network.start();
     this.network.node.pubsub.addEventListener(
       'message',
