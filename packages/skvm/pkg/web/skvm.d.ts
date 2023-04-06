@@ -2,12 +2,12 @@
 /* eslint-disable */
 /**
 * Evaluate the given ECMAScript code.
-* @param {string} src
+* @param {Array<any>} src
 * @param {bigint} cu_limit
 * @param {Uint8Array} storage
 * @returns {Uint8Array}
 */
-export function evaluate(src: string, cu_limit: bigint, storage: Uint8Array): Uint8Array;
+export function evaluate(src: Array<any>, cu_limit: bigint, storage: Uint8Array): Uint8Array;
 /**
 * Handler for `console.log` invocations.
 *
@@ -83,7 +83,7 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly evaluate: (a: number, b: number, c: number, d: number, e: number) => void;
+  readonly evaluate: (a: number, b: number, c: number, d: number) => void;
   readonly __wbg_wasmbindgentestcontext_free: (a: number) => void;
   readonly wasmbindgentestcontext_new: () => number;
   readonly wasmbindgentestcontext_args: (a: number, b: number, c: number) => void;

@@ -2,12 +2,12 @@
 /* eslint-disable */
 /**
 * Evaluate the given ECMAScript code.
-* @param {string} src
+* @param {Array<any>} src
 * @param {bigint} cu_limit
 * @param {Uint8Array} storage
 * @returns {Uint8Array}
 */
-export function evaluate(src: string, cu_limit: bigint, storage: Uint8Array): Uint8Array;
+export function evaluate(src: Array<any>, cu_limit: bigint, storage: Uint8Array): Uint8Array;
 /**
 * Handler for `console.log` invocations.
 *

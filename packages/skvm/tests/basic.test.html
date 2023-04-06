@@ -20,7 +20,8 @@
     init().then(() => {
       document.querySelector('#run').addEventListener('click', () => {
         const res = evaluate(
-          `
+          [
+            `
         
         function testcc () {
           let bn = {a: 11n, b: 111111111n,c:66562555555n,d:5458452115n,r:55555555555555n};
@@ -42,9 +43,9 @@
             return 2
         }
     }
-    testcc()
-        
         `,
+            'testcc()',
+          ].reverse(),
           1000n,
           new Uint8Array([
             123, 34, 97, 34, 58, 49, 49, 110, 44, 34, 98, 34, 58, 49, 49, 49,

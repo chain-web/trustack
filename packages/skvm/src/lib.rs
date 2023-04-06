@@ -63,7 +63,7 @@ mod utils;
 
 use boa_engine::{Context, Source};
 use getrandom as _;
-use js_sys::Uint8Array;
+use js_sys::{Array, Uint8Array};
 use proto_rs::eval_result;
 use protobuf::{Message, SpecialFields};
 use sk::window_sk::init_sk;
@@ -80,22 +80,47 @@ static mut SAVED_STORAGE: RefCell<Vec<u8>> = RefCell::new(Vec::<u8>::new());
 
 /// Evaluate the given ECMAScript code.
 #[wasm_bindgen]
-pub fn evaluate(src: &str, cu_limit: u64, storage: Uint8Array) -> Result<Uint8Array, JsValue> {
+pub fn evaluate(src: Array, cu_limit: u64, storage: Uint8Array) -> Result<Uint8Array, JsValue> {
     set_panic_hook();
-    // js_console_log("__sk__ inited");
-    // Setup executor
-    let mut ctx = Context::builder()
-        .build_sk(cu_limit)
-        .expect("Building the default context should not fail");
-    init_sk(&mut ctx, storage).expect("init sk error");
-    let result = ctx.eval_script(Source::from_bytes(src));
-    let cu_cost = ctx.get_cu_used().to_string();
-    // js_console_log(&format!("cu cost: {}", cu_cost));
+    let mut code_list = src
+        .to_vec()
+        .into_iter()
+        .map(|v| v.as_string().unwrap())
+        .collect::<Vec<String>>();
 
-    match result {
+    let mut ctx = Context::builder()
+        .build()
+        .expect("Building the default context should not fail");
+    ctx.cost_record.set_cu_limit(cu_limit);
+    ctx.cost_record.set_use_cu_limit();
+    init_sk(&mut ctx, storage).expect("init sk error");
+
+    let mut result = vec![];
+    let mut cu_costs = vec![];
+    loop {
+        if code_list.len() == 0 {
+            break;
+        }
+        let code = code_list.remove(0);
+        // js_console_log(&format!("code: {:?}", &code));
+        let step_result = ctx.eval_script(Source::from_bytes(code.as_bytes()));
+        // let step_res = match step_result.clone() {
+        //     Ok(v) => {
+        //         v.display().to_string()
+        //     }
+        //     Err(e) => e.to_string(),
+        // };
+        // js_console_log(&format!("step_result: {:?}", &step_res));
+        result.push(step_result);
+        cu_costs.push(ctx.cost_record.cu_cost.to_string());
+        // js_console_log(&format!("cost--i: {:?}", &ctx.cost_record.cu_cost.to_string()));
+        ctx.cost_record.reset_cu_cost();
+    }
+
+    match result.pop().unwrap() {
         Ok(v) => {
             let res_pb = eval_result::EvalResult {
-                cu_cost,
+                cu_cost: cu_costs,
                 func_result: v.display().to_string(),
                 storage: unsafe { SAVED_STORAGE.get_mut().to_vec() },
                 special_fields: SpecialFields::new(),

@@ -4,12 +4,15 @@ import { bytes } from 'multiformats';
 
 export const evalFunction = async (codeStr: string): Promise<EvalResult> => {
   await init();
-  codeStr = `
-    const evalFn = ${codeStr}
+  const codeString = [
+    `
+    const evalFn = ${codeStr}`,
+    `
     evalFn()
-  `;
+  `,
+  ];
   return evaluate({
-    codeString: codeStr,
+    codeString,
     cuLimit: 1000n,
     storage: bytes.fromString(''),
   });
@@ -21,15 +24,19 @@ export const evalClass = async (
   params: string[] = [],
 ): Promise<EvalResult> => {
   await init();
-  codeStr = `
+  const codeString = [
+    `
     ${codeStr}
+    `,
+    `
     const __run__class__ = new ${BUILDER_NAMES.CONTRACT_CLASS_NAME}();
     __run__class__.${BUILDER_NAMES.CONSTRUCTOR_METHOD}();
     __run__class__.${method}(${params?.join(',')});
   
-  `;
+  `,
+  ];
   return evaluate({
-    codeString: codeStr,
+    codeString,
     cuLimit: 1000n,
     storage: bytes.fromString(''),
   });
