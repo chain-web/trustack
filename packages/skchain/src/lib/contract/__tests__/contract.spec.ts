@@ -22,6 +22,26 @@ describe('contract', () => {
       );
       expect(res.funcResult).toEqual('undefined');
     });
+    it('should cu limit ok', async () => {
+      const contract = new Contract();
+      await contract.init();
+      let msg = '';
+      try {
+        const res = await contract.runContract(
+          bytes.fromString(testCoinContract),
+          {
+            cuLimit: 10n,
+            storage: bytes.fromString(''),
+            method: BUILDER_NAMES.CONSTRUCTOR_METHOD,
+            sender: new Address(testAccounts[0].id),
+          },
+        );
+      } catch (error) {
+        msg = (error as Error).message;
+      }
+
+      expect(msg).toEqual('Uncaught "out of cu limit"');
+    });
     it('should load storage ok', async () => {
       const contract = new Contract();
       await contract.init();

@@ -1,7 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
-export function evaluate(a: number, b: number, c: number, d: number, e: number): void;
+export function evaluate(a: number, b: number, c: number, d: number): void;
 export function __wbg_wasmbindgentestcontext_free(a: number): void;
 export function wasmbindgentestcontext_new(): number;
 export function wasmbindgentestcontext_args(a: number, b: number, c: number): void;

@@ -16,9 +16,9 @@ import { MessageType } from "@protobuf-ts/runtime";
  */
 export interface EvalResult {
     /**
-     * @generated from protobuf field: string cu_cost = 1;
+     * @generated from protobuf field: repeated string cu_cost = 1;
      */
-    cuCost: string;
+    cuCost: string[];
     /**
      * @generated from protobuf field: string func_result = 2;
      */
@@ -32,13 +32,13 @@ export interface EvalResult {
 class EvalResult$Type extends MessageType<EvalResult> {
     constructor() {
         super("EvalResult", [
-            { no: 1, name: "cu_cost", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 1, name: "cu_cost", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "func_result", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "storage", kind: "scalar", T: 12 /*ScalarType.BYTES*/ }
         ]);
     }
     create(value?: PartialMessage<EvalResult>): EvalResult {
-        const message = { cuCost: "", funcResult: "", storage: new Uint8Array(0) };
+        const message = { cuCost: [], funcResult: "", storage: new Uint8Array(0) };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<EvalResult>(this, message, value);
@@ -49,8 +49,8 @@ class EvalResult$Type extends MessageType<EvalResult> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string cu_cost */ 1:
-                    message.cuCost = reader.string();
+                case /* repeated string cu_cost */ 1:
+                    message.cuCost.push(reader.string());
                     break;
                 case /* string func_result */ 2:
                     message.funcResult = reader.string();
@@ -70,9 +70,9 @@ class EvalResult$Type extends MessageType<EvalResult> {
         return message;
     }
     internalBinaryWrite(message: EvalResult, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string cu_cost = 1; */
-        if (message.cuCost !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.cuCost);
+        /* repeated string cu_cost = 1; */
+        for (let i = 0; i < message.cuCost.length; i++)
+            writer.tag(1, WireType.LengthDelimited).string(message.cuCost[i]);
         /* string func_result = 2; */
         if (message.funcResult !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.funcResult);

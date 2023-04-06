@@ -6,7 +6,7 @@ export { init } from '@faithstack/vm';
 
 export { EvalResult } from './proto_ts/eval_result.js';
 export interface EvaluateParams {
-  codeString: string;
+  codeString: string[];
   cuLimit: bigint;
   storage: Uint8Array;
 }

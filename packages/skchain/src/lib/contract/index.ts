@@ -88,15 +88,16 @@ export class Contract {
       })
       __sk_utils__.save_storage(JSON.stringify(storage));
     `;
-    const allCode = `
-      ${generateBaseContractCode(opts.sender)}
-      ${codeStr}
-      ${initClassCode}
-      ${loadDataCode}
-      ${funcCallCode}
-      ${saveStorageCode}
-      __run__class__result__;
-    `;
+    const allCode = [
+      generateBaseContractCode(opts.sender),
+      codeStr,
+      initClassCode,
+      loadDataCode,
+      funcCallCode,
+      saveStorageCode,
+      '__run__class__result__',
+    ];
+
     try {
       const result = this.evaluate({
         codeString: allCode,

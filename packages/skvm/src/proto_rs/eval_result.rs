@@ -30,7 +30,7 @@ const _PROTOBUF_VERSION_CHECK: () = ::protobuf::VERSION_3_2_0;
 pub struct EvalResult {
     // message fields
     // @@protoc_insertion_point(field:EvalResult.cu_cost)
-    pub cu_cost: ::std::string::String,
+    pub cu_cost: ::std::vec::Vec<::std::string::String>,
     // @@protoc_insertion_point(field:EvalResult.func_result)
     pub func_result: ::std::string::String,
     // @@protoc_insertion_point(field:EvalResult.storage)
@@ -54,7 +54,7 @@ impl EvalResult {
     fn generated_message_descriptor_data() -> ::protobuf::reflect::GeneratedMessageDescriptorData {
         let mut fields = ::std::vec::Vec::with_capacity(3);
         let mut oneofs = ::std::vec::Vec::with_capacity(0);
-        fields.push(::protobuf::reflect::rt::v2::make_simpler_field_accessor::<_, _>(
+        fields.push(::protobuf::reflect::rt::v2::make_vec_simpler_accessor::<_, _>(
             "cu_cost",
             |m: &EvalResult| { &m.cu_cost },
             |m: &mut EvalResult| { &mut m.cu_cost },
@@ -88,7 +88,7 @@ impl ::protobuf::Message for EvalResult {
         while let Some(tag) = is.read_raw_tag_or_eof()? {
             match tag {
                 10 => {
-                    self.cu_cost = is.read_string()?;
+                    self.cu_cost.push(is.read_string()?);
                 },
                 18 => {
                     self.func_result = is.read_string()?;
@@ -108,9 +108,9 @@ impl ::protobuf::Message for EvalResult {
     #[allow(unused_variables)]
     fn compute_size(&self) -> u64 {
         let mut my_size = 0;
-        if !self.cu_cost.is_empty() {
-            my_size += ::protobuf::rt::string_size(1, &self.cu_cost);
-        }
+        for value in &self.cu_cost {
+            my_size += ::protobuf::rt::string_size(1, &value);
+        };
         if !self.func_result.is_empty() {
             my_size += ::protobuf::rt::string_size(2, &self.func_result);
         }
@@ -123,9 +123,9 @@ impl ::protobuf::Message for EvalResult {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::Result<()> {
-        if !self.cu_cost.is_empty() {
-            os.write_string(1, &self.cu_cost)?;
-        }
+        for v in &self.cu_cost {
+            os.write_string(1, &v)?;
+        };
         if !self.func_result.is_empty() {
             os.write_string(2, &self.func_result)?;
         }
@@ -157,7 +157,7 @@ impl ::protobuf::Message for EvalResult {
 
     fn default_instance() -> &'static EvalResult {
         static instance: EvalResult = EvalResult {
-            cu_cost: ::std::string::String::new(),
+            cu_cost: ::std::vec::Vec::new(),
             func_result: ::std::string::String::new(),
             storage: ::std::vec::Vec::new(),
             special_fields: ::protobuf::SpecialFields::new(),
@@ -185,19 +185,19 @@ impl ::protobuf::reflect::ProtobufValue for EvalResult {
 
 static file_descriptor_proto_data: &'static [u8] = b"\
     \n\x17proto/eval_result.proto\"`\n\nEvalResult\x12\x17\n\x07cu_cost\x18\
-    \x01\x20\x01(\tR\x06cuCost\x12\x1f\n\x0bfunc_result\x18\x02\x20\x01(\tR\
-    \nfuncResult\x12\x18\n\x07storage\x18\x03\x20\x01(\x0cR\x07storageJ\xcf\
+    \x01\x20\x03(\tR\x06cuCost\x12\x1f\n\x0bfunc_result\x18\x02\x20\x01(\tR\
+    \nfuncResult\x12\x18\n\x07storage\x18\x03\x20\x01(\x0cR\x07storageJ\xdd\
     \x01\n\x06\x12\x04\0\0\x06\x01\n\x08\n\x01\x0c\x12\x03\0\0\x12\n\n\n\x02\
     \x04\0\x12\x04\x02\0\x06\x01\n\n\n\x03\x04\0\x01\x12\x03\x02\x08\x12\n\
-    \x0b\n\x04\x04\0\x02\0\x12\x03\x03\x02\x15\n\x0c\n\x05\x04\0\x02\0\x05\
-    \x12\x03\x03\x02\x08\n\x0c\n\x05\x04\0\x02\0\x01\x12\x03\x03\t\x10\n\x0c\
-    \n\x05\x04\0\x02\0\x03\x12\x03\x03\x13\x14\n\x0b\n\x04\x04\0\x02\x01\x12\
-    \x03\x04\x02\x19\n\x0c\n\x05\x04\0\x02\x01\x05\x12\x03\x04\x02\x08\n\x0c\
-    \n\x05\x04\0\x02\x01\x01\x12\x03\x04\t\x14\n\x0c\n\x05\x04\0\x02\x01\x03\
-    \x12\x03\x04\x17\x18\n\x0b\n\x04\x04\0\x02\x02\x12\x03\x05\x02\x14\n\x0c\
-    \n\x05\x04\0\x02\x02\x05\x12\x03\x05\x02\x07\n\x0c\n\x05\x04\0\x02\x02\
-    \x01\x12\x03\x05\x08\x0f\n\x0c\n\x05\x04\0\x02\x02\x03\x12\x03\x05\x12\
-    \x13b\x06proto3\
+    \x0b\n\x04\x04\0\x02\0\x12\x03\x03\x02\x1e\n\x0c\n\x05\x04\0\x02\0\x04\
+    \x12\x03\x03\x02\n\n\x0c\n\x05\x04\0\x02\0\x05\x12\x03\x03\x0b\x11\n\x0c\
+    \n\x05\x04\0\x02\0\x01\x12\x03\x03\x12\x19\n\x0c\n\x05\x04\0\x02\0\x03\
+    \x12\x03\x03\x1c\x1d\n\x0b\n\x04\x04\0\x02\x01\x12\x03\x04\x02\x19\n\x0c\
+    \n\x05\x04\0\x02\x01\x05\x12\x03\x04\x02\x08\n\x0c\n\x05\x04\0\x02\x01\
+    \x01\x12\x03\x04\t\x14\n\x0c\n\x05\x04\0\x02\x01\x03\x12\x03\x04\x17\x18\
+    \n\x0b\n\x04\x04\0\x02\x02\x12\x03\x05\x02\x14\n\x0c\n\x05\x04\0\x02\x02\
+    \x05\x12\x03\x05\x02\x07\n\x0c\n\x05\x04\0\x02\x02\x01\x12\x03\x05\x08\
+    \x0f\n\x0c\n\x05\x04\0\x02\x02\x03\x12\x03\x05\x12\x13b\x06proto3\
 ";
 
 /// `FileDescriptorProto` object which was a source for this generated file

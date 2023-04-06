@@ -420,7 +420,7 @@ export class TransactionAction {
     });
 
     return {
-      cuCost: BigInt(result.cuCost),
+      cuCost: BigInt(result.cuCost.reduce((a, b) => a + Number(b), 0)),
       result: tryParseJson(result.funcResult),
       storage: result.storage,
     };
