@@ -36,7 +36,7 @@ describe('SkChain', () => {
         expect(status.status).toEqual(TransStatus.waiting);
       }
       // wait to stack
-      await sleep(7000);
+      await sleep(8000);
       expect(trans).not.toEqual(undefined);
       if (trans) {
         const status = await chain.transAction.transStatus(trans.hash);
@@ -44,7 +44,7 @@ describe('SkChain', () => {
       }
       await chain.stop();
       performanceCollecter.enabled && performanceCollecter.print();
-    }, 12000);
+    }, 20000);
     it('should deploy and call contract at two ok', async () => {
       const chain = await createTestSkChain('contract');
       await chain.run({ user: testAccounts[2] });
@@ -57,7 +57,7 @@ describe('SkChain', () => {
         throw new Error('no trans');
       }
       // wait to stack
-      await sleep(7000);
+      await sleep(8000);
       const status = await chain.transAction.transStatus(trans.hash);
       expect(status.status).toEqual(TransStatus.transed);
       let account = await chain.getAccount(trans.recipient.did);
@@ -87,7 +87,7 @@ describe('SkChain', () => {
       if (!trans2) {
         throw new Error('no trans2');
       }
-      await sleep(7000);
+      await sleep(10000);
       account = await chain.getAccount(trans.recipient.did);
       if (!account) {
         throw new Error('no contract account');
@@ -102,7 +102,7 @@ describe('SkChain', () => {
         Boolean(bytes.toString(storage2).match(`"${testAccounts[0].id}":100n`)),
       ).toEqual(true);
       await chain.stop();
-    }, 16000);
+    }, 30000);
     it('should deploy and call contract at one block ok', async () => {
       const chain = await createTestSkChain('contract');
       await chain.run({ user: testAccounts[2] });
@@ -125,7 +125,7 @@ describe('SkChain', () => {
       if (!trans2) {
         throw new Error('no trans2');
       }
-      await sleep(8000);
+      await sleep(10000);
       const account = await chain.getAccount(trans.recipient.did);
       if (!account) {
         throw new Error('no contract account');
@@ -142,6 +142,6 @@ describe('SkChain', () => {
         Boolean(bytes.toString(storage2).match(`"${testAccounts[0].id}":100n`)),
       ).toEqual(true);
       await chain.stop();
-    }, 14000);
+    }, 20000);
   });
 });

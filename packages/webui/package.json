@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
-    "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
+    "@trustack/node-modules-polyfill": "^0.2.5",
     "@xstate/react": "^3.2.1",
     "antd": "^5.4.0",
     "esbuild": "^0.17.16",
@@ -27,7 +27,7 @@
     "react-json-view": "^1.21.3",
     "react-router": "^6.10.0",
     "react-router-dom": "^6.10.0",
-    "rollup-plugin-node-polyfills": "./libs/rollup-plugin-node-polyfills",
+    "@trustack/rollup-plugin-node-polyfills": "^0.2.2",
     "skchain": "workspace:^1.0.0",
     "xstate": "^4.37.1"
   },

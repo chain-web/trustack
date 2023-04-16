@@ -21,8 +21,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-      - name: Install local package deps
-        run: cd packages/webui/libs/rollup-plugin-node-polyfills && pnpm i
       - name: Install Playwright Browsers
         run: cd packages/webui && pnpm exec playwright install --with-deps
       - name: Run Playwright tests

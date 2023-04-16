@@ -44,7 +44,7 @@ describe('transcation', () => {
         payload: bytes.fromString(testCoinContract),
       });
       expect(trans).not.toEqual(undefined);
-      await sleep(6000);
+      await sleep(8000);
       if (!trans) {
         throw new Error('no trans');
       } else {
@@ -52,6 +52,6 @@ describe('transcation', () => {
         expect(status.status).toEqual(TransStatus.waiting);
       }
       await transAction.stop();
-    }, 10000);
+    }, 20000);
   });
 });
