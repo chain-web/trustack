@@ -17,6 +17,7 @@ import type { DidJson } from './lib/p2p/did.js';
 import { genetateDid } from './lib/p2p/did.js';
 import { Consensus } from './lib/consensus/index.js';
 import { logClassPerformance } from './utils/performance.js';
+import { SkNetwork } from './lib/skfs/network.js';
 // import { TransactionTest } from './lib/transaction/test';
 // import { message } from './utils/message';
 // import { BlockService } from './lib/ipld/blockService/blockService';
@@ -27,6 +28,8 @@ export interface SKChainOption {
   db?: Skfs;
   blockService?: BlockService;
   datastorePath?: string;
+  tcpPort?: number;
+  wsPort?: number;
 }
 
 export interface SKChainRunOpts {
@@ -42,7 +45,10 @@ export class SKChain {
       new Skfs({
         path: option?.datastorePath || 'skfs',
       });
-    // this.ipld = new Ipld(this);
+    this.network = new SkNetwork({
+      tcpPort: option?.tcpPort || 4003,
+      wsPort: option?.wsPort || 6004,
+    });
     this.blockService = option?.blockService || new BlockService(this.db);
     // this.did = this.db.cache.get(skCacheKeys.accountId);
     this.genesis = new Genesis(
@@ -63,6 +69,8 @@ export class SKChain {
   version = version;
   // 数据存取服务
   db: Skfs;
+  // n
+  network: SkNetwork;
   // 创世配置
   private genesis: Genesis;
   // // 交易
@@ -95,6 +103,8 @@ export class SKChain {
     this.did = user.id;
     try {
       await this.db.open();
+      await this.network.init(user, this.db.datastore);
+      await this.db.initBitswap(this.network);
       await this.blockService.init();
       await this.genesis.checkGenesisBlock();
       // await this.db.swarm.connect(
@@ -114,6 +124,7 @@ export class SKChain {
   async stop(): Promise<void> {
     await this.transAction.stop();
     await this.blockService.close();
+    await this.network.stop();
     await this.db.close();
     this.chainState.send('STOP');
   }

@@ -1,5 +1,10 @@
-import { createEd25519PeerId } from '@libp2p/peer-id-factory';
+import {
+  createEd25519PeerId,
+  createFromPrivKey,
+  createFromPubKey,
+} from '@libp2p/peer-id-factory';
 import { unmarshalPrivateKey, unmarshalPublicKey } from '@libp2p/crypto/keys';
+import type { PeerId } from '@libp2p/interface-peer-id';
 
 import { toString } from 'uint8arrays/to-string';
 import { bytes } from 'multiformats';
@@ -58,6 +63,25 @@ export const verifyById = async (
   const PUK = unmarshalPublicKey(uint8ArrayFromString(`${id}`, 'base58btc'));
   const verifyed = await PUK.verify(data, bytes.fromHex(signature));
   return verifyed;
+};
+
+export const createPeerIdFromDidString = async (
+  did: string,
+): Promise<PeerId> => {
+  const PUK = unmarshalPublicKey(uint8ArrayFromString(`${did}`, 'base58btc'));
+  const peerId = await createFromPubKey(PUK);
+  return peerId;
+};
+
+export const createPeerIdFromDidJson = async (
+  didJson: DidJson,
+): Promise<PeerId> => {
+  const PK = await unmarshalPrivateKey(
+    uint8ArrayFromString(didJson.privKey, 'base64pad'),
+  );
+
+  const peerId = await createFromPrivKey(PK);
+  return peerId;
 };
 
 // 从libp2p私钥中解出ed priv

@@ -1,5 +1,7 @@
+import type { DidJson } from '../../p2p/did.js';
 import { Skfs } from '../index.js';
 import { Mpt } from '../mpt.js';
+import { SkNetwork } from '../network.js';
 
 export const createTestSkMpt = (): Mpt => {
   return new Mpt('test_mpt', { useMemDb: true });
@@ -18,8 +20,6 @@ export const createTestSkfs = async (): Promise<Skfs> => {
   });
   await skfs.open();
 
-  await skfs.clear();
-
   return skfs;
 };
 
@@ -31,9 +31,27 @@ export const createTestDiskSkfs = async (name?: string): Promise<Skfs> => {
   });
   await skfs.open();
 
-  await skfs.clear();
-
   return skfs;
+};
+
+export const createTestSkNetWork = async (
+  tcpPort: number,
+  wsPort: number,
+  did: DidJson,
+): Promise<{ network: SkNetwork; close: () => void }> => {
+  const skfs = await createTestDiskSkfs(`test__sk_network_${tcpPort}`);
+
+  const network = new SkNetwork({ tcpPort, wsPort });
+  await network.init(did, skfs.datastore);
+  await skfs.initBitswap(network);
+
+  return {
+    network,
+    close: async () => {
+      await network.stop();
+      await skfs.close();
+    },
+  };
 };
 
 const rmDbFile = async (name: string = '') => {
