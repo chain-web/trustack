@@ -15,7 +15,7 @@ import {
 import type { UpdateAccountI } from '../ipld/blockService/nextBlock.js';
 import type { BlockService } from '../ipld/blockService/blockService.js';
 import type { Consensus } from '../consensus/index.js';
-import { skCacheKeys } from '../ipfs/key.js';
+import { skCacheKeys } from '../skfs/key.js';
 import { createEmptyStorageRoot, createRawBlock } from '../../mate/utils.js';
 import { newAccount } from '../../mate/account.js';
 import type { Address } from '../../mate/address.js';

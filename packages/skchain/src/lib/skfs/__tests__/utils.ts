@@ -38,7 +38,7 @@ export const createTestSkNetWork = async (
   tcpPort: number,
   wsPort: number,
   did: DidJson,
-): Promise<{ network: SkNetwork; close: () => void }> => {
+): Promise<{ network: SkNetwork; skfs: Skfs; close: () => void }> => {
   const skfs = await createTestDiskSkfs(`test__sk_network_${tcpPort}`);
 
   const network = new SkNetwork({ tcpPort, wsPort });
@@ -47,11 +47,23 @@ export const createTestSkNetWork = async (
 
   return {
     network,
+    skfs,
     close: async () => {
       await network.stop();
       await skfs.close();
     },
   };
+};
+
+export const connect2Network = async (
+  n1: SkNetwork,
+  n2: SkNetwork,
+): Promise<void> => {
+  await n1.network.node.peerStore.addressBook.set(
+    n2.network.node.peerId,
+    n2.network.node.getMultiaddrs(),
+  );
+  await n1.network.node.dial(n2.network.node.peerId);
 };
 
 const rmDbFile = async (name: string = '') => {

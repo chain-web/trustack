@@ -12,7 +12,7 @@ import { Genesis } from './lib/genesis/index.js';
 import { genesis as testNetGenesis } from './config/testnet.config.js';
 import { BlockService } from './lib/ipld/blockService/blockService.js';
 import { message } from './utils/message.js';
-import { skCacheKeys } from './lib/ipfs/key.js';
+import { skCacheKeys } from './lib/skfs/key.js';
 import type { DidJson } from './lib/p2p/did.js';
 import { genetateDid } from './lib/p2p/did.js';
 import { Consensus } from './lib/consensus/index.js';

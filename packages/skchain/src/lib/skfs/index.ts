@@ -7,6 +7,7 @@ import type { Bitswap } from 'ipfs-bitswap';
 import { createBitswap } from 'ipfs-bitswap';
 import { LevelBlockstore } from 'blockstore-level';
 import type { MultihashHasher } from 'multiformats';
+import { CID } from 'multiformats';
 import { sha256, sha512 } from 'multiformats/hashes/sha2';
 import { identity } from 'multiformats/hashes/identity';
 import type { DefaultBlockType, RawBlockType } from '../../mate/utils.js';
@@ -15,6 +16,10 @@ import type { SkNetwork } from './network.js';
 export interface SkfsOptions {
   path: string;
   useMemoryBb?: boolean;
+}
+
+export interface GetOptions {
+  timeout?: number;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -61,13 +66,6 @@ export class Skfs {
   // origin kv store
   skCache: DefaultSunLevel;
 
-  get bitswap(): Bitswap {
-    if (!this.#bitswap) {
-      throw new Error('bitswap not init');
-    }
-    return this.#bitswap;
-  }
-
   open = async (): Promise<void> => {
     await this._blockdb.open();
     await this._datadb.open();
@@ -93,6 +91,7 @@ export class Skfs {
         },
       },
     });
+    await this.#bitswap.start();
   }
 
   /**
@@ -101,7 +100,7 @@ export class Skfs {
    * @param data
    * @returns
    */
-  put = async (key: string, data: Uint8Array): Promise<Key> => {
+  putData = async (key: string, data: Uint8Array): Promise<Key> => {
     const idKey = new Key(key);
     return await this.datastore.put(idKey, data);
   };
@@ -112,17 +111,33 @@ export class Skfs {
    * @returns
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  putCborBlock = async (block: DefaultBlockType<any>): Promise<Key> => {
-    const key = new Key(block.cid.toString());
-    return await this.datastore.put(key, block.bytes);
+  putCborBlock = async (block: DefaultBlockType<any>): Promise<CID> => {
+    return await this.blockstore.put(block.cid, block.bytes);
   };
 
-  putRawBlock = async (block: RawBlockType): Promise<Key> => {
-    const key = new Key(block.cid.toString());
-    return await this.datastore.put(key, block.value);
+  putRawBlock = async (block: RawBlockType): Promise<CID> => {
+    return await this.blockstore.put(block.cid, block.value);
   };
 
-  get = async (cid: string): Promise<Uint8Array | undefined> => {
+  get = async (
+    cid: string,
+    opts?: GetOptions,
+  ): Promise<Uint8Array | undefined> => {
+    const data = await this.getData(cid, opts);
+    if (data) {
+      return data;
+    }
+    const block = await this.getBlock(CID.parse(cid), opts);
+    if (block) {
+      return block;
+    }
+    return undefined;
+  };
+
+  getData = async (
+    cid: string,
+    opts?: GetOptions,
+  ): Promise<Uint8Array | undefined> => {
     const key = new Key(cid);
     try {
       const data = await this.datastore.get(key);
@@ -137,9 +152,54 @@ export class Skfs {
     }
   };
 
-  del = async (cid: string): Promise<void> => {
+  getBlock = async (
+    cid: CID,
+    opts?: GetOptions,
+  ): Promise<Uint8Array | undefined> => {
+    try {
+      const block = await this.blockstore.get(cid);
+      return block;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      if (error.notFound) {
+        return await this.getFromBitswap(cid, opts);
+      } else {
+        throw new Error(error);
+      }
+    }
+  };
+
+  private getFromBitswap = (
+    cid: CID,
+    opts?: GetOptions,
+  ): Promise<Uint8Array | undefined> => {
+    if (!this.#bitswap) {
+      return Promise.resolve(undefined);
+    }
+    const abortController = new AbortController();
+    setTimeout(() => {
+      abortController.abort();
+    }, opts?.timeout || 5000);
+    return new Promise((resolve) => {
+      this.#bitswap
+        .want(cid, { signal: abortController.signal })
+        .then((res) => {
+          resolve(res);
+        })
+        .catch((e) => {
+          // console.log(e);
+          resolve(undefined);
+        });
+    });
+  };
+
+  delData = async (cid: string): Promise<void> => {
     const key = new Key(cid);
     await this.datastore.delete(key);
+  };
+
+  delBlock = async (cid: CID): Promise<void> => {
+    await this.blockstore.delete(cid);
   };
 
   clear = async (): Promise<void> => {
@@ -174,6 +234,7 @@ export class Skfs {
   };
 
   close = async (): Promise<void> => {
+    await this.#bitswap?.stop();
     await this.skCache.close();
     await this.datastore.close();
     await this._datadb.close();

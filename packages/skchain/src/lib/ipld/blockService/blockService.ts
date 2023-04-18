@@ -1,6 +1,6 @@
 import type { BlockMeta } from '../../../mate/block.js';
 import { Block } from '../../../mate/block.js';
-import { skCacheKeys } from '../../ipfs/key.js';
+import { skCacheKeys } from '../../skfs/key.js';
 import { LifecycleStap } from '../../state/lifecycle.js';
 import { StateRoot } from '../../../mate/mpts/stateRoot.js';
 import type { Skfs } from '../../skfs/index.js';
