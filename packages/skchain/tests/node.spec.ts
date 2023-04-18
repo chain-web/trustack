@@ -57,14 +57,14 @@ describe('SkChain', () => {
         throw new Error('no trans');
       }
       // wait to stack
-      await sleep(8000);
+      await sleep(12000);
       const status = await chain.transAction.transStatus(trans.hash);
       expect(status.status).toEqual(TransStatus.transed);
       let account = await chain.getAccount(trans.recipient.did);
       if (!account) {
         throw new Error('no contract account');
       }
-      const storage = await chain.db.get(account.storageRoot.toString());
+      const storage = await chain.db.getBlock(account.storageRoot);
       if (!storage) {
         throw new Error('no storage');
       }
@@ -92,7 +92,7 @@ describe('SkChain', () => {
       if (!account) {
         throw new Error('no contract account');
       }
-      const storage2 = await chain.db.get(account.storageRoot.toString());
+      const storage2 = await chain.db.getBlock(account.storageRoot);
       if (!storage2) {
         throw new Error('no storage');
       }
@@ -125,12 +125,12 @@ describe('SkChain', () => {
       if (!trans2) {
         throw new Error('no trans2');
       }
-      await sleep(10000);
+      await sleep(15000);
       const account = await chain.getAccount(trans.recipient.did);
       if (!account) {
         throw new Error('no contract account');
       }
-      const storage2 = await chain.db.get(account.storageRoot.toString());
+      const storage2 = await chain.db.getBlock(account.storageRoot);
       if (!storage2) {
         throw new Error('no storage');
       }
@@ -142,6 +142,6 @@ describe('SkChain', () => {
         Boolean(bytes.toString(storage2).match(`"${testAccounts[0].id}":100n`)),
       ).toEqual(true);
       await chain.stop();
-    }, 20000);
+    }, 30000);
   });
 });

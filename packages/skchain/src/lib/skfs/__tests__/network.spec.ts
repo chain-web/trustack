@@ -2,7 +2,7 @@ import { bytes } from 'multiformats';
 import { sleep } from '../../../../tests/skchainTest.util.js';
 import { testAccounts } from '../../../../tests/testAccount.js';
 import { PubsubTopic } from '../network.js';
-import { createTestSkNetWork } from './utils.js';
+import { connect2Network, createTestSkNetWork } from './utils.js';
 
 describe('Sknetwork', () => {
   describe(`test`, () => {
@@ -37,17 +37,9 @@ describe('Sknetwork', () => {
         msg3.push(bytes.toString(data));
       });
 
-      await n1.network.node.peerStore.addressBook.set(
-        n2.network.node.peerId,
-        n2.network.node.getMultiaddrs(),
-      );
-      await n1.network.node.dial(n2.network.node.peerId);
+      await connect2Network(n1, n2);
+      await connect2Network(n2, n3);
 
-      await n2.network.node.peerStore.addressBook.set(
-        n3.network.node.peerId,
-        n3.network.node.getMultiaddrs(),
-      );
-      await n2.network.node.dial(n3.network.node.peerId);
       await sleep(500);
 
       await n1.publish(PubsubTopic.DID, bytes.fromString('hello'));
