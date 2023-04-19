@@ -20,4 +20,5 @@ export enum LifecycleStap {
   'initedConsensus' = 'initedConsensus', // 分片共识初始化成功
   'initedContract' = 'initedContract', // 智能合约模块初始化成功
   'newBlock' = 'newBlock', // 更新本地块头
+  'receivedNewBlock' = 'receivedNewBlock', // 收到新区块
 }

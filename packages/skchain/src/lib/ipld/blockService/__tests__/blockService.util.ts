@@ -19,7 +19,7 @@ export const createTestBlockRoot = async (
 export const createTestBlockService = async (opts?: {
   name?: string;
   skfs?: Skfs;
-}): Promise<BlockService> => {
+}): Promise<{ bs: BlockService; close: () => void }> => {
   let skfs = opts?.skfs;
   if (!skfs) {
     skfs = await createTestDiskSkfs(opts?.name);
@@ -27,12 +27,11 @@ export const createTestBlockService = async (opts?: {
   const blockRoot = await createTestBlockRoot(`${opts?.name}_blockRoot`);
   const stateRoot = await createTestStateRoot(`${opts?.name}_stateRoot`);
   const root = new BlockService(skfs, { blockRoot, stateRoot });
-  return root;
-};
-
-export const closeTestBlockService = async (
-  blockService: BlockService,
-): Promise<void> => {
-  await blockService.close();
-  await blockService.db.close();
+  return {
+    bs: root,
+    close: async () => {
+      await root.close();
+      await root.db.close();
+    },
+  };
 };

@@ -5,14 +5,14 @@ import { SKChain } from '../src/skChain.js';
 
 export const createTestSkChain = async (name: string): Promise<SKChain> => {
   const skfs = await createTestDiskSkfs(`test__skchain_${name}_fs`);
-  const blockService = await createTestBlockService({
+  const { bs } = await createTestBlockService({
     name: `test__skchain_${name}_bs`,
     skfs,
   });
   const chain = new SKChain({
     genesis: genesis,
     db: skfs,
-    blockService,
+    blockService: bs,
   });
 
   return chain;

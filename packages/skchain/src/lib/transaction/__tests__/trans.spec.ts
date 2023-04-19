@@ -9,15 +9,15 @@ import { createTestTransAction } from './transTest.util.js';
 describe('transcation', () => {
   describe('simple test', () => {
     it('should create transAction ok', async () => {
-      const transAction = await createTestTransAction(
+      const { transAction, close } = await createTestTransAction(
         'trans_create',
         testAccounts[0],
       );
       await transAction.init();
-      await transAction.stop();
+      await close();
     });
     it('should trans ok', async () => {
-      const transAction = await createTestTransAction(
+      const { transAction, close } = await createTestTransAction(
         'trans_one',
         testAccounts[0],
       );
@@ -32,10 +32,10 @@ describe('transcation', () => {
         const status = await transAction.transStatus(trans.hash);
         expect(status.status).toEqual(TransStatus.waiting);
       }
-      await transAction.stop();
+      await close();
     });
     it('should deploy contract ok', async () => {
-      const transAction = await createTestTransAction(
+      const { transAction, close } = await createTestTransAction(
         'trans_create_contract',
         testAccounts[0],
       );
@@ -51,7 +51,7 @@ describe('transcation', () => {
         const status = await transAction.transStatus(trans.hash);
         expect(status.status).toEqual(TransStatus.waiting);
       }
-      await transAction.stop();
+      await close();
     }, 20000);
   });
 });

@@ -9,9 +9,9 @@ import { TransactionAction } from '../index.js';
 export const createTestTransAction = async (
   name: string,
   user: DidJson,
-): Promise<TransactionAction> => {
-  const bs = await createTestBlockService({ name });
-  const consensus = await createTestConsensus({
+): Promise<{ transAction: TransactionAction; close: () => void }> => {
+  const { bs, close: cbs } = await createTestBlockService({ name });
+  const { consensus, close: cc } = await createTestConsensus({
     db: bs.db,
     blockService: bs,
   });
@@ -22,5 +22,14 @@ export const createTestTransAction = async (
 
   await consensus.init();
   const transAction = new TransactionAction(bs, consensus);
-  return transAction;
+  return {
+    transAction,
+    close: async () => {
+      // must close consensus first, it will close network and blockdb
+      await cc();
+      // then close blockService, it will close skfs and other db
+      await cbs();
+      await transAction.stop();
+    },
+  };
 };
