@@ -55,7 +55,7 @@ export class SKChain {
       this.blockService,
       option?.genesis || testNetGenesis,
     );
-    this.consensus = new Consensus(this.db, this.blockService);
+    this.consensus = new Consensus(this.blockService, this.network);
     this.transAction = new TransactionAction(this.blockService, this.consensus);
     // this.transTest = new TransactionTest(this);
     // this.pinService = new PinService(this);

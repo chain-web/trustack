@@ -1,21 +1,46 @@
+import { testAccounts } from '../../../../tests/testAccount.js';
 import type { BlockService } from '../../ipld/blockService/blockService.js';
 import { createTestBlockService } from '../../ipld/blockService/__tests__/blockService.util.js';
+import type { DidJson } from '../../p2p/did.js';
 import type { Skfs } from '../../skfs/index.js';
+import { SkNetwork } from '../../skfs/network.js';
 import { createTestDiskSkfs } from '../../skfs/__tests__/utils.js';
 import { Consensus } from '../index.js';
 
 export const createTestConsensus = async (opts?: {
   db?: Skfs;
   blockService?: BlockService;
-}): Promise<Consensus> => {
+  network?: SkNetwork;
+  tcpPort?: number;
+  wsPort?: number;
+  did?: DidJson;
+}): Promise<{ consensus: Consensus; close: () => void }> => {
   const db = opts?.db || (await createTestDiskSkfs('test__init_consensus'));
-  const blockService =
-    opts?.blockService ||
-    (await createTestBlockService({
+  let close = () => {};
+  let bs = opts?.blockService;
+  if (!opts?.blockService) {
+    const newBs = await createTestBlockService({
       skfs: db,
       name: 'test__init_consensus',
-    }));
-  const consensus = new Consensus(db, blockService);
+    });
+    bs = newBs.bs;
+    close = newBs.close;
+  }
 
-  return consensus;
+  const network = new SkNetwork({
+    tcpPort: opts?.tcpPort || 6688,
+    wsPort: opts?.wsPort || 6689,
+  });
+  await network.init(opts?.did || testAccounts[0], db.datastore);
+  await db.initBitswap(network);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const consensus = new Consensus(bs!, network);
+
+  return {
+    consensus,
+    close: async () => {
+      await network.stop();
+      close && (await close());
+    },
+  };
 };
