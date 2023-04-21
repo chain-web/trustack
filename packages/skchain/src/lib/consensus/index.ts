@@ -28,6 +28,15 @@ interface PossibleChain {
   possibleChain: PossibleChain;
 }
 
+export enum NewBlockActions {
+  // 合法的新区块
+  NEXT_BLOCK = 'NEXT_BLOCK',
+  // 合法的当前区块
+  HEDAER_BLOCK = 'HEDAER_BLOCK',
+  // 无效的区块
+  INVALID_BLOCK = 'INVALID_BLOCK',
+}
+
 export class Consensus {
   constructor(blockService: BlockService, network: SkNetwork) {
     this.blockService = blockService;
@@ -92,48 +101,66 @@ export class Consensus {
         throw new Error('block not found');
       }
       const newBlock = await Block.fromBinary(blockBinary);
-
       const headerBlock = await this.blockService.getHeaderBlock();
-
-      // console.log('receive new block', newBlock);
-      // console.log(headerBlock);
-
-      if (newBlock.header.number === headerBlock.header.number) {
-        // 接收到的块小于等于当前最新块
-        message.info('receive block: old');
-        // 验证收到的块是否跟自己的本地存储块hash是否相同
-        const savedBlock = await this.blockService.getBlockByNumber(
-          newBlock.header.number,
-        );
-        if (savedBlock?.hash === newBlock.hash) {
-          message.info('receive block: check pass');
-        } else {
-          // TODO 对比收到的块和自己本地块的contribute
-        }
-      } else {
-        // 收到的块是比自己节点存储的更新的
-        message.info('receive block: new');
-        if (headerBlock.header.number < newBlock.header.number) {
-          // 收到的是下一个块
-          if (newBlock.header.parent === headerBlock.hash) {
-            // 验证通过是下一个块
-            // await this.blockService.addBlockCidByNumber(
-            //   newData.cid,
-            //   newBlock.header.number,
-            // );
-            // await this.transAction.stopThisBlock();
-            chainState.send('CHANGE', {
-              event: LifecycleStap.receivedNewBlock,
-            });
-          }
-        }
-        // TODO 验证收到的块的合法性,验证过程会
-        // this.possibleChainMap.set()
-        //
-        // 更新自己的本地存储块
-        await this.blockService.addBlock(newBlock);
-      }
+      const action = await this.processNewBlock(newBlock, headerBlock);
     });
+  };
+
+  doConsensus = async (
+    action: NewBlockActions,
+    newBlock: Block,
+    headerBlock: Block,
+  ): Promise<void> => {
+    if (action === NewBlockActions.NEXT_BLOCK) {
+      this.blockService.blockBuffer.addBlock(newBlock);
+    }
+  };
+
+  processNewBlock = async (
+    newBlock: Block,
+    headerBlock: Block,
+  ): Promise<NewBlockActions> => {
+    // console.log('receive new block', newBlock);
+    // console.log(headerBlock);
+
+    if (newBlock.header.number === headerBlock.header.number) {
+      // 接收到的块小于等于当前最新块
+      message.info('receive block: old');
+      // 验证收到的块是否跟自己的本地存储块hash是否相同
+      const savedBlock = await this.blockService.getBlockByNumber(
+        newBlock.header.number,
+      );
+      if (savedBlock?.hash === newBlock.hash) {
+        message.info('receive block: check pass');
+        return NewBlockActions.HEDAER_BLOCK;
+      } else {
+        // TODO 对比收到的块和自己本地块的contribute
+      }
+    } else {
+      // 收到的块是比自己节点存储的更新的
+      message.info('receive block: new');
+      if (headerBlock.header.number < newBlock.header.number) {
+        // 收到的是下一个块
+        if (newBlock.header.parent === headerBlock.hash) {
+          // 验证通过是下一个块
+          // await this.blockService.addBlockCidByNumber(
+          //   newData.cid,
+          //   newBlock.header.number,
+          // );
+          // await this.transAction.stopThisBlock();
+          // chainState.send('CHANGE', {
+          //   event: LifecycleStap.receivedNewBlock,
+          // });
+          return NewBlockActions.NEXT_BLOCK;
+        }
+      }
+      // TODO 验证收到的块的合法性,验证过程会
+      // this.possibleChainMap.set()
+      //
+      // 更新自己的本地存储块
+      // await this.blockService.addBlock(newBlock);
+    }
+    return NewBlockActions.INVALID_BLOCK;
   };
 
   // compareContribute = async (_block: Block) => {

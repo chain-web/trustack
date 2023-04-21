@@ -15,6 +15,7 @@ import { isTxInBlock } from './util.js';
 import { BlockRoot } from './blockRoot.js';
 import { NextBlock } from './nextBlock.js';
 import { AccountCache } from './accountCache.js';
+import { BlockBuffer } from './blockBuffer.js';
 
 // 管理、已经存储的块索引
 export class BlockService {
@@ -29,11 +30,13 @@ export class BlockService {
     this.blockRoot = opts?.blockRoot || new BlockRoot();
     this.stateRoot = opts?.stateRoot || new StateRoot();
     this.accountCache = new AccountCache();
+    this.blockBuffer = new BlockBuffer();
   }
   db: Skfs;
   blockRoot: BlockRoot;
   stateRoot: StateRoot;
   accountCache: AccountCache;
+  blockBuffer: BlockBuffer;
 
   // 连续的已经验证通过的块高，在节点同步完成后是最新块
   checkedBlockHeight = 0n;
@@ -332,6 +335,7 @@ export class BlockService {
     );
     const headerBlock = await this.getHeaderBlock();
     await this.nextBlock.initNextBlock(headerBlock);
+    this.blockBuffer = new BlockBuffer();
   };
 
   // 从块头向下查询某个交易发生的块

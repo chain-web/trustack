@@ -121,9 +121,7 @@ export class Block {
       logsBloom: this.header.logsBloom.getData(),
       body: this.body || null,
     };
-    // ts，hash 不参与生成块hash
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    delete (obj as any).hash;
+    // ts 不参与生成块hash
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     delete (obj as any).ts;
     const hash = (await createCborBlock(obj)).cid.toString();
