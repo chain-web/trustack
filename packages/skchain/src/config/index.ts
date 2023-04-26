@@ -33,3 +33,9 @@ export const WAIT_TIME_LIMIT = 4 * 1000; // 每个交易从被发出到能进行
 export const BLOCK_INTERVAL_TIME_LIMIT = 4 * 1000; // 两个块之间打包的最短时间间隔 ms
 
 export const LOAD_CONTRACT_DATA_FUNC = '__vm__load_data';
+
+export const NETWORK_GET_NODE_COUNT_INTERVAL = 10 * 1000; // ms
+
+export const CONSENSUS_TIME_WINDOW_BASE = 1n; // ms
+export const CONSENSUS_NODE_PERCENT = 60; // ms
+export const DO_CONSENSUS_INTERVAL = 600; // ms

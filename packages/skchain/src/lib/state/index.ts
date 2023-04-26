@@ -1,15 +1,25 @@
-import { createMachine, interpret } from 'xstate';
+import { assign, createMachine, interpret } from 'xstate';
+import type { SKChainOption } from '../../skChain.js';
 import { message } from '../../utils/message.js';
 import type { LifecycleStap } from './lifecycle.js';
 
-export type ChainEvents = {
-  type: 'CHANGE' | 'INITIALIZE' | 'START' | 'ERROR' | 'STARTED' | 'STOP';
+export type ChainEvents = SimpleEvent | InitEvent;
+
+type SimpleEvent = {
+  type: 'CHANGE' | 'START' | 'ERROR' | 'STARTED' | 'STOP';
   event?: LifecycleStap;
   data?: string[];
 };
 
+type InitEvent = {
+  type: 'INITIALIZE';
+  event?: LifecycleStap;
+  data: SKChainOption;
+};
+
 export interface ChainContext {
   eventQueue: { event: string; data?: string[] }[];
+  initOptions: SKChainOption;
 }
 
 // chain state
@@ -20,6 +30,7 @@ const chainMachine = createMachine<ChainContext, ChainEvents>(
     predictableActionArguments: true,
     context: {
       eventQueue: [],
+      initOptions: {} as SKChainOption,
     },
     type: 'parallel',
     states: {
@@ -47,6 +58,9 @@ const chainMachine = createMachine<ChainContext, ChainEvents>(
               () => {
                 message.info('to initializing');
               },
+              assign({
+                initOptions: (_ctx, e: InitEvent) => e.data,
+              }),
             ],
           },
         },
@@ -71,7 +85,7 @@ const chainMachine = createMachine<ChainContext, ChainEvents>(
   },
   {
     actions: {
-      update: (ctx, e) => {
+      update: (ctx, e: SimpleEvent) => {
         message.info('state event: ', e, ...(e.data || []));
         if (e.event) {
           ctx.eventQueue.push({ event: e.event, data: e.data });
@@ -113,6 +127,10 @@ class ChainState {
 
   getSnapshot() {
     return this.state.getSnapshot();
+  }
+
+  getInitOption() {
+    return this.getSnapshot().context.initOptions;
   }
 }
 

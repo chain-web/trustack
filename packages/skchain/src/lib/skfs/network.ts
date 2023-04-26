@@ -3,6 +3,7 @@ import type { LevelDatastore } from 'datastore-level';
 import type { Message } from '@libp2p/interface-pubsub';
 import type { DidJson } from '../p2p/did.js';
 import { createPeerIdFromDidJson } from '../p2p/did.js';
+import { NETWORK_GET_NODE_COUNT_INTERVAL } from '../../config/index.js';
 
 export enum PubsubTopic {
   DID = 'did',
@@ -24,6 +25,7 @@ export class SkNetwork {
     }
     return this._network;
   }
+  public activeNodeCount = 0;
 
   #subscribeMap = new Map<PubsubTopic, ((data: Uint8Array) => void)[]>();
 
@@ -59,6 +61,14 @@ export class SkNetwork {
       handler,
     ]);
     return this.network.node.pubsub.subscribe(topic);
+  }
+
+  private async updateActiveNodeCount(): Promise<void> {
+    // TODO
+    this.activeNodeCount = 10;
+    setTimeout(() => {
+      this.updateActiveNodeCount();
+    }, NETWORK_GET_NODE_COUNT_INTERVAL);
   }
 
   async stop(): Promise<void> {

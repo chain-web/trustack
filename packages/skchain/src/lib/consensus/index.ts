@@ -6,6 +6,11 @@ import { LifecycleStap } from '../state/lifecycle.js';
 import type { SkNetwork } from '../skfs/network.js';
 import { PubsubTopic } from '../skfs/network.js';
 import { message } from '../../utils/message.js';
+import {
+  CONSENSUS_NODE_PERCENT,
+  CONSENSUS_TIME_WINDOW_BASE,
+  DO_CONSENSUS_INTERVAL,
+} from '../../config/index.js';
 // import { Slice } from './slice.js';
 
 interface ConsensusNewBlockData {
@@ -53,6 +58,8 @@ export class Consensus {
 
   possibleChainMap = new Map<string, PossibleChain>();
 
+  consensusInterval: NodeJS.Timeout | null = null;
+
   setIsReady = (ready: boolean): void => {
     this.ready = ready;
   };
@@ -63,6 +70,7 @@ export class Consensus {
     // await this.slice.init();
     // TODO
     await this.subNewBlock();
+    this.doConsensus();
     chainState.send('CHANGE', {
       event: LifecycleStap.initedConsensus,
     });
@@ -103,17 +111,54 @@ export class Consensus {
       const newBlock = await Block.fromBinary(blockBinary);
       const headerBlock = await this.blockService.getHeaderBlock();
       const action = await this.processNewBlock(newBlock, headerBlock);
+      await this.addAction(action, newBlock);
     });
   };
 
-  doConsensus = async (
+  addAction = async (
     action: NewBlockActions,
     newBlock: Block,
-    headerBlock: Block,
   ): Promise<void> => {
-    if (action === NewBlockActions.NEXT_BLOCK) {
-      this.blockService.blockBuffer.addBlock(newBlock);
+    const isConsensusTimeWindow = await this.inConsensusTimeWindow();
+    if (isConsensusTimeWindow) {
+      if (action === NewBlockActions.NEXT_BLOCK) {
+        this.blockService.blockBuffer.addBlock(newBlock);
+      }
     }
+  };
+
+  private async doConsensus() {
+    const isConsensusTimeWindow = await this.inConsensusTimeWindow();
+    if (!isConsensusTimeWindow) {
+      // do consensus, to pick next block
+      // POC
+    } else {
+      // wait for consensus time window
+      this.consensusInterval && clearTimeout(this.consensusInterval);
+      this.consensusInterval = setTimeout(() => {
+        this.doConsensus();
+      }, DO_CONSENSUS_INTERVAL);
+    }
+  }
+
+  private inConsensusTimeWindow = async (): Promise<boolean> => {
+    const headerBlock = await this.blockService.getHeaderBlock();
+    const timeWindow =
+      headerBlock.header.difficulty * CONSENSUS_TIME_WINDOW_BASE;
+    const now = Date.now();
+    if (now - headerBlock.header.ts > timeWindow) {
+      return false;
+    }
+    // 收到的打包量大于总活跃节点量的 X%
+    if (
+      (this.blockService.blockBuffer.blockCount /
+        this.network.activeNodeCount) *
+        100 >
+      CONSENSUS_NODE_PERCENT
+    ) {
+      return false;
+    }
+    return true;
   };
 
   processNewBlock = async (
@@ -167,4 +212,8 @@ export class Consensus {
   //   // 对比相同高度两个block的sum contribute
   //   // 如果存储的contribute相等，就用上一block的hash的后几位，计算来进行确定性随即
   // };
+
+  async stop(): Promise<void> {
+    this.consensusInterval && clearTimeout(this.consensusInterval);
+  }
 }

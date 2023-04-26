@@ -11,6 +11,7 @@ import {
   createCborBlock,
   createEmptyStorageRoot,
 } from '../../../mate/utils.js';
+import { Genesis } from '../../genesis/index.js';
 import { isTxInBlock } from './util.js';
 import { BlockRoot } from './blockRoot.js';
 import { NextBlock } from './nextBlock.js';
@@ -31,8 +32,11 @@ export class BlockService {
     this.stateRoot = opts?.stateRoot || new StateRoot();
     this.accountCache = new AccountCache();
     this.blockBuffer = new BlockBuffer();
+    this.genesis = new Genesis(this);
   }
   db: Skfs;
+  // 创世配置
+  private genesis: Genesis;
   blockRoot: BlockRoot;
   stateRoot: StateRoot;
   accountCache: AccountCache;
@@ -139,9 +143,10 @@ export class BlockService {
     chainState.send('CHANGE', {
       event: LifecycleStap.initingBlockService,
     });
+    await this.initGenseis();
     const rootCid = this.db.cacheGet(skCacheKeys['sk-block']);
     if (!rootCid) {
-      await this.initGenseis();
+      throw new Error('block root cid not found');
     } else {
       await this.checkBlockRoot();
     }
@@ -150,7 +155,9 @@ export class BlockService {
     });
   };
 
-  initGenseis = async (): Promise<void> => {};
+  initGenseis = async (): Promise<void> => {
+    await this.genesis.checkGenesisBlock();
+  };
 
   checkBlockRoot = async (): Promise<void> => {
     let prevBlock = await this.getBlockByNumber(this.checkedBlockHeight);
