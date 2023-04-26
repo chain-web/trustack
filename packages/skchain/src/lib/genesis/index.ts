@@ -7,13 +7,14 @@ import { chainState } from '../state/index.js';
 import { LifecycleStap } from '../state/lifecycle.js';
 import { createGenesisBlock } from './genesis.util.js';
 export class Genesis {
-  constructor(blockService: BlockService, genesis: GenesisConfig) {
+  constructor(blockService: BlockService) {
     this.blockService = blockService;
-    this.genesis = genesis;
   }
   private blockService: BlockService;
   // 创世配置
-  private genesis: GenesisConfig;
+  private get genesis() {
+    return chainState.getInitOption().genesis;
+  }
   checkGenesisBlock = async (): Promise<void> => {
     chainState.send('CHANGE', {
       event: LifecycleStap.checkingGenesisBlock,

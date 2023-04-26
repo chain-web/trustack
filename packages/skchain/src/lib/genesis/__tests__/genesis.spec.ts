@@ -1,6 +1,7 @@
 import { testAccounts } from '../../../../tests/testAccount.js';
-import { genesis } from '../../../config/testnet.config.js';
 import { createTestBlockService } from '../../ipld/blockService/__tests__/blockService.util.js';
+import { chainState } from '../../state/index.js';
+import { genInitOption } from '../../state/initOption.js';
 import { Genesis } from '../index.js';
 
 describe('Genesis', () => {
@@ -9,7 +10,10 @@ describe('Genesis', () => {
       const { bs, close } = await createTestBlockService({
         name: 'test__genesis_check',
       });
-      const gs = new Genesis(bs, genesis);
+      chainState.send('INITIALIZE', {
+        data: await genInitOption({ db: bs.db, blockService: bs }),
+      });
+      const gs = new Genesis(bs);
       await gs.checkGenesisBlock();
       const block0 = await bs.getBlockByNumber(0n);
       expect(block0).not.toEqual(undefined);

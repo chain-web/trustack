@@ -5,7 +5,7 @@ export class BlockBuffer {
     this.buffer = new Map();
   }
 
-  buffer: Map<string, Block>;
+  private buffer: Map<string, Block>;
   blockNumber = 0n;
 
   addBlock = (block: Block): void => {
@@ -27,4 +27,8 @@ export class BlockBuffer {
   getBlockList = (): Block[] => {
     return Array.from(this.buffer.values());
   };
+
+  get blockCount(): number {
+    return this.buffer.size;
+  }
 }

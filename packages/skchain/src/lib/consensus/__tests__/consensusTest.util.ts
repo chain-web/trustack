@@ -31,6 +31,7 @@ export const createTestConsensus = async (opts?: {
     tcpPort: opts?.tcpPort || 6688,
     wsPort: opts?.wsPort || 6689,
   });
+  await bs?.init();
   await network.init(opts?.did || testAccounts[0], db.datastore);
   await db.initBitswap(network);
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -39,6 +40,7 @@ export const createTestConsensus = async (opts?: {
   return {
     consensus,
     close: async () => {
+      await consensus.stop();
       await network.stop();
       close && (await close());
     },

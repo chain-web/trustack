@@ -4,6 +4,8 @@ import {
   createTestDiskSkMpt,
   createTestDiskSkfs,
 } from '../../../skfs/__tests__/utils.js';
+import { chainState } from '../../../state/index.js';
+import { genInitOption } from '../../../state/initOption.js';
 import { BlockRoot } from '../blockRoot.js';
 import { BlockService } from '../blockService.js';
 
@@ -27,6 +29,9 @@ export const createTestBlockService = async (opts?: {
   const blockRoot = await createTestBlockRoot(`${opts?.name}_blockRoot`);
   const stateRoot = await createTestStateRoot(`${opts?.name}_stateRoot`);
   const root = new BlockService(skfs, { blockRoot, stateRoot });
+  chainState.send('INITIALIZE', {
+    data: await genInitOption({ db: skfs, blockService: root }),
+  });
   return {
     bs: root,
     close: async () => {
