@@ -56,7 +56,7 @@ const chainMachine = createMachine<ChainContext, ChainEvents>(
             target: 'inactive.initializing',
             actions: [
               () => {
-                message.info('to initializing');
+                message.info('to initializing sk state');
               },
               assign({
                 initOptions: (_ctx, e: InitEvent) => e.data,

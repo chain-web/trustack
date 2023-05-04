@@ -8,6 +8,7 @@ import { kadDHT } from '@libp2p/kad-dht';
 import { webSockets } from '@libp2p/websockets';
 import * as filters from '@libp2p/websockets/filters';
 import { webRTC } from '@libp2p/webrtc';
+import { mdns } from '@libp2p/mdns';
 
 export const createConfig = (opts?: {
   tcpPort?: number;
@@ -29,8 +30,9 @@ export const createConfig = (opts?: {
       }),
       webRTC({}),
     ],
-    pubsub: gossipsub(),
+    pubsub: gossipsub({ allowPublishToZeroPeers: true }),
     relay: circuitRelayServer(),
     dht: kadDHT(),
+    peerDiscovery: [mdns()],
   };
 };

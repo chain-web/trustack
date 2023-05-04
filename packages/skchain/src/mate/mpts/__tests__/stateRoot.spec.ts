@@ -12,6 +12,20 @@ describe('stateRoot', () => {
       if (cid) {
         expect(cid.bytes).toEqual(block.cid.bytes);
       }
+      await stateRoot.close();
     });
+    it('should get size ok', async () => {
+      const stateRoot = await createTestStateRoot();
+      const count = 100;
+
+      for (let i = 0; i < count; i++) {
+        const block = await createCborBlock(`test_cid${i}`);
+        await stateRoot.put(`test_did${i}`, block.cid.toString());
+      }
+      const size = await stateRoot.size();
+      expect(size).toBeGreaterThan(count * 0.95);
+      expect(size).toBeLessThan(count * 1.05);
+      await stateRoot.close();
+    }, 20000);
   });
 });

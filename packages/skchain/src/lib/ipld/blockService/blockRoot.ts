@@ -3,12 +3,15 @@ import { Mpt } from '../../skfs/mpt.js';
 
 // 操作已经存储的块索引
 export class BlockRoot {
-  constructor(opts?: { mpt?: Mpt }) {
+  constructor(opts?: { mpt?: Mpt; name?: string }) {
     this.db = opts?.mpt || new Mpt('block_root');
     this.db.initRootTree();
+    this.name = opts?.name || 'block_root';
   }
   // 块cid存储在一个类似二维数组的结构里，setSize是内层数组的单组大小
   static setSize = 100_0000n;
+
+  name: string;
 
   dbMap = new Map<string, Mpt>();
 
@@ -17,7 +20,7 @@ export class BlockRoot {
   getDb(index: bigint): Mpt {
     const key = index.toString();
     if (!this.dbMap.has(key)) {
-      const db = new Mpt(`block_${index}`);
+      const db = new Mpt(`${this.name}_${index}`);
       db.initRootTree();
       this.dbMap.set(key, db);
     }

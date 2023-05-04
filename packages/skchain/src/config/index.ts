@@ -35,6 +35,9 @@ export const BLOCK_INTERVAL_TIME_LIMIT = 4 * 1000; // 两个块之间打包的�
 export const LOAD_CONTRACT_DATA_FUNC = '__vm__load_data';
 
 export const NETWORK_GET_NODE_COUNT_INTERVAL = 10 * 1000; // ms
+export const NETWORK_PUB_NODE_COUNT_INTERVAL =
+  2 * NETWORK_GET_NODE_COUNT_INTERVAL; // ms
+export const NETWORK_MAX_NODE_COUNT_Buffer = 10;
 
 export const CONSENSUS_TIME_WINDOW_BASE = 1n; // ms
 export const CONSENSUS_NODE_PERCENT = 60; // ms

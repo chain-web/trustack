@@ -12,7 +12,7 @@ export class Genesis {
   }
   private blockService: BlockService;
   // 创世配置
-  private get genesis() {
+  get genesis(): GenesisConfig {
     return chainState.getInitOption().genesis;
   }
   checkGenesisBlock = async (): Promise<void> => {
