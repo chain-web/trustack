@@ -57,5 +57,30 @@ describe('Sknetwork', () => {
       await c2();
       await c3();
     }, 20000);
+    it('should sknetwork dial ok', async () => {
+      const { network: n1, close: c1 } = await createTestSkNetWork(
+        4020,
+        6632,
+        testAccounts[0],
+      );
+      const { network: n2, close: c2 } = await createTestSkNetWork(
+        4120,
+        6732,
+        testAccounts[1],
+      );
+      const conn1 = await n1.network.node.dial(n2.network.node.peerId);
+      expect(conn1.stat.status === 'OPEN').toBeTruthy();
+      await conn1.close();
+      await c2();
+      await sleep(1000);
+      let conn2Error = false;
+      try {
+        await n1.network.node.dial(n2.network.node.peerId);
+      } catch (error) {
+        conn2Error = true;
+      }
+      expect(conn2Error).toBeTruthy();
+      await c1();
+    }, 20000);
   });
 });

@@ -14,7 +14,7 @@ export const createTestBlockRoot = async (
 ): Promise<BlockRoot> => {
   name = name || 'test__block_root_mot';
   const mpt = await createTestDiskSkMpt(name);
-  const root = new BlockRoot({ mpt });
+  const root = new BlockRoot({ mpt, name });
   return root;
 };
 
@@ -32,6 +32,7 @@ export const createTestBlockService = async (opts?: {
   chainState.send('INITIALIZE', {
     data: await genInitOption({ db: skfs, blockService: root }),
   });
+  await root.init();
   return {
     bs: root,
     close: async () => {

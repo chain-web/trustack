@@ -38,10 +38,14 @@ export const createTestSkNetWork = async (
   tcpPort: number,
   wsPort: number,
   did: DidJson,
+  skfs?: Skfs,
 ): Promise<{ network: SkNetwork; skfs: Skfs; close: () => void }> => {
-  const skfs = await createTestDiskSkfs(`test__sk_network_${tcpPort}`);
+  skfs = skfs || (await createTestDiskSkfs(`test__sk_network_${tcpPort}`));
 
-  const network = new SkNetwork({ tcpPort, wsPort });
+  const network = new SkNetwork({
+    tcpPort,
+    wsPort,
+  });
   await network.init(did, skfs.datastore);
   await skfs.initBitswap(network);
 
@@ -50,7 +54,7 @@ export const createTestSkNetWork = async (
     skfs,
     close: async () => {
       await network.stop();
-      await skfs.close();
+      await skfs?.close();
     },
   };
 };

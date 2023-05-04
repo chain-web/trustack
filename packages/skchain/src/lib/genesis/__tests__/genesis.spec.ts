@@ -21,6 +21,9 @@ describe('Genesis', () => {
         expect(block0.header.number).toEqual(0n);
       }
 
+      const size = await bs.stateRoot.size();
+      expect(size).toEqual(Object.keys(gs.genesis.alloc || {}).length);
+
       const account = await bs.getExistAccount(testAccounts[0].id);
       expect((await account.toCborBlock()).cid.toString()).toEqual(
         (await bs.stateRoot.get(account.address.did))?.toString(),

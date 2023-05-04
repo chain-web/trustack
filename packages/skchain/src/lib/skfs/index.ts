@@ -42,11 +42,11 @@ export class Skfs {
   constructor(options: SkfsOptions) {
     this._datadb = generateLevelDb({
       useMemoryBb: options.useMemoryBb,
-      path: `${options.path}_data_db`,
+      path: `${options.path}/data_db`,
     });
     this._blockdb = generateLevelDb({
       useMemoryBb: options.useMemoryBb,
-      path: `${options.path}_block_db`,
+      path: `${options.path}/block_db`,
     });
     this.datastore = new LevelDatastore(
       this._datadb as unknown as Level<string, Uint8Array>,
@@ -57,6 +57,7 @@ export class Skfs {
     this.skCache = this._datadb.sublevel('sk_cache_db');
   }
 
+  #closed = true;
   #bitswap!: Bitswap;
   datastore: LevelDatastore;
   blockstore: LevelBlockstore;
@@ -71,6 +72,7 @@ export class Skfs {
     await this._datadb.open();
     await this.datastore.open();
     await this.skCache.open();
+    this.#closed = false;
   };
 
   async initBitswap(network: SkNetwork): Promise<void> {
@@ -234,11 +236,15 @@ export class Skfs {
   };
 
   close = async (): Promise<void> => {
+    if (this.#closed) {
+      return;
+    }
     await this.#bitswap?.stop();
     await this.skCache.close();
     await this.datastore.close();
     await this._datadb.close();
     await this._blockdb.close();
+    this.#closed = true;
   };
 }
 

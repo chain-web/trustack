@@ -11,6 +11,7 @@ import {
   CONSENSUS_TIME_WINDOW_BASE,
   DO_CONSENSUS_INTERVAL,
 } from '../../config/index.js';
+import { NodeCollect } from './nodeCollect.js';
 // import { Slice } from './slice.js';
 
 interface ConsensusNewBlockData {
@@ -46,12 +47,14 @@ export class Consensus {
   constructor(blockService: BlockService, network: SkNetwork) {
     this.blockService = blockService;
     this.network = network;
+    this.nodeCollect = new NodeCollect(this.blockService, this.network);
     // this.slice = new Slice(this.db);
   }
 
   blockPrefix = 'sk-block-new';
   blockService: BlockService;
   network: SkNetwork;
+  nodeCollect: NodeCollect;
   // slice: Slice;
   // 是否已经同步完成，可以进行交易打包和参与共识
   private ready = true; // TODO default is false
@@ -68,6 +71,7 @@ export class Consensus {
 
   init = async (): Promise<void> => {
     // await this.slice.init();
+    await this.nodeCollect.init();
     // TODO
     await this.subNewBlock();
     this.doConsensus();
@@ -152,7 +156,7 @@ export class Consensus {
     // 收到的打包量大于总活跃节点量的 X%
     if (
       (this.blockService.blockBuffer.blockCount /
-        this.network.activeNodeCount) *
+        this.nodeCollect.activeNodeCount) *
         100 >
       CONSENSUS_NODE_PERCENT
     ) {
@@ -214,6 +218,7 @@ export class Consensus {
   // };
 
   async stop(): Promise<void> {
+    await this.nodeCollect.stop();
     this.consensusInterval && clearTimeout(this.consensusInterval);
   }
 }
