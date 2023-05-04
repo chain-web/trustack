@@ -42,3 +42,5 @@
 //     ns: ['translations'],
 //     defaultNS: 'translations',
 //   });
+
+export default {};

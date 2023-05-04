@@ -68,7 +68,7 @@ export default function Login() {
             <div>
               <input
                 type="text"
-                placeholder={t(lanKeys.did)}
+                // placeholder={t(lanKeys.did)}
                 value={did}
                 onChange={(e) => {
                   setdid(e.target.value);
@@ -78,7 +78,7 @@ export default function Login() {
             <div>
               <input
                 type="text"
-                placeholder={t(lanKeys.privKey)}
+                // placeholder={t(lanKeys.privKey)}
                 value={privKey}
                 onChange={(e) => {
                   setprivKey(e.target.value);

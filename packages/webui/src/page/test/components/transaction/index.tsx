@@ -14,13 +14,13 @@ export default function Transaction() {
       <Form form={form}>
         <FormItem label="to" name={TRANS_TO}>
           <Select>
-            {accounts.map((ele) => {
+            {/* {accounts.map((ele) => {
               return (
                 <Select.Option key={ele.id} value={ele.id}>
                   {ele.id}
                 </Select.Option>
               );
-            })}
+            })} */}
           </Select>
         </FormItem>
         <FormItem label="to" name={TRANS_TO}>
