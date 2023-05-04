@@ -7,6 +7,7 @@
     "dev": "vite",
     "e2e": "playwright test",
     "build": "tsc && vite build",
+    "static-server": "node ./e2e/server.mjs",
     "preview": "vite preview"
   },
   "engines": {
@@ -15,30 +16,30 @@
   "dependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@trustack/node-modules-polyfill": "^0.2.5",
+    "@trustack/rollup-plugin-node-polyfills": "^0.2.2",
     "@xstate/react": "^3.2.1",
     "antd": "^5.4.0",
     "esbuild": "^0.17.16",
     "i18next": "^22.4.14",
     "i18next-browser-languagedetector": "^7.0.1",
+    "mime-types": "^2.1.35",
     "multiformats": "^11.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-i18next": "^12.2.0",
-    "react-json-view": "^1.21.3",
     "react-router": "^6.10.0",
     "react-router-dom": "^6.10.0",
-    "@trustack/rollup-plugin-node-polyfills": "^0.2.2",
     "skchain": "workspace:^1.0.0",
     "xstate": "^4.37.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.32.2",
+    "@rollup/plugin-inject": "^5.0.3",
     "@types/react": "^18.0.33",
     "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react-swc": "^3.3.0",
     "sass": "^1.61.0",
     "typescript": "^4.9.5",
-    "vite": "^4.2.1",
-    "vite-plugin-imp": "^2.3.1"
+    "vite": "^4.2.1"
   }
 }

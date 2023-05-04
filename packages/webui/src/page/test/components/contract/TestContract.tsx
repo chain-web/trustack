@@ -35,18 +35,18 @@ export const TestContract = (CodeClass: any, _contractCode: Uint8Array) => {
               setfunc(e);
             }}
           >
-            {Object.keys(codeClass).map((ele) => (
+            {/* {Object.keys(codeClass).map((ele) => (
               <Select.Option key={ele} value={ele}>
                 {ele}
               </Select.Option>
-            ))}
+            ))} */}
           </Select>
           arg:
           <Input
             value={arg}
-            onChange={(e) => {
-              setarg(e.target.value);
-            }}
+            // onChange={(e) => {
+            //   setarg(e.target.value);
+            // }}
           />
           <Button
             // disabled={!context.chain.started}

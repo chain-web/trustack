@@ -35,9 +35,9 @@ export default function Devtool() {
       <div className="get-dag-cid">
         <Input
           value={cid}
-          onChange={(e) => {
-            setCid(e.target.value);
-          }}
+          // onChange={(e) => {
+          //   setCid(e.target.value);
+          // }}
         />
         <Button
           onClick={() => {
