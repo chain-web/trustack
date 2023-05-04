@@ -59,6 +59,6 @@ pub(crate) fn init_sk(context: &mut Context<'_>, storage: Uint8Array) -> Result<
         )
         .build();
 
-    context.register_global_property("__sk_utils__", obj, attribute);
+    context.register_global_property("__sk_utils__", obj, attribute).unwrap();
     Ok(())
 }
