@@ -2,13 +2,14 @@
   "name": "@faithstack/contract_builder",
   "version": "1.0.0",
   "description": "",
-  "main": "src/node",
+  "main": "dist/src/node.mjs",
   "browser": "src/browser",
   "type": "module",
   "bin": "dist/cli.js",
   "typings": "./src/index.ts",
   "scripts": {
-    "test": "tsc -p ./tsconfig.build.json && node ./dist/src/cli.js build ./examples/coin/index.ts && rm -rf ./dist"
+    "test": "tsc -p ../tsconfig.build.json && node ./dist/src/cli.js build ./examples/coin/index.ts && rm -rf ./dist",
+    "build": "tsc -p ./tsconfig.build.json"
   },
   "keywords": [],
   "author": "",

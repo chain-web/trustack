@@ -1,5 +1,7 @@
 import { bytes } from 'multiformats';
-import { evaluate } from '../src/index.js';
+// jest not support esm, so use dist/index.mjs
+// bad import, but it's ok for test
+import { evaluate } from '../dist/index.mjs';
 
 describe('contract evaluate', () => {
   describe('test', () => {

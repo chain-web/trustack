@@ -21,6 +21,8 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
+      - name: build packages
+        run: pnpm run -r build
       - name: Install Playwright Browsers
         run: cd packages/webui && pnpm exec playwright install --with-deps
       - name: Build fe
