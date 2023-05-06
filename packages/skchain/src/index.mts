@@ -4,7 +4,7 @@ export { evalFunction } from './lib/contract/vm.js';
 
 export { SKChain } from './skChain.js';
 export { Address } from './mate/address.js';
-export { Transaction } from './mate//transaction.js';
+export { Transaction } from './mate/transaction.js';
 export { skCacheKeys } from './lib/skfs/key.js';
 import { Cache } from './lib/skfs/cache.browser.js';
 export { TransStatus } from './lib/transaction/index.js';

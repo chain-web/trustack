@@ -181,7 +181,10 @@ importers:
       '@types/node': 18.16.3
 
   packages/sknode:
-    specifiers: {}
+    specifiers:
+      skchain: workspace:^1.0.0
+    dependencies:
+      skchain: link:../skchain
 
   packages/skvm:
     specifiers:

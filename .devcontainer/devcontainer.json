@@ -32,7 +32,7 @@
     "eamodio.gitlens",
     "GitHub.vscode-pull-request-github",
     "ms-playwright.playwright",
-    "rust-lang.rust-analyzer",
+    // "rust-lang.rust-analyzer",
     "bungcip.better-toml",
     "GitHub.copilot"
   ],
