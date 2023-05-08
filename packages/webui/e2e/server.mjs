@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 
 createServer((req, res) => {
   const __dirname = dirname(__filename);
-  const path = join(__dirname, '../', parse(req.url, true).path);
+  const path = join(__dirname, '../dist', parse(req.url, true).path);
   // console.log(path);
   readFile(path, (err, data) => {
     if (err) {

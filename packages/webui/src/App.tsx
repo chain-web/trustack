@@ -9,7 +9,6 @@ function App() {
     { path: '/test', element: <TestPage /> },
     { path: '/ci', element: <CiPage /> },
     { path: 'vis', element: <VisPage /> },
-    { path: '*', element: <CiPage /> },
   ]);
   return element;
 }

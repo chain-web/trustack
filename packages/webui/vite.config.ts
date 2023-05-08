@@ -7,18 +7,27 @@ import { NodeModulesPolyfillPlugin } from '@trustack/node-modules-polyfill';
 // You don't need to add this to deps, it's included by @esbuild-plugins/node-modules-polyfill
 import rollupNodePolyFill from '@trustack/rollup-plugin-node-polyfills';
 import inject from '@rollup/plugin-inject';
+const devMode = process.env.NODE_ENV === 'development';
+
+const resolveConfig = {
+  alias: {
+    events:
+      'node_modules/@trustack/rollup-plugin-node-polyfills/polyfills/events.js',
+  },
+};
+
+if (!devMode) {
+  // both Buffer and buffer are required for some packages
+  (resolveConfig.alias as { [find: string]: string }).buffer =
+    'node_modules/@trustack/rollup-plugin-node-polyfills/polyfills/buffer-es6.js';
+  (resolveConfig.alias as { [find: string]: string }).Buffer =
+    'node_modules/@trustack/rollup-plugin-node-polyfills/polyfills/buffer-es6.js';
+}
 
 // https://vitejs.dev/config/
 export default defineConfig({
   resolve: {
-    alias: {
-      events:
-        'node_modules/@trustack/rollup-plugin-node-polyfills/polyfills/events.js',
-      buffer:
-        'node_modules/@trustack/rollup-plugin-node-polyfills/polyfills/buffer-es6.js',
-      Buffer:
-        'node_modules/@trustack/rollup-plugin-node-polyfills/polyfills/buffer-es6.js',
-    },
+    ...resolveConfig,
   },
   optimizeDeps: {
     esbuildOptions: {
@@ -38,7 +47,6 @@ export default defineConfig({
       supported: { bigint: true },
     },
   },
-  base: '/dist',
   define: {
     global: 'globalThis',
   },
