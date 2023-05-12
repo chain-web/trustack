@@ -9,6 +9,7 @@ thumbs.db
 .pnpm-store
 .leveldb
 __contract_code__.js
+.logs
 
 .eslintcache
 

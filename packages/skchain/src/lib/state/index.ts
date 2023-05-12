@@ -55,12 +55,12 @@ const chainMachine = createMachine<ChainContext, ChainEvents>(
           INITIALIZE: {
             target: 'inactive.initializing',
             actions: [
-              () => {
-                message.info('to initializing sk state');
-              },
               assign({
                 initOptions: (_ctx, e: InitEvent) => e.data,
               }),
+              () => {
+                message.info('to initializing sk state');
+              },
             ],
           },
         },
@@ -104,6 +104,7 @@ class ChainState {
   }
   state = chainStateInterpret;
   send: (typeof chainStateInterpret)['send'];
+  name = 'skchain';
 
   onLifecycle(step: LifecycleStap, cb: (data?: string[]) => void): void {
     this.state.onEvent((event) => {

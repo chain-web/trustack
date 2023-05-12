@@ -1,5 +1,7 @@
+import { testAccounts } from '../../../tests/testAccount.js';
 import { genesis } from '../../config/testnet.config.js';
 import { BloomFilter } from '../../lib/ipld/logsBloom/bloomFilter.js';
+import { signById } from '../../lib/p2p/did.js';
 import type { Account } from '../account.js';
 import { newAccount } from '../account.js';
 import { Address } from '../address.js';
@@ -7,15 +9,15 @@ import { Block } from '../block.js';
 import { Transaction } from '../transaction.js';
 import { createCborBlock, createEmptyStorageRoot } from '../utils.js';
 
-export const testDid = '12D3KooWL8qb3L8nKPjDtQmJU8jge5Qspsn6YLSBei9MsbTjJDr8';
+export const testDid = testAccounts[0].id;
 export const createTestAccount = async (): Promise<Account> => {
   const storageRoot = await createEmptyStorageRoot();
   const account = newAccount(testDid, storageRoot);
   return account;
 };
 
-export const createTestTranscation = (): Transaction => {
-  return new Transaction({
+export const createTestTranscation = async (): Promise<Transaction> => {
+  const trans = new Transaction({
     from: new Address(testDid),
     accountNonce: 1n,
     cu: 1n,
@@ -24,13 +26,20 @@ export const createTestTranscation = (): Transaction => {
     amount: 1n,
     ts: Date.now(),
   });
+
+  const signature = await signById(
+    testAccounts[0].privKey,
+    await trans.getSignatureData(),
+  );
+  trans.signature = signature;
+  return trans;
 };
 
 export const createTestBlock = async (
   number = 1n,
   parent = genesis.parent,
 ): Promise<Block> => {
-  const transaction = createTestTranscation();
+  const transaction = await createTestTranscation();
   await transaction.genHash();
   const block = new Block({
     parent,

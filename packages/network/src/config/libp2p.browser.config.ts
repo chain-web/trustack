@@ -17,7 +17,7 @@ export const createConfig = (): Libp2pOptions => {
       }),
       webRTC({}),
     ],
-    pubsub: gossipsub(),
+    pubsub: gossipsub({ allowPublishToZeroPeers: true }),
     dht: kadDHT(),
   };
 };

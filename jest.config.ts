@@ -20,6 +20,7 @@ const config = {
       },
       testMatch: [
         '<rootDir>/packages/skchain/tests/**/?(*.)+(spec|test).[jt]s?(x)',
+        '<rootDir>/packages/sknode/tests/**/?(*.)+(spec|test).[jt]s?(x)',
         '<rootDir>/packages/skchain/src/**/__tests__/**/?(*.)+(spec|test).[jt]s?(x)',
         '<rootDir>/packages/contract/tests/**/?(*.)+(spec|test).[jt]s?(x)',
       ],

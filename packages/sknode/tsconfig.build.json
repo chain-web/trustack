@@ -18,6 +18,6 @@
     "outDir": "./dist",
     "baseUrl": "./src"
   },
-  "include": ["src", "tests"],
+  "include": ["src"],
   "esm": true
 }

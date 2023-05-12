@@ -1,12 +1,16 @@
-import { SKChain } from 'skchain';
+import { createHTTPServer } from '@trpc/server/adapters/standalone';
+import { rpcPort } from './config.mjs';
+import { chainRouter } from './rpc/router.mjs';
+import { chain } from './skchain.mjs';
 
-const createChain = async () => {
-  const chain = new SKChain({
-    tcpPort: 6622,
-    wsPort: 6723,
+const createRPCServer = async () => {
+  const server = createHTTPServer({
+    router: chainRouter,
   });
-  await chain.run();
-  return chain;
+
+  server.listen(rpcPort);
+  // eslint-disable-next-line no-console
+  chain.message.info(`-------rpc server start at ${rpcPort}`);
 };
 
-createChain();
+createRPCServer();

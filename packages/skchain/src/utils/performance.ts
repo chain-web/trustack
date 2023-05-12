@@ -16,7 +16,19 @@ export const getStack = (): string[] => {
   // console.log(err.stack);
   if (err.stack) {
     err.stack.split('\n').forEach((line) => {
-      const call = line.match(/(?<=at\s)([\s\S])+(?=\s\()/);
+      const call = line.match(/(?<=at\s)([\s\S])+?(?=(\s\(|\sfile:))/);
+      // test case
+      // at testClass.descriptor.value (/workspaces/faith-stack/packages/skchain/src/utils/performance.ts:36:23)
+
+      // at async runTest (/workspaces/faith-stack/node_modules/.pnpm/jest-runner@29.4.1/node_modules/jest-runner/build/runTest.js:444:34)
+
+      // at SKChain.decorateFunction [as transaction] (/workspaces/faith-stack/packages/skchain/src/utils/performance.ts:93:29)
+
+      // at Object.<anonymous> (/workspaces/faith-stack/packages/skchain/tests/node.spec.ts:28:19)
+
+      //     at async file:///workspaces/faith-stack/packages/sknode/dist/src/skchain.mjs:10:22
+
+      //     at async file:///workspaces/faith-stack/packages/sknode/dist/src/skchain.mjs:10:22
       if (call && call[0]) {
         stack.unshift(call[0]);
       } else {

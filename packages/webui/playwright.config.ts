@@ -42,7 +42,7 @@ export default defineConfig({
     baseURL: 'http://localhost:5555/',
   },
   webServer: {
-    command: 'npm run static-server',
+    command: 'npm run server',
     url: 'http://localhost:5555',
     timeout: 120 * 1000,
     reuseExistingServer: !process.env.CI,

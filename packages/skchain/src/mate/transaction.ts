@@ -3,26 +3,17 @@ import { Address } from './address.js';
 import type { DefaultBlockType } from './utils.js';
 import { createCborBlock, takeBlockValue } from './utils.js';
 
-export interface transMeta {
-  from: Transaction['from'];
-  amount: Transaction['amount'];
-  recipient: Transaction['recipient'];
-  cu: Transaction['cu'];
-  signature: string;
-  payload?: Transaction['payload'];
-  ts: number;
-}
-
 export interface TransactionOption {
-  from: Address;
-  accountNonce: bigint;
-  cu: bigint;
-  cuLimit: bigint;
-  recipient: Address;
-  amount: bigint;
+  from: Transaction['from'];
+  accountNonce: Transaction['accountNonce'];
+  cu: Transaction['cu'];
+  cuLimit: Transaction['cuLimit'];
+  recipient: Transaction['recipient'];
+  amount: Transaction['amount'];
+  signature?: Transaction['signature'];
   payload?: Transaction['payload'];
-  ts: number;
-  hash?: string;
+  ts: Transaction['ts'];
+  hash?: Transaction['hash'];
 }
 
 export type TransactionBinaryMeta = string[];
@@ -37,6 +28,7 @@ export class Transaction {
     this.recipient = opt.recipient;
     this.amount = opt.amount;
     this.payload = opt.payload;
+    this.signature = opt.signature;
     this.ts = opt.ts;
     if (opt.hash) {
       this.hash = opt.hash;
@@ -47,6 +39,7 @@ export class Transaction {
   cu: bigint;
   cuLimit: bigint;
   from: Address;
+  signature?: string;
   recipient: Address;
   amount: bigint;
   payload?: {
@@ -56,6 +49,19 @@ export class Transaction {
   };
   hash!: string;
   ts: number;
+
+  getSignatureData = async (): Promise<Uint8Array> => {
+    const cborBlock = await createCborBlock<TransactionBinaryMeta>([
+      this.accountNonce.toString(),
+      this.amount.toString(),
+      this.cu.toString(),
+      this.cuLimit.toString(),
+      this.from.did,
+      JSON.stringify(this.payload || ''),
+      this.recipient.did,
+    ]);
+    return cborBlock.bytes;
+  };
 
   genHash = async (): Promise<void> => {
     const obj = {
@@ -83,7 +89,8 @@ export class Transaction {
       hash: transData[5],
       payload: JSON.parse(transData[6]) || undefined,
       recipient: new Address(transData[7]),
-      ts: Number(transData[8]),
+      signature: transData[8],
+      ts: Number(transData[9]),
     });
   };
 
@@ -94,6 +101,9 @@ export class Transaction {
     if (!this.hash) {
       await this.genHash();
     }
+    if (!this.signature) {
+      throw new Error('Transaction signature is empty');
+    }
     const cborBlock = await createCborBlock<TransactionBinaryMeta>([
       this.accountNonce.toString(),
       this.amount.toString(),
@@ -103,6 +113,7 @@ export class Transaction {
       this.hash,
       JSON.stringify(this.payload || ''),
       this.recipient.did,
+      this.signature,
       this.ts.toString(),
     ]);
 
