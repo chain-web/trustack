@@ -1,6 +1,5 @@
-import { bytes } from 'multiformats';
 import { BUILDER_NAMES } from '@faithstack/contract';
-import type { Transaction, transMeta } from '../../mate/transaction.js';
+import type { Transaction } from '../../mate/transaction.js';
 import { genetateDid, verifyById } from '../p2p/did.js';
 import { message } from '../../utils/message.js';
 import { transDemoFn } from '../contracts/transaction_demo.js';
@@ -15,7 +14,11 @@ import {
 import type { BlockService } from '../ipld/blockService/blockService.js';
 import type { Consensus } from '../consensus/index.js';
 import { skCacheKeys } from '../skfs/key.js';
-import { createEmptyStorageRoot, createRawBlock } from '../../mate/utils.js';
+import {
+  createEmptyStorageRoot,
+  createRawBlock,
+  takeBlockValue,
+} from '../../mate/utils.js';
 import { newAccount } from '../../mate/account.js';
 import type { Address } from '../../mate/address.js';
 import { Contract } from '../contract/index.js';
@@ -25,7 +28,8 @@ import {
   logClassPerformance,
   logPerformance,
 } from '../../utils/performance.js';
-import { genTransMeta, genTransactionClass } from './trans.pure.js';
+import { PubsubTopic } from '../skfs/network.js';
+import { genTransactionClass } from './trans.pure.js';
 
 export enum TransStatus {
   'transing' = 'transing',
@@ -304,50 +308,32 @@ export class TransactionAction {
 
   async handelTransaction(trans: Transaction): Promise<void> {
     // 处理接受到的或者本地发起的交易
-
     await this.add(trans);
-    // test contract
-    // const res = this.contract.runFunction(transContract, {
-    //   from: trans.from,
-    //   recipient: trans.recipient,
-    //   amount: trans.amount,
-    // });
-    // message.info(res);
   }
 
   private async initTransactionListen() {
     // 接收交易
-    // await this.chain.db.pubsub.subscribe(
-    //   peerEvent.transaction,
-    //   this.receiveTransaction,
-    // );
+    await this.consensus.network.subscribe(
+      PubsubTopic.TRANSACTION,
+      this.receiveTransaction.bind(this),
+    );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private async receiveTransaction(data: any) {
+  private async receiveTransaction(data: Uint8Array) {
     // 接收p2p网络里的交易，并塞到交易列表
-    if (
-      data.from === this.blockService.db.cacheGetExist(skCacheKeys.accountId)
-    ) {
-      // 不再处理自己发出的交易，因为已经直接添加到了队列
-      return;
-    }
-    const tm: transMeta = JSON.parse(bytes.toString(data.data));
-    // parse bigNumber
-    tm.amount = BigInt(tm.amount);
-    tm.cu = BigInt(tm.cu);
-    const signature = tm.signature;
+    const trans = await takeBlockValue<Transaction>(data);
+    message.info('receive trans from network', trans.hash);
+    // verify signature
+    const signature = trans.signature;
     if (
       signature &&
       (await verifyById(
-        tm.from.did,
+        trans.from.did,
         signature,
-        // 删掉signature验证签名
-        bytes.fromString(JSON.stringify({ ...tm, signature: undefined })),
+        await trans.getSignatureData(),
       ))
     ) {
       // 交易签名验证通过
-      const trans = await genTransactionClass(tm);
       await this.handelTransaction(trans);
     } else {
       message.info('trans unlow');
@@ -359,25 +345,30 @@ export class TransactionAction {
     //  unbindTransactionListen
   }
 
-  async transaction(
-    tm: Pick<transMeta, 'amount' | 'recipient'> & {
-      payload?: Transaction['payload'];
-    },
-  ): Promise<{ trans?: Transaction | undefined }> {
+  async transaction(transMeta: {
+    amount: Transaction['amount'];
+    recipient: Transaction['recipient'];
+
+    payload?: Transaction['payload'];
+  }): Promise<{ trans?: Transaction | undefined }> {
     // 供外部调用的发起交易方法
-    const transMeta = await genTransMeta(
-      tm,
+    const trans = await genTransactionClass(
+      transMeta.amount,
+      transMeta.recipient,
       await this.blockService.db.cacheGetExist(skCacheKeys.accountId),
       await this.blockService.db.cacheGetExist(skCacheKeys.accountPrivKey),
+      transMeta.payload,
     );
-    // TODO
-    // await this.blockService.db.pubsub.publish(
-    //   'peerEvent.transaction',
-    //   bytes.fromString(JSON.stringify(transMeta)),
-    // );
-    if (transMeta) {
-      const trans = await genTransactionClass(transMeta);
+
+    if (trans) {
+      message.info('send trans', trans.hash);
       await this.handelTransaction(trans);
+      // pub to p2p network
+      const transData = await trans.toCborBlock();
+      await this.consensus.network.publish(
+        PubsubTopic.TRANSACTION,
+        transData.bytes,
+      );
       return { trans };
     }
     return {};

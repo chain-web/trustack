@@ -8,6 +8,7 @@ export const genInitOption = (
 ): SKChainOption => {
   const db = option?.db || new Skfs({ path: option?.datastorePath || 'skfs' });
   const initOption: SKChainOption = {
+    name: option?.name || 'skchain',
     db,
     blockService: option?.blockService || new BlockService(db),
     datastorePath: option?.datastorePath || 'skfs',

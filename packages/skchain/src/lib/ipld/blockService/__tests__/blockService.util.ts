@@ -21,6 +21,7 @@ export const createTestBlockRoot = async (
 export const createTestBlockService = async (opts?: {
   name?: string;
   skfs?: Skfs;
+  noInitState?: boolean; // 是否初始化state
 }): Promise<{ bs: BlockService; close: () => void }> => {
   let skfs = opts?.skfs;
   if (!skfs) {
@@ -29,9 +30,11 @@ export const createTestBlockService = async (opts?: {
   const blockRoot = await createTestBlockRoot(`${opts?.name}_blockRoot`);
   const stateRoot = await createTestStateRoot(`${opts?.name}_stateRoot`);
   const root = new BlockService(skfs, { blockRoot, stateRoot });
-  chainState.send('INITIALIZE', {
-    data: await genInitOption({ db: skfs, blockService: root }),
-  });
+  if (!opts?.noInitState) {
+    chainState.send('INITIALIZE', {
+      data: await genInitOption({ db: skfs, blockService: root }),
+    });
+  }
   await root.init();
   return {
     bs: root,

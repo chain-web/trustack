@@ -15,6 +15,7 @@ import type { Skfs } from './lib/skfs/index.js';
 import type { BlockService } from './lib/ipld/blockService/blockService.js';
 
 export interface SKChainOption {
+  name: string;
   genesis: GenesisConfig;
   db: Skfs;
   blockService: BlockService;
@@ -31,6 +32,8 @@ export interface SKChainRunOpts {
 export class SKChain {
   constructor(option?: Partial<SKChainOption>) {
     const initOption = genInitOption(option);
+    this.chainState.name = initOption.name;
+    message.init();
     this.chainState.send('INITIALIZE', {
       data: initOption,
     });
@@ -56,6 +59,7 @@ export class SKChain {
   // 数据存取服务
   db: Skfs;
   network: SkNetwork;
+  message = message;
 
   // 交易
   transAction: TransactionAction;
