@@ -1,10 +1,10 @@
 import { SKChain } from 'skchain';
-import { rpcPort } from './config.mjs';
+import { rpcPort, tcpPort, wsPort } from './config.mjs';
 
 const createChain = async () => {
   const chain = new SKChain({
-    tcpPort: 6622,
-    wsPort: 6723,
+    tcpPort,
+    wsPort,
     name: rpcPort.toString(),
   });
 

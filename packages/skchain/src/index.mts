@@ -8,6 +8,7 @@ export { Transaction } from './mate/transaction.js';
 export { skCacheKeys } from './lib/skfs/key.js';
 import { Cache } from './lib/skfs/cache.browser.js';
 export { TransStatus } from './lib/transaction/index.js';
+export type { TransactionOption } from './lib/transaction/index.js';
 export { LifecycleStap } from './lib/state/lifecycle.js';
 
 export { BaseContract } from './contractHelper.js';

@@ -12,6 +12,7 @@ import {
   createEmptyStorageRoot,
 } from '../../../mate/utils.js';
 import { Genesis } from '../../genesis/index.js';
+import { message } from '../../../utils/message.js';
 import { isTxInBlock } from './util.js';
 import { BlockRoot } from './blockRoot.js';
 import { NextBlock } from './nextBlock.js';
@@ -296,6 +297,7 @@ export class BlockService {
       const hasSendAccount = await this.stateRoot.get(trans.from.did);
       const hasRecipientAccount = await this.stateRoot.get(trans.recipient.did);
       if (!hasSendAccount) {
+        message.info('no send account: ', trans.from.did);
         throw new Error('no send account');
       }
       if (!hasRecipientAccount) {

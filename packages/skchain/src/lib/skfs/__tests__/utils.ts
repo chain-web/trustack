@@ -1,5 +1,5 @@
 import type { DidJson } from '../../p2p/did.js';
-import { Skfs } from '../index.js';
+import { Skfs, leveldb_prefix } from '../index.js';
 import { Mpt } from '../mpt.js';
 import { SkNetwork } from '../network.js';
 
@@ -83,7 +83,7 @@ const rmDbFile = async (name: string = '') => {
     // eslint-disable-next-line import/no-nodejs-modules
     const { existsSync, rmSync } = (await import('fs')).default;
 
-    const dbFile = resolve(process.cwd(), `.leveldb/${name}`);
+    const dbFile = resolve(process.cwd(), `${leveldb_prefix()}${name}`);
     if (existsSync(dbFile)) {
       rmSync(dbFile, { recursive: true, force: true });
     }

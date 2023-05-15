@@ -19,7 +19,7 @@ export class Mpt {
       return;
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    this.db = new MptDb(new Level(`${leveldb_prefix}${name}`) as any);
+    this.db = new MptDb(new Level(`${leveldb_prefix()}${name}`) as any);
   }
 
   private db: MptDb;
