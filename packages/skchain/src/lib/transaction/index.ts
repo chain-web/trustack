@@ -31,6 +31,13 @@ import {
 import { PubsubTopic } from '../skfs/network.js';
 import { genTransactionClass } from './trans.pure.js';
 
+export interface TransactionOption {
+  amount: Transaction['amount'];
+  recipient: Transaction['recipient'];
+
+  payload?: Transaction['payload'];
+}
+
 export enum TransStatus {
   'transing' = 'transing',
   'waiting' = 'waiting',
@@ -345,12 +352,9 @@ export class TransactionAction {
     //  unbindTransactionListen
   }
 
-  async transaction(transMeta: {
-    amount: Transaction['amount'];
-    recipient: Transaction['recipient'];
-
-    payload?: Transaction['payload'];
-  }): Promise<{ trans?: Transaction | undefined }> {
+  async transaction(
+    transMeta: TransactionOption,
+  ): Promise<{ trans?: Transaction | undefined }> {
     // 供外部调用的发起交易方法
     const trans = await genTransactionClass(
       transMeta.amount,

@@ -8,7 +8,7 @@ export const genInitOption = (
 ): SKChainOption => {
   const db = option?.db || new Skfs({ path: option?.datastorePath || 'skfs' });
   const initOption: SKChainOption = {
-    name: option?.name || 'skchain',
+    name: genInitName(option),
     db,
     blockService: option?.blockService || new BlockService(db),
     datastorePath: option?.datastorePath || 'skfs',
@@ -17,4 +17,8 @@ export const genInitOption = (
     genesis: option?.genesis || genesis,
   };
   return initOption;
+};
+
+export const genInitName = (option?: Partial<SKChainOption>): string => {
+  return option?.name || 'skchain';
 };

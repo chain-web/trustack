@@ -42,6 +42,20 @@ importers:
       ts-jest: 29.1.0_doipufordlnvh5g4adbwayvyvy
       typescript: 4.9.5
 
+  packages/common:
+    specifiers:
+      '@trpc/client': ^10.25.1
+      '@trpc/server': ^10.25.1
+      execa: ^7.1.1
+      skchain: workspace:^1.0.0
+      zod: ^3.21.4
+    dependencies:
+      '@trpc/client': 10.25.1_@trpc+server@10.25.1
+      '@trpc/server': 10.25.1
+      execa: 7.1.1
+      skchain: link:../skchain
+      zod: 3.21.4
+
   packages/contract:
     specifiers:
       '@faithstack/contract_builder': workspace:^1.0.0
@@ -184,12 +198,14 @@ importers:
     specifiers:
       '@trpc/client': ^10.25.1
       '@trpc/server': ^10.25.1
+      '@trustack/common': workspace:^1.0.0
       execa: ^7.1.1
       skchain: workspace:^1.0.0
       zod: ^3.21.4
     dependencies:
       '@trpc/client': 10.25.1_@trpc+server@10.25.1
       '@trpc/server': 10.25.1
+      '@trustack/common': link:../common
       execa: 7.1.1
       skchain: link:../skchain
       zod: 3.21.4

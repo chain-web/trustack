@@ -11,6 +11,7 @@ import { CID } from 'multiformats';
 import { sha256, sha512 } from 'multiformats/hashes/sha2';
 import { identity } from 'multiformats/hashes/identity';
 import type { DefaultBlockType, RawBlockType } from '../../mate/utils.js';
+import { chainState } from '../state/index.js';
 import type { SkNetwork } from './network.js';
 
 export interface SkfsOptions {
@@ -34,7 +35,7 @@ export type DefaultSunLevel = AbstractSublevel<
   string
 >;
 
-export const leveldb_prefix = '.leveldb/';
+export const leveldb_prefix = (): string => `.leveldb/${chainState.name}/`;
 
 const hashers: MultihashHasher[] = [sha256, sha512, identity];
 
@@ -263,7 +264,7 @@ export const generateLevelDb = <
     });
   }
 
-  return new Level<KDefault, VDefault>(`${leveldb_prefix}${options.path}`, {
+  return new Level<KDefault, VDefault>(`${leveldb_prefix()}${options.path}`, {
     keyEncoding: 'utf8',
     valueEncoding: 'view',
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -10,7 +10,7 @@ import { genetateDid } from './lib/p2p/did.js';
 import { Consensus } from './lib/consensus/index.js';
 import { logClassPerformance } from './utils/performance.js';
 import { SkNetwork } from './lib/skfs/network.js';
-import { genInitOption } from './lib/state/initOption.js';
+import { genInitName, genInitOption } from './lib/state/initOption.js';
 import type { Skfs } from './lib/skfs/index.js';
 import type { BlockService } from './lib/ipld/blockService/blockService.js';
 
@@ -31,8 +31,9 @@ export interface SKChainRunOpts {
 @logClassPerformance()
 export class SKChain {
   constructor(option?: Partial<SKChainOption>) {
+    // must be first
+    this.chainState.name = genInitName(option);
     const initOption = genInitOption(option);
-    this.chainState.name = initOption.name;
     message.init();
     this.chainState.send('INITIALIZE', {
       data: initOption,
