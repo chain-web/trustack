@@ -1,5 +1,5 @@
 export { genetateDid } from './lib/p2p/did.js';
-export type { DidJson } from './lib/p2p/did.js';
+export type { DidJson } from '@trustack/common';
 export { evalFunction } from './lib/contract/vm.js';
 
 export { SKChain } from './skChain.js';

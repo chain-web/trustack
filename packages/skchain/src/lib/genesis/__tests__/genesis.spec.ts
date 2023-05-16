@@ -1,4 +1,4 @@
-import { testAccounts } from '../../../../tests/testAccount.js';
+import { testAccounts } from '@trustack/common';
 import { createTestBlockService } from '../../ipld/blockService/__tests__/blockService.util.js';
 import { chainState } from '../../state/index.js';
 import { genInitOption } from '../../state/initOption.js';

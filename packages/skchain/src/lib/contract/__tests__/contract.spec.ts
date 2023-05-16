@@ -1,6 +1,6 @@
 import { BUILDER_NAMES } from '@faithstack/contract';
 import { bytes } from 'multiformats';
-import { testAccounts } from '../../../../tests/testAccount.js';
+import { testAccounts } from '@trustack/common';
 import { Address } from '../../../mate/address.js';
 import { Contract } from '../index.js';
 import { testCoinContract } from './contractTest.util.js';

@@ -1,10 +1,10 @@
+import { testAccounts, wait } from '@trustack/common';
 import { bytes } from 'multiformats';
 import { testCoinContract } from '../src/lib/contract/__tests__/contractTest.util.js';
 import { TransStatus } from '../src/lib/transaction/index.js';
 import { Address } from '../src/mate/address.js';
 import { performanceCollecter } from '../src/utils/performance.js';
-import { createTestSkChain, sleep } from './skchainTest.util.js';
-import { testAccounts } from './testAccount.js';
+import { createTestSkChain } from './skchainTest.util.js';
 
 describe('SkChain transaction', () => {
   describe('single node test', () => {
@@ -21,7 +21,7 @@ describe('SkChain transaction', () => {
         expect(status.status).toEqual(TransStatus.waiting);
       }
       // wait to stack
-      await sleep(8000);
+      await wait(8000);
       expect(trans).not.toEqual(undefined);
       if (trans) {
         const status = await chain.transAction.transStatus(trans.hash);
@@ -45,7 +45,7 @@ describe('SkChain transaction', () => {
         throw new Error('no trans');
       }
       // wait to stack
-      await sleep(12000);
+      await wait(12000);
       const status = await chain.transAction.transStatus(trans.hash);
       expect(status.status).toEqual(TransStatus.transed);
       let account = await chain.getAccount(trans.recipient.did);
@@ -75,7 +75,7 @@ describe('SkChain transaction', () => {
       if (!trans2) {
         throw new Error('no trans2');
       }
-      await sleep(10000);
+      await wait(10000);
       account = await chain.getAccount(trans.recipient.did);
       if (!account) {
         throw new Error('no contract account');
@@ -113,7 +113,7 @@ describe('SkChain transaction', () => {
       if (!trans2) {
         throw new Error('no trans2');
       }
-      await sleep(15000);
+      await wait(15000);
       const account = await chain.getAccount(trans.recipient.did);
       if (!account) {
         throw new Error('no contract account');

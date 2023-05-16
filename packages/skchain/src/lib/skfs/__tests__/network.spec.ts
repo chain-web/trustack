@@ -1,6 +1,5 @@
 import { bytes } from 'multiformats';
-import { sleep } from '../../../../tests/skchainTest.util.js';
-import { testAccounts } from '../../../../tests/testAccount.js';
+import { testAccounts, wait } from '@trustack/common';
 import { PubsubTopic } from '../network.js';
 import { connect2Network, createTestSkNetWork } from './utils.js';
 
@@ -40,12 +39,12 @@ describe('Sknetwork', () => {
       await connect2Network(n1, n2);
       await connect2Network(n2, n3);
 
-      await sleep(500);
+      await wait(500);
 
       await n1.publish(PubsubTopic.DID, bytes.fromString('hello'));
-      await sleep(300);
+      await wait(300);
       await n2.publish(PubsubTopic.DID, bytes.fromString('world'));
-      await sleep(2000);
+      await wait(2000);
 
       expect(msg1).toBe('world');
       expect(msg2).toBe('hello');
@@ -72,7 +71,7 @@ describe('Sknetwork', () => {
       expect(conn1.stat.status === 'OPEN').toBeTruthy();
       await conn1.close();
       await c2();
-      await sleep(1000);
+      await wait(1000);
       let conn2Error = false;
       try {
         await n1.network.node.dial(n2.network.node.peerId);

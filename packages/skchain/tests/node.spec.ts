@@ -1,6 +1,6 @@
+import { testAccounts } from '@trustack/common';
 import { performanceCollecter } from '../src/utils/performance.js';
 import { createTestSkChain } from './skchainTest.util.js';
-import { testAccounts } from './testAccount.js';
 
 describe('SkChain', () => {
   describe('test', () => {

@@ -1,5 +1,5 @@
 import { bytes } from 'multiformats';
-import { testAccounts } from '../../../../tests/testAccount.js';
+import { testAccounts } from '@trustack/common';
 import { createCborBlock, takeBlockValue } from '../../../mate/utils.js';
 import { testDid } from '../../../mate/__tests__/metaTest.util.js';
 import { connect2Network, createTestSkNetWork } from './utils.js';

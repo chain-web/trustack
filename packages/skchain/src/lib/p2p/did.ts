@@ -13,11 +13,7 @@ import { base58btc } from 'multiformats/bases/base58';
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string';
 import * as lsm from 'libsodium-wrappers-sumo';
 const { randomBytes, secretbox } = nacl;
-export interface DidJson {
-  id: string; // sk did
-  pubKey?: string; // libp2p
-  privKey: string; // libp2p
-}
+import type { DidJson } from '@trustack/common';
 
 // https://libsodium.gitbook.io/doc/advanced/ed25519-curve25519
 // https://github.com/paulmillr/noble-ed25519#getsharedsecretprivatekey-publickey

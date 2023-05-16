@@ -1,3 +1,4 @@
+import type { DidJson } from '@trustack/common';
 import { LifecycleStap } from './lib/state/lifecycle.js';
 import type { GenesisConfig } from './config/types.js';
 import { chainState } from './lib/state/index.js';
@@ -5,7 +6,6 @@ import { version } from './config/index.js';
 import { TransactionAction } from './lib/transaction/index.js';
 import { message } from './utils/message.js';
 import { skCacheKeys } from './lib/skfs/key.js';
-import type { DidJson } from './lib/p2p/did.js';
 import { genetateDid } from './lib/p2p/did.js';
 import { Consensus } from './lib/consensus/index.js';
 import { logClassPerformance } from './utils/performance.js';
