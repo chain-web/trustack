@@ -19,15 +19,15 @@
   "devDependencies": {
     "@types/libsodium-wrappers-sumo": "^0.7.5",
     "@types/lodash": "^4.14.194",
-    "@types/node": "^18.16.3"
+    "@types/node": "^18.16.10"
   },
   "dependencies": {
     "@ethereumjs/trie": "^5.0.5",
-    "@faithstack/contract": "workspace:^1.0.0",
+    "@trustack/contract": "workspace:^1.0.0",
     "@ipld/dag-cbor": "^9.0.0",
-    "@ipld/dag-pb": "^4.0.2",
-    "@libp2p/crypto": "^1.0.15",
-    "@libp2p/interface-peer-id": "^2.0.1",
+    "@ipld/dag-pb": "^4.0.3",
+    "@libp2p/crypto": "^1.0.17",
+    "@libp2p/interface-peer-id": "^2.0.2",
     "@libp2p/interface-pubsub": "^3.0.7",
     "@libp2p/peer-id-factory": "^2.0.3",
     "@trustack/common": "workspace:^1.0.0",

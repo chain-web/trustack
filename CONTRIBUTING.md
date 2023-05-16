@@ -2,13 +2,13 @@
 
 Welcome!
 
-To get you started on a good foot, we've created an easy overview of the most important things to get you started contributing code to faith stack.
+To get you started on a good foot, we've created an easy overview of the most important things to get you started contributing code to trustack.
 
 ## General Prerequisites
 
 We use devcontainer as dev env, so you need [config vscode devcontainer](https://code.visualstudio.com/docs/devcontainers/containers#_installation) at first.
 
-then you can open faith-stack directory then click open with devcontainer.
+then you can open trustack directory then click open with devcontainer.
 
 Tips: you should open terminal at vscode to run commands.
 

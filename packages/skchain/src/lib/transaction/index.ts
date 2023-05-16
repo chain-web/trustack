@@ -1,4 +1,4 @@
-import { BUILDER_NAMES } from '@faithstack/contract';
+import { BUILDER_NAMES } from '@trustack/contract';
 import type { Transaction } from '../../mate/transaction.js';
 import { genetateDid, verifyById } from '../p2p/did.js';
 import { message } from '../../utils/message.js';
