@@ -1,6 +1,5 @@
-import { sleep } from '../../../../tests/skchainTest.util.js';
+import { wait } from '@trustack/common';
 import { NETWORK_GET_NODE_COUNT_INTERVAL } from '../../../config/index.js';
-import { genetateDid } from '../../p2p/did.js';
 import type { NodeCollect } from '../nodeCollect.js';
 import { createTestNodeCollect } from './consensusTest.util.js';
 
@@ -9,7 +8,7 @@ describe('Sknetwork', () => {
     it('should nodeCollect init ok', async () => {
       const { nodeCollect, close } = await createTestNodeCollect();
       await nodeCollect.init();
-      await sleep(NETWORK_GET_NODE_COUNT_INTERVAL * 2.1);
+      await wait(NETWORK_GET_NODE_COUNT_INTERVAL * 2.1);
       await close();
     }, 100000);
     // TODO fix this test

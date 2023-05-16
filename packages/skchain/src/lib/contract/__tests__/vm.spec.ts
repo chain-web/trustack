@@ -1,4 +1,4 @@
-import { testAccounts } from '../../../../tests/testAccount.js';
+import { testAccounts } from '@trustack/common';
 import { Address } from '../../../mate/address.js';
 import { generateBaseContractCode } from '../codeSnippet.js';
 import { evalClass, evalFunction } from '../vm.js';

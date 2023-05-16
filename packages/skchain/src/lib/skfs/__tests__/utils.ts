@@ -1,4 +1,4 @@
-import type { DidJson } from '../../p2p/did.js';
+import type { DidJson } from '@trustack/common';
 import { Skfs, leveldb_prefix } from '../index.js';
 import { Mpt } from '../mpt.js';
 import { SkNetwork } from '../network.js';

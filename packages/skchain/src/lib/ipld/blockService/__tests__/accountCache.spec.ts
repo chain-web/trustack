@@ -1,4 +1,4 @@
-import { testAccounts } from '../../../../../tests/testAccount.js';
+import { testAccounts } from '@trustack/common';
 import { newAccount } from '../../../../mate/account.js';
 import { createEmptyStorageRoot } from '../../../../mate/utils.js';
 import { AccountCache } from '../accountCache.js';

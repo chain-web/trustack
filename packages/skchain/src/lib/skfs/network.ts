@@ -1,7 +1,7 @@
 import { Network, createConfig } from '@trustack/network';
 import type { LevelDatastore } from 'datastore-level';
 import type { Message } from '@libp2p/interface-pubsub';
-import type { DidJson } from '../p2p/did.js';
+import type { DidJson } from '@trustack/common';
 import { createPeerIdFromDidJson } from '../p2p/did.js';
 
 export enum PubsubTopic {

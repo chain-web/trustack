@@ -26,11 +26,3 @@ export const createTestSkChain = async (
 
   return chain;
 };
-
-export const sleep = async (timeout: number): Promise<boolean> => {
-  return new Promise((reslove) => {
-    setTimeout(() => {
-      reslove(true);
-    }, timeout);
-  });
-};

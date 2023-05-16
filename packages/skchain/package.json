@@ -30,6 +30,7 @@
     "@libp2p/interface-peer-id": "^2.0.1",
     "@libp2p/interface-pubsub": "^3.0.7",
     "@libp2p/peer-id-factory": "^2.0.3",
+    "@trustack/common": "workspace:^1.0.0",
     "@trustack/network": "workspace:^1.0.0",
     "abstract-level": "^1.0.3",
     "bitset": "^5.1.1",

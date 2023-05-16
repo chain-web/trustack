@@ -1,6 +1,5 @@
 import { bytes } from 'multiformats';
-import { sleep } from '../../../../tests/skchainTest.util.js';
-import { testAccounts } from '../../../../tests/testAccount.js';
+import { testAccounts, wait } from '@trustack/common';
 import { Address } from '../../../mate/address.js';
 import { testCoinContract } from '../../contract/__tests__/contractTest.util.js';
 import { TransStatus } from '../index.js';
@@ -44,7 +43,7 @@ describe('transcation', () => {
         payload: bytes.fromString(testCoinContract),
       });
       expect(trans).not.toEqual(undefined);
-      await sleep(8000);
+      await wait(8000);
       if (!trans) {
         throw new Error('no trans');
       } else {

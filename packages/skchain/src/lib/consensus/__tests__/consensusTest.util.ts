@@ -1,7 +1,7 @@
-import { testAccounts } from '../../../../tests/testAccount.js';
+import type { DidJson } from '@trustack/common';
+import { testAccounts } from '@trustack/common';
 import type { BlockService } from '../../ipld/blockService/blockService.js';
 import { createTestBlockService } from '../../ipld/blockService/__tests__/blockService.util.js';
-import type { DidJson } from '../../p2p/did.js';
 import type { Skfs } from '../../skfs/index.js';
 import { SkNetwork } from '../../skfs/network.js';
 import {

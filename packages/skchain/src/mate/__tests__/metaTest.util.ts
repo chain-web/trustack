@@ -1,4 +1,4 @@
-import { testAccounts } from '../../../tests/testAccount.js';
+import { testAccounts } from '@trustack/common';
 import { genesis } from '../../config/testnet.config.js';
 import { BloomFilter } from '../../lib/ipld/logsBloom/bloomFilter.js';
 import { signById } from '../../lib/p2p/did.js';

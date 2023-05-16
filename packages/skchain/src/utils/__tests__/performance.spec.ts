@@ -1,5 +1,5 @@
+import { wait } from '@trustack/common';
 import { bytes } from 'multiformats';
-import { sleep } from '../../../tests/skchainTest.util.js';
 import {
   logClassPerformance,
   logPerformance,
@@ -19,7 +19,7 @@ class testClass {
     return bytes.fromString(this.str);
   }
   async timer() {
-    await sleep(1100);
+    await wait(1100);
   }
 
   @logPerformance
