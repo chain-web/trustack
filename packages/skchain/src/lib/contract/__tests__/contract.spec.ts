@@ -1,4 +1,4 @@
-import { BUILDER_NAMES } from '@faithstack/contract';
+import { BUILDER_NAMES } from '@trustack/contract';
 import { bytes } from 'multiformats';
 import { testAccounts } from '@trustack/common';
 import { Address } from '../../../mate/address.js';

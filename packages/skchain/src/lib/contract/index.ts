@@ -1,5 +1,5 @@
-import type { EvalResult } from '@faithstack/contract';
-import { BUILDER_NAMES, evaluate, init } from '@faithstack/contract';
+import type { EvalResult } from '@trustack/contract';
+import { BUILDER_NAMES, evaluate, init } from '@trustack/contract';
 import { bytes } from 'multiformats';
 import { LOAD_CONTRACT_DATA_FUNC } from '../../config/index.js';
 import type { Address } from '../../mate/address.js';

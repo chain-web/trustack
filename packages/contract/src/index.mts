@@ -1,8 +1,8 @@
-export * from '@faithstack/contract_builder';
+export * from '@trustack/contract_builder';
 
-import { evaluate as evalFn } from '@faithstack/vm';
+import { evaluate as evalFn } from '@trustack/vm';
 import { EvalResult } from './proto_ts/eval_result.js';
-export { init } from '@faithstack/vm';
+export { init } from '@trustack/vm';
 
 export { EvalResult } from './proto_ts/eval_result.js';
 export interface EvaluateParams {

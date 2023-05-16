@@ -1,5 +1,5 @@
 {
-  "name": "@faithstack/contract_builder",
+  "name": "@trustack/contract_builder",
   "version": "1.0.0",
   "description": "",
   "main": "dist/src/node.mjs",
@@ -15,11 +15,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@faithstack/vm": "workspace:^1.0.0",
-    "@swc/core": "^1.3.35",
-    "@swc/wasm-web": "^1.3.35",
+    "@trustack/vm": "workspace:^1.0.0",
+    "@swc/core": "^1.3.58",
+    "@swc/wasm-web": "^1.3.58",
     "cac": "^6.7.14",
     "chalk": "^5.2.0",
-    "multiformats": "^10.0.2"
+    "multiformats": "^10.0.3"
   }
 }
