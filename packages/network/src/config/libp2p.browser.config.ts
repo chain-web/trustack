@@ -6,8 +6,11 @@ import { kadDHT } from '@libp2p/kad-dht';
 import { webSockets } from '@libp2p/websockets';
 import * as filters from '@libp2p/websockets/filters';
 import { webRTC } from '@libp2p/webrtc';
+import { circuitRelayTransport } from 'libp2p/circuit-relay';
+import { identifyService } from 'libp2p/identify';
+import type { IServiceMap } from '../netwoek.js';
 
-export const createConfig = (): Libp2pOptions => {
+export const createConfig = (): Libp2pOptions<IServiceMap> => {
   return {
     streamMuxers: [mplex()],
     connectionEncryption: [noise()],
@@ -16,8 +19,14 @@ export const createConfig = (): Libp2pOptions => {
         filter: filters.all,
       }),
       webRTC({}),
+      circuitRelayTransport(),
     ],
-    pubsub: gossipsub({ allowPublishToZeroPeers: true }),
-    dht: kadDHT(),
+    services: {
+      pubsub: gossipsub({ allowPublishToZeroPeers: true }),
+      dht: kadDHT({
+        allowQueryWithZeroPeers: true,
+      }),
+      identify: identifyService(),
+    },
   };
 };

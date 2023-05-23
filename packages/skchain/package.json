@@ -19,11 +19,10 @@
   "devDependencies": {
     "@types/libsodium-wrappers-sumo": "^0.7.5",
     "@types/lodash": "^4.14.194",
-    "@types/node": "^18.16.10"
+    "@types/node": "^18.16.14"
   },
   "dependencies": {
     "@ethereumjs/trie": "^5.0.5",
-    "@trustack/contract": "workspace:^1.0.0",
     "@ipld/dag-cbor": "^9.0.0",
     "@ipld/dag-pb": "^4.0.3",
     "@libp2p/crypto": "^1.0.17",
@@ -31,6 +30,7 @@
     "@libp2p/interface-pubsub": "^3.0.7",
     "@libp2p/peer-id-factory": "^2.0.3",
     "@trustack/common": "workspace:^1.0.0",
+    "@trustack/contract": "workspace:^1.0.0",
     "@trustack/network": "workspace:^1.0.0",
     "abstract-level": "^1.0.3",
     "bitset": "^5.1.1",
@@ -40,7 +40,7 @@
     "datastore-core": "^9.1.1",
     "datastore-level": "^10.1.1",
     "interface-datastore": "^8.2.0",
-    "ipfs-bitswap": "^17.0.2",
+    "ipfs-bitswap": "^18.0.0",
     "level": "^8.0.0",
     "libsodium-wrappers-sumo": "^0.7.11",
     "lodash": "^4.17.21",

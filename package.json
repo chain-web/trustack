@@ -24,10 +24,10 @@
   "homepage": "https://github.com/chain-web/trustack#readme",
   "dependencies": {
     "@types/jest": "^29.5.1",
-    "@types/node": "^18.16.10",
+    "@types/node": "^18.16.14",
     "@typescript-eslint/eslint-plugin": "^5.59.6",
     "@typescript-eslint/parser": "^5.59.6",
-    "eslint": "^8.40.0",
+    "eslint": "^8.41.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-define-config": "^1.20.0",
     "eslint-plugin-import": "^2.27.5",
@@ -49,6 +49,11 @@
       "datastore-core": {
         "dependencies": {
           "interface-datastore": "*"
+        }
+      },
+      "@libp2p/peer-store": {
+        "dependencies": {
+          "@libp2p/peer-id-factory": "*"
         }
       },
       "ipfs-bitswap": {

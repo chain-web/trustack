@@ -17,8 +17,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@trpc/client": "^10.25.1",
-    "@trpc/server": "^10.25.1",
+    "@trpc/client": "^10.27.1",
+    "@trpc/server": "^10.27.1",
     "@trustack/common": "workspace:^1.0.0",
     "execa": "^7.1.1",
     "multiformats": "^11.0.2",
