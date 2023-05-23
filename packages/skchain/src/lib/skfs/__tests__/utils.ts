@@ -63,11 +63,10 @@ export const connect2Network = async (
   n1: SkNetwork,
   n2: SkNetwork,
 ): Promise<void> => {
-  await n1.network.node.peerStore.addressBook.set(
-    n2.network.node.peerId,
-    n2.network.node.getMultiaddrs(),
-  );
-  await n1.network.node.dial(n2.network.node.peerId);
+  await n1.network.node.peerStore.patch(n2.network.node.peerId, {
+    multiaddrs: n2.network.node.getMultiaddrs(),
+  });
+  await n1.network.node.dial(n2.network.node.getMultiaddrs());
 };
 
 const rmDbFile = async (name: string = '') => {

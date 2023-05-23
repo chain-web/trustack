@@ -40,7 +40,7 @@ export class SkNetwork {
       createConfig({ tcpPort: this.tcpPort, wsPort: this.wsPort }),
     );
     await this.network.start();
-    this.network.node.pubsub.addEventListener(
+    this.network.node.services.pubsub.addEventListener(
       'message',
       ({ detail: msg }: CustomEvent<Message>) => {
         const handlers = this.#subscribeMap.get(msg.topic as PubsubTopic);
@@ -52,7 +52,7 @@ export class SkNetwork {
   }
 
   async publish(topic: PubsubTopic, data: Uint8Array): Promise<void> {
-    await this.network.node.pubsub.publish(topic, data);
+    await this.network.node.services.pubsub.publish(topic, data);
   }
 
   subscribe(topic: PubsubTopic, handler: (data: Uint8Array) => void): void {
@@ -60,7 +60,7 @@ export class SkNetwork {
       ...(this.#subscribeMap.get(topic) || []),
       handler,
     ]);
-    return this.network.node.pubsub.subscribe(topic);
+    return this.network.node.services.pubsub.subscribe(topic);
   }
 
   async stop(): Promise<void> {

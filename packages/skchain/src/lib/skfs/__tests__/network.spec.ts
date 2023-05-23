@@ -67,14 +67,14 @@ describe('Sknetwork', () => {
         6732,
         testAccounts[1],
       );
-      const conn1 = await n1.network.node.dial(n2.network.node.peerId);
+      const conn1 = await n1.network.node.dial(n2.network.node.getMultiaddrs());
       expect(conn1.stat.status === 'OPEN').toBeTruthy();
       await conn1.close();
       await c2();
       await wait(1000);
       let conn2Error = false;
       try {
-        await n1.network.node.dial(n2.network.node.peerId);
+        await n1.network.node.dial(n2.network.node.getMultiaddrs());
       } catch (error) {
         conn2Error = true;
       }
