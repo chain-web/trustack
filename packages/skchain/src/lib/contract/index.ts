@@ -36,9 +36,7 @@ export class Contract {
   public init = async (): Promise<void> => {
     await init();
     this.ready = true;
-    chainState.send('CHANGE', {
-      event: LifecycleStap.initedContract,
-    });
+    chainState.lifecycleChange(LifecycleStap.initedContract);
   };
 
   runContract = async (

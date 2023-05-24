@@ -13,6 +13,7 @@ __contract_code__.js
 
 .eslintcache
 
+coverage
 test-results/
 playwright-report/
 playwright/.cache/

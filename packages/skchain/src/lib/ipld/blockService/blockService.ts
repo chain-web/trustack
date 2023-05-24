@@ -141,9 +141,7 @@ export class BlockService {
   };
 
   init = async (): Promise<void> => {
-    chainState.send('CHANGE', {
-      event: LifecycleStap.initingBlockService,
-    });
+    chainState.lifecycleChange(LifecycleStap.initingBlockService);
     await this.initGenseis();
     const rootCid = this.db.cacheGet(skCacheKeys['sk-block']);
     if (!rootCid) {
@@ -151,9 +149,7 @@ export class BlockService {
     } else {
       await this.checkBlockRoot();
     }
-    chainState.send('CHANGE', {
-      event: LifecycleStap.initedBlockService,
-    });
+    chainState.lifecycleChange(LifecycleStap.initedBlockService);
   };
 
   initGenseis = async (): Promise<void> => {
@@ -165,12 +161,9 @@ export class BlockService {
 
     let checkeFinish = false;
     while (!checkeFinish) {
-      chainState.send('CHANGE', {
-        event: LifecycleStap.checkingBlockIndex,
-        data: [
-          `${this.checkedBlockHeight.toString()}/${this.headerBlockNumber}`,
-        ],
-      });
+      chainState.lifecycleChange(LifecycleStap.checkingBlockIndex, [
+        `${this.checkedBlockHeight.toString()}/${this.headerBlockNumber}`,
+      ]);
 
       const checkBlock = await this.getBlockByNumber(
         this.checkedBlockHeight + 1n,
@@ -186,28 +179,21 @@ export class BlockService {
         if (checkBlock) {
           //  check不通过，纠正数据, 删除错误块及其之后的块
           await this.deleteFromStartNUmber(this.checkedBlockHeight);
-
-          chainState.send('CHANGE', {
-            event: LifecycleStap.checkedBlockIndex,
-            data: [
-              'checkedBlockHeight: ',
-              'delete after',
-              this.checkedBlockHeight.toString(),
-            ],
-          });
+          chainState.lifecycleChange(LifecycleStap.checkedBlockIndex, [
+            'checkedBlock: ',
+            'delete after',
+            this.checkedBlockHeight.toString(),
+          ]);
         }
       }
       prevBlock = checkBlock;
     }
 
-    chainState.send('CHANGE', {
-      event: LifecycleStap.checkedBlockIndex,
-      data: [
-        'checkedBlock warn: ',
-        'delete after',
-        this.checkedBlockHeight.toString(),
-      ],
-    });
+    chainState.lifecycleChange(LifecycleStap.checkedBlockIndex, [
+      'checkedBlock: ',
+      'delete after',
+      this.checkedBlockHeight.toString(),
+    ]);
   };
 
   // check two block is adjacent

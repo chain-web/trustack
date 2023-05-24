@@ -12,6 +12,7 @@ import { sha256, sha512 } from 'multiformats/hashes/sha2';
 import { identity } from 'multiformats/hashes/identity';
 import type { DefaultBlockType, RawBlockType } from '../../mate/utils.js';
 import { chainState } from '../state/index.js';
+import { LifecycleStap } from '../state/lifecycle.js';
 import type { SkNetwork } from './network.js';
 
 export interface SkfsOptions {
@@ -41,6 +42,7 @@ const hashers: MultihashHasher[] = [sha256, sha512, identity];
 
 export class Skfs {
   constructor(options: SkfsOptions) {
+    chainState.lifecycleChange(LifecycleStap.creatingSkfs);
     this._datadb = generateLevelDb({
       useMemoryBb: options.useMemoryBb,
       path: `${options.path}/data_db`,
@@ -74,6 +76,7 @@ export class Skfs {
     await this.datastore.open();
     await this.skCache.open();
     this.#closed = false;
+    chainState.lifecycleChange(LifecycleStap.initedSkfs);
   };
 
   async initBitswap(network: SkNetwork): Promise<void> {
