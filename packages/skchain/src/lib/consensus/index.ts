@@ -51,7 +51,6 @@ export class Consensus {
     // this.slice = new Slice(this.db);
   }
 
-  blockPrefix = 'sk-block-new';
   blockService: BlockService;
   network: SkNetwork;
   nodeCollect: NodeCollect;
@@ -75,37 +74,36 @@ export class Consensus {
     // TODO
     await this.subNewBlock();
     this.doConsensus();
-    chainState.send('CHANGE', {
-      event: LifecycleStap.initedConsensus,
-    });
+    chainState.lifecycleChange(LifecycleStap.initedConsensus);
   };
 
   /**
-   * 广播新区块
-   * @param nextBlock
+   * publish new block
    */
   public pubNewBlock = async (nextBlock: Block): Promise<void> => {
     const blockCid = await nextBlock.toCborBlock();
-    // TODO
-    // const nextData: ConsensusNewBlockData = {
-    //   number: nextBlock.header.number,
-    //   cid: blockCid.cid.toString(),
-    // };
-    // await this.db.pubsub.publish(
-    //   this.blockPrefix,
-    //   bytes.fromString(JSON.stringify(nextData)),
-    // );
+    const nextData: ConsensusNewBlockData = {
+      number: nextBlock.header.number,
+      cid: blockCid.cid.toString(),
+    };
+    await this.network.publish(
+      PubsubTopic.NEW_BLOCK,
+      bytes.fromString(JSON.stringify(nextData)), // TODO use cbor block replace JSON.stringify
+    );
+    message.info('publish block: ', nextBlock.header.number.toString());
     await this.blockService.addBlock(nextBlock);
-    chainState.send('CHANGE', {
-      event: LifecycleStap.newBlock,
-      data: [blockCid.cid.toString(), nextBlock.header.number],
-    });
+    chainState.lifecycleChange(LifecycleStap.newBlock, [
+      blockCid.cid.toString(),
+      nextBlock.header.number.toString(),
+    ]);
   };
 
   // 接收其他节点广播的新区块
   subNewBlock = async (): Promise<void> => {
-    this.network.subscribe(PubsubTopic.BLOCK, async (data) => {
+    this.network.subscribe(PubsubTopic.NEW_BLOCK, async (data) => {
       const newData: ConsensusNewBlockData = JSON.parse(bytes.toString(data));
+      // TDOO
+      // add a fast check, only check the block number and block cid
       const blockBinary = await this.blockService.db.getBlock(
         CID.parse(newData.cid),
       );

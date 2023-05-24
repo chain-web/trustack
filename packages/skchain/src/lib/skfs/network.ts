@@ -6,7 +6,7 @@ import { createPeerIdFromDidJson } from '../p2p/did.js';
 
 export enum PubsubTopic {
   DID = 'did',
-  BLOCK = 'block',
+  NEW_BLOCK = 'newBlock',
   TRANSACTION = 'transaction',
   ACTIVENODE = 'activeNode',
 }

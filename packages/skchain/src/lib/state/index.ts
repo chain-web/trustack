@@ -106,6 +106,10 @@ class ChainState {
   send: (typeof chainStateInterpret)['send'];
   name = 'skchain';
 
+  lifecycleChange(step: LifecycleStap, data?: string[]) {
+    this.state.send({ type: 'CHANGE', event: step, data });
+  }
+
   onLifecycle(step: LifecycleStap, cb: (data?: string[]) => void): void {
     this.state.onEvent((event) => {
       const chainEvent = event as ChainEvents;

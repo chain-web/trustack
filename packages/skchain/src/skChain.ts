@@ -26,15 +26,16 @@ export interface SKChainOption {
 
 export interface SKChainRunOpts {
   user?: DidJson;
+  networkOnly?: boolean;
 }
 
 @logClassPerformance()
 export class SKChain {
   constructor(option?: Partial<SKChainOption>) {
-    // must be first
+    // must be first set chainState name
     this.chainState.name = genInitName(option);
     const initOption = genInitOption(option);
-    message.init();
+    this.chainState.lifecycleChange(LifecycleStap.initConfig);
     this.chainState.send('INITIALIZE', {
       data: initOption,
     });
@@ -82,7 +83,7 @@ export class SKChain {
 
   async run(opts?: SKChainRunOpts): Promise<void> {
     this.chainState.send('START');
-    this.chainState.send('CHANGE', { event: LifecycleStap.startCreateSKChain });
+    this.chainState.lifecycleChange(LifecycleStap.startCreateSKChain);
     const user = opts?.user || (await genetateDid());
     await this.db.cachePut(skCacheKeys.accountId, user.id);
     await this.db.cachePut(skCacheKeys.accountPrivKey, user.privKey);
@@ -90,12 +91,12 @@ export class SKChain {
     try {
       await this.db.open();
       await this.network.init(user, this.db.datastore);
+      if (opts?.networkOnly) {
+        message.info('start at networkOnly mode');
+        return;
+      }
       await this.db.initBitswap(this.network);
       await this.blockService.init();
-      // await this.db.swarm.connect(
-      //   '/ip4/47.99.47.82/tcp/4003/ws/p2p/12D3KooWDd6gAZ1Djtt4bhAG7djGKM32ETxiiiJCCWnH5ypK2csa',
-      // );
-
       await this.transAction.init();
       await this.blockService.goToNextBlock();
 

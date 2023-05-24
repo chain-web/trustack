@@ -2,6 +2,9 @@
 const config = {
   maxConcurrency: 1,
   maxWorkers: 1,
+  automock: true,
+  resetMocks: true,
+  resetModules: true,
   projects: [
     {
       displayName: 'skchain',

@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev-build": "tsc -w -p ./tsconfig.build.json",
     "build": "tsc -p ./tsconfig.build.json",
+    "relay": "node  --experimental-wasm-modules ./dist/relay.mjs",
     "start": "npm run build && RPC_PORT=3322 node  --experimental-wasm-modules ./dist/index.mjs"
   },
   "engines": {

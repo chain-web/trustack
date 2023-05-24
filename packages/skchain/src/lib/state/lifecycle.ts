@@ -2,8 +2,8 @@
 
 export enum LifecycleStap {
   'initConfig' = 'initConfig', // 节点启动前，初始化节点配置
-  'creatingIpfs' = 'creatingIpfs', // 节点启动前，初始化IPFS
-  'createdIpfs' = 'createdIpfs', // 节点启动前，初始化IPFS成功
+  'creatingSkfs' = 'creatingSkfs', // 节点启动前，初始化SKFS
+  'initedSkfs' = 'initedSkfs', // 节点启动前，初始SKFS成功
   'startCreateSKChain' = 'startCreateSKChain', // 节点启动
   'checkingGenesisBlock' = 'checkingGenesisBlock', // 开始检查创世区块
   'creatingGenesisBlock' = 'creatingGenesisBlock',

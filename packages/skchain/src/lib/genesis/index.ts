@@ -16,20 +16,14 @@ export class Genesis {
     return chainState.getInitOption().genesis;
   }
   checkGenesisBlock = async (): Promise<void> => {
-    chainState.send('CHANGE', {
-      event: LifecycleStap.checkingGenesisBlock,
-    });
+    chainState.lifecycleChange(LifecycleStap.checkingGenesisBlock);
     if (!this.blockService.needGenseis()) {
       // 不是完全冷启动
       // this.checkGenesis();
-      chainState.send('CHANGE', {
-        event: LifecycleStap.checkedGenesisBlock,
-      });
+      chainState.lifecycleChange(LifecycleStap.checkedGenesisBlock);
     } else {
       // 完全冷启动
-      chainState.send('CHANGE', {
-        event: LifecycleStap.creatingGenesisBlock,
-      });
+      chainState.lifecycleChange(LifecycleStap.creatingGenesisBlock);
       // 初始化预设账号
       const stateRoot = await this.initAlloc(this.genesis.alloc);
       // 创建创世区块
@@ -38,9 +32,7 @@ export class Genesis {
 
       // 将创世块cid存储到块索引
       await this.blockService.addBlock(genesisBlock);
-      chainState.send('CHANGE', {
-        event: LifecycleStap.checkedGenesisBlock,
-      });
+      chainState.lifecycleChange(LifecycleStap.checkedGenesisBlock);
     }
   };
 

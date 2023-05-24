@@ -56,6 +56,7 @@ const writeToFile = async (
 };
 
 export class SKMessage {
+  inited = false;
   init = (): void => {
     writeToFile(
       chainState.name,
@@ -79,6 +80,10 @@ export class SKMessage {
   };
 
   writeToFile = (log: string): void => {
+    if (!this.inited) {
+      this.init();
+      this.inited = true;
+    }
     writeToFile(chainState.name, log, false);
   };
   readFile = async (): Promise<string | undefined> => {

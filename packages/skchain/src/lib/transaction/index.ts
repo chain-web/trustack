@@ -85,15 +85,11 @@ export class TransactionAction {
   }
 
   async init(): Promise<void> {
-    chainState.send('CHANGE', {
-      event: LifecycleStap.initingTransaction,
-    });
+    chainState.lifecycleChange(LifecycleStap.initingTransaction);
     await this.initTransactionListen();
     await this.contract.init();
     await this.startTransTask();
-    chainState.send('CHANGE', {
-      event: LifecycleStap.initedTransaction,
-    });
+    chainState.lifecycleChange(LifecycleStap.initedTransaction);
   }
 
   private async startTransTask(): Promise<void> {
