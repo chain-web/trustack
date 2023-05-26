@@ -138,6 +138,7 @@ importers:
       '@libp2p/interface-peer-id': ^2.0.2
       '@libp2p/interface-pubsub': ^3.0.7
       '@libp2p/peer-id-factory': ^2.0.3
+      '@multiformats/multiaddr': ^12.1.3
       '@trustack/common': workspace:^1.0.0
       '@trustack/contract': workspace:^1.0.0
       '@trustack/network': workspace:^1.0.0
@@ -171,6 +172,7 @@ importers:
       '@libp2p/interface-peer-id': 2.0.2
       '@libp2p/interface-pubsub': 3.0.7
       '@libp2p/peer-id-factory': 2.0.3
+      '@multiformats/multiaddr': 12.1.3
       '@trustack/common': link:../common
       '@trustack/contract': link:../contract
       '@trustack/network': link:../network
@@ -1567,7 +1569,7 @@ packages:
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
       '@libp2p/interface-peer-id': 2.0.2
-      '@multiformats/multiaddr': 12.1.2
+      '@multiformats/multiaddr': 12.1.3
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -2086,21 +2088,6 @@ packages:
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
       '@multiformats/multiaddr': 12.1.3
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
-
-  /@multiformats/multiaddr/12.1.2:
-    resolution: {integrity: sha512-EYYUEAddjWoyig5Dcu+JGq2JdpEpT2tW/K4sefdDWVSQW+rfnABfz1rx/KnrituB20jC8aPBcT62kISTZ3oL5A==}
-    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
-    dependencies:
-      '@chainsafe/is-ip': 2.0.1
-      '@chainsafe/netmask': 2.0.0
-      '@libp2p/interfaces': 3.3.2
-      dns-over-http-resolver: 2.1.1
-      multiformats: 11.0.2
-      uint8arrays: 4.0.3
-      varint: 6.0.0
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -4826,7 +4813,7 @@ packages:
       '@libp2p/logger': 2.0.7
       '@libp2p/topology': 4.0.1
       '@libp2p/tracked-map': 3.0.2
-      '@multiformats/multiaddr': 12.1.2
+      '@multiformats/multiaddr': 12.1.3
       '@vascosantos/moving-average': 1.1.0
       abortable-iterator: 5.0.1
       any-signal: 4.1.1

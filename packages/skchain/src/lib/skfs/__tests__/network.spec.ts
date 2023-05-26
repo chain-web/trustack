@@ -67,19 +67,34 @@ describe('Sknetwork', () => {
         6732,
         testAccounts[1],
       );
-      const conn1 = await n1.network.node.dial(n2.network.node.getMultiaddrs());
-      expect(conn1.stat.status === 'OPEN').toBeTruthy();
-      await conn1.close();
+      const addr2 = n2.network.node.getMultiaddrs();
+      const sig1 = new AbortController();
+      const timeout1 = setTimeout(() => {
+        sig1.abort();
+      }, 10000);
+      const ping1 = await n1.network.node.services.ping.ping(addr2, {
+        signal: sig1.signal,
+      });
+      clearTimeout(timeout1);
+      expect(ping1).toBeLessThan(5000);
       await c2();
       await wait(1000);
       let conn2Error = false;
+      const sig2 = new AbortController();
+      const timeout2 = setTimeout(() => {
+        sig2.abort();
+      }, 10000);
       try {
-        await n1.network.node.dial(n2.network.node.getMultiaddrs());
+        await n1.network.node.services.ping.ping(addr2, {
+          signal: sig2.signal,
+        });
       } catch (error) {
+        // console.log(error);
         conn2Error = true;
       }
+      clearTimeout(timeout2);
       expect(conn2Error).toBeTruthy();
       await c1();
-    }, 20000);
+    }, 30000);
   });
 });

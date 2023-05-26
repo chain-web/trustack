@@ -13,6 +13,7 @@ import * as filters from '@libp2p/websockets/filters';
 import { webRTC } from '@libp2p/webrtc';
 import { mdns } from '@libp2p/mdns';
 import { identifyService } from 'libp2p/identify';
+import { pingService } from 'libp2p/ping';
 import type { IServiceMap } from '../netwoek.js';
 
 export const createConfig = (opts?: {
@@ -43,6 +44,7 @@ export const createConfig = (opts?: {
         allowQueryWithZeroPeers: true,
       }),
       identify: identifyService(),
+      ping: pingService(),
     },
     peerDiscovery: [mdns()],
   };

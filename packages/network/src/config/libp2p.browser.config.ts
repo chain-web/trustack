@@ -8,6 +8,7 @@ import * as filters from '@libp2p/websockets/filters';
 import { webRTC } from '@libp2p/webrtc';
 import { circuitRelayTransport } from 'libp2p/circuit-relay';
 import { identifyService } from 'libp2p/identify';
+import { pingService } from 'libp2p/ping';
 import type { IServiceMap } from '../netwoek.js';
 
 export const createConfig = (): Libp2pOptions<IServiceMap> => {
@@ -27,6 +28,7 @@ export const createConfig = (): Libp2pOptions<IServiceMap> => {
         allowQueryWithZeroPeers: true,
       }),
       identify: identifyService(),
+      ping: pingService(),
     },
   };
 };
