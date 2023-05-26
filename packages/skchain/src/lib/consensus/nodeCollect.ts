@@ -1,8 +1,10 @@
+import { wait } from '@trustack/common';
 import { bytes } from 'multiformats';
 import {
   NETWORK_GET_NODE_COUNT_INTERVAL,
   NETWORK_PUB_NODE_COUNT_INTERVAL,
 } from '../../config/index.js';
+import { message } from '../../utils/message.js';
 import { tryParseExistJson } from '../../utils/utils.js';
 import type { BlockService } from '../ipld/blockService/blockService.js';
 import type { SkNetwork } from '../skfs/network.js';
@@ -45,46 +47,47 @@ export class NodeCollect {
   // activeNodeRate = activeCount / peers.length
   // allNodeCount = activeCount / (inDBAccountRate * activeNodeRate) = peers.length / inDBAccountRate
   private async updateActiveNodeCount(): Promise<void> {
-    try {
-      let activeCount = 0;
-      let inDBAccountCount = 0;
-      const peers = await this.network.network.node.peerStore.all();
-      // message.info('peers.length', peers.length);
-      if (peers.length > 0) {
-        for (let i = 0; i < peers.length; i++) {
-          const peer = peers[i];
-          const signal = new AbortController();
-          setTimeout(() => {
-            signal.abort();
-          }, 1000);
-          const conn = await this.network.network.node.dial(peer.id, {
-            signal: signal.signal,
-          });
-
-          if (conn.stat.status !== 'CLOSED') {
-            activeCount++;
-            await conn.close();
-          }
-
-          if (await this.blockService.stateRoot.get(peer.id.toString())) {
-            inDBAccountCount++;
-          }
-        }
-        const accountCount = await this.blockService.stateRoot.size();
-        const inDBAccountRate = Math.max(inDBAccountCount, 1) / accountCount;
-        this.activeNodeRate = activeCount / peers.length;
-        this.nodeCount = Math.round(peers.length / inDBAccountRate);
-      }
-
-      this.updateActiveNodeRateTimeout = setTimeout(() => {
-        this.updateActiveNodeCount();
-      }, NETWORK_GET_NODE_COUNT_INTERVAL);
-    } catch (_) {
-      // console.log('updateActiveNodeCount error');
+    if (!this.updateActiveNodeRateTimeout) {
+      // force stop
+      return;
     }
+    let activeCount = 0;
+    let inDBAccountCount = 0;
+    const peers = await this.network.network.node.peerStore.all();
+    // message.info('peers.length', peers.length);
+
+    if (peers.length > 0) {
+      for (let i = 0; i < peers.length; i++) {
+        if (!this.updateActiveNodeRateTimeout) {
+          // force stop
+          return;
+        }
+        const peer = peers[i];
+        const ping = await this.network.ping(peer.id, 10000);
+        if (ping > 0) {
+          activeCount++;
+        }
+
+        if (await this.blockService.stateRoot.get(peer.id.toString())) {
+          inDBAccountCount++;
+        }
+      }
+      const accountCount = await this.blockService.stateRoot.size();
+      const inDBAccountRate = Math.max(inDBAccountCount, 1) / accountCount;
+      this.activeNodeRate = activeCount / peers.length;
+      this.nodeCount = Math.round(peers.length / inDBAccountRate);
+    }
+
+    this.updateActiveNodeRateTimeout = setTimeout(() => {
+      this.updateActiveNodeCount();
+    }, NETWORK_GET_NODE_COUNT_INTERVAL);
   }
 
   private async pubActiveNodeCount(): Promise<void> {
+    if (!this.pubActiveNodeRateTimeout) {
+      // force stop
+      return;
+    }
     if (this.activeNodeCount === 0) {
       return;
     }
@@ -119,5 +122,7 @@ export class NodeCollect {
     // have some problem, can not stop all async function right now
     clearTimeout(this.pubActiveNodeRateTimeout);
     clearTimeout(this.updateActiveNodeRateTimeout);
+    this.pubActiveNodeRateTimeout = undefined as unknown as NodeJS.Timeout;
+    this.updateActiveNodeRateTimeout = undefined as unknown as NodeJS.Timeout;
   }
 }

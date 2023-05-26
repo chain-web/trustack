@@ -2,6 +2,8 @@ import { Network, createConfig } from '@trustack/network';
 import type { LevelDatastore } from 'datastore-level';
 import type { Message } from '@libp2p/interface-pubsub';
 import type { DidJson } from '@trustack/common';
+import type { PeerId } from '@libp2p/interface-peer-id';
+import type { Multiaddr } from '@multiformats/multiaddr';
 import { createPeerIdFromDidJson } from '../p2p/did.js';
 
 export enum PubsubTopic {
@@ -28,6 +30,10 @@ export class SkNetwork {
   }
 
   #subscribeMap = new Map<PubsubTopic, ((data: Uint8Array) => void)[]>();
+  private pingMap = new Map<
+    NodeJS.Timeout,
+    { abortController: AbortController }
+  >();
 
   async init(did: DidJson, datastore: LevelDatastore): Promise<void> {
     const peerId = await createPeerIdFromDidJson(did);
@@ -63,7 +69,28 @@ export class SkNetwork {
     return this.network.node.services.pubsub.subscribe(topic);
   }
 
+  async ping(
+    peerId: PeerId | Multiaddr | Multiaddr[],
+    timeout = 5000,
+  ): Promise<number> {
+    const abortController = new AbortController();
+    const pingTimer = setTimeout(() => abortController.abort(), timeout);
+    this.pingMap.set(pingTimer, { abortController });
+    let ping = -1;
+    try {
+      ping = await this.network.node.services.ping.ping(peerId, {
+        signal: abortController.signal,
+      });
+    } catch (_error) {}
+    clearTimeout(pingTimer);
+    return ping;
+  }
+
   async stop(): Promise<void> {
+    this.pingMap.forEach(({ abortController }, pingTimer) => {
+      clearTimeout(pingTimer);
+      abortController.abort();
+    });
     await this.network.node.stop();
   }
 }

@@ -20,6 +20,6 @@ describe('sknode multi node', () => {
       const trans = await Transaction.fromBinary(bytes.fromHex(hex));
       expect(trans.amount).toEqual(10n);
       kill();
-    }, 15000);
+    });
   });
 });

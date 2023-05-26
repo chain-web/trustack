@@ -6,6 +6,7 @@ import type { PubSub } from '@libp2p/interface-pubsub';
 import type { CircuitRelayService } from 'libp2p/circuit-relay';
 import type { DualKadDHT } from '@libp2p/kad-dht';
 import type { identifyService } from 'libp2p/identify';
+import type { pingService } from 'libp2p/ping';
 
 interface NetworkOptions {
   peerId: PeerId;
@@ -17,6 +18,7 @@ export type IServiceMap = {
   relay?: CircuitRelayService;
   dht: DualKadDHT;
   identify: ReturnType<ReturnType<typeof identifyService>>;
+  ping: ReturnType<ReturnType<typeof pingService>>;
 };
 
 export class Network {

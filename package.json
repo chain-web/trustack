@@ -9,7 +9,7 @@
     "lint:fix": "eslint --fix --cache .",
     "format": "prettier --write --cache .",
     "build:clear": "rm -rf ./**/**/dist/",
-    "test:dev": "node --experimental-vm-modules node_modules/jest/bin/jest.js --no-cache ",
+    "test:dev": "node --experimental-vm-modules node_modules/jest/bin/jest.js --no-cache --detectOpenHandles",
     "test": "node --experimental-vm-modules --no-warnings node_modules/jest/bin/jest.js --no-cache --silent"
   },
   "repository": {
