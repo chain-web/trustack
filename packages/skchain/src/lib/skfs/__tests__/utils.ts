@@ -45,6 +45,7 @@ export const createTestSkNetWork = async (
   const network = new SkNetwork({
     tcpPort,
     wsPort,
+    bootstrap: [],
   });
   await network.init(did, skfs.datastore);
   await skfs.initBitswap(network);

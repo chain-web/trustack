@@ -14,11 +14,12 @@ import { webRTC } from '@libp2p/webrtc';
 import { mdns } from '@libp2p/mdns';
 import { identifyService } from 'libp2p/identify';
 import { pingService } from 'libp2p/ping';
+import { bootstrap } from '@libp2p/bootstrap';
 import type { IServiceMap } from '../netwoek.js';
-
 export const createConfig = (opts?: {
   tcpPort?: number;
   wsPort?: number;
+  bootstrap?: string[];
 }): Libp2pOptions<IServiceMap> => {
   return {
     addresses: {
@@ -42,10 +43,17 @@ export const createConfig = (opts?: {
       relay: circuitRelayServer(),
       dht: kadDHT({
         allowQueryWithZeroPeers: true,
+        clientMode: false,
+        protocolPrefix: '/sk/1.0',
       }),
       identify: identifyService(),
       ping: pingService(),
     },
-    peerDiscovery: [mdns()],
+    peerDiscovery: [
+      mdns(),
+      opts?.bootstrap?.length
+        ? bootstrap({ list: opts.bootstrap, timeout: 1000 })
+        : undefined,
+    ].filter(Boolean),
   };
 };

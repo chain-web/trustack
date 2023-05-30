@@ -101,6 +101,7 @@ importers:
     specifiers:
       '@chainsafe/libp2p-gossipsub': ^8.0.0
       '@chainsafe/libp2p-noise': ^12.0.0
+      '@libp2p/bootstrap': ^8.0.0
       '@libp2p/interface-peer-id': ^2.0.2
       '@libp2p/interface-pubsub': ^3.0.7
       '@libp2p/kad-dht': ^9.3.4
@@ -116,6 +117,7 @@ importers:
     dependencies:
       '@chainsafe/libp2p-gossipsub': 8.0.0
       '@chainsafe/libp2p-noise': 12.0.0
+      '@libp2p/bootstrap': 8.0.0
       '@libp2p/interface-peer-id': 2.0.2
       '@libp2p/interface-pubsub': 3.0.7
       '@libp2p/kad-dht': 9.3.4
@@ -206,6 +208,7 @@ importers:
       '@trpc/server': ^10.27.1
       '@trustack/common': workspace:^1.0.0
       execa: ^7.1.1
+      kill-port: ^2.0.1
       multiformats: ^11.0.2
       skchain: workspace:^1.0.0
       zod: ^3.21.4
@@ -214,6 +217,7 @@ importers:
       '@trpc/server': 10.27.1
       '@trustack/common': link:../common
       execa: 7.1.1
+      kill-port: 2.0.1
       multiformats: 11.0.2
       skchain: link:../skchain
       zod: 3.21.4
@@ -1387,6 +1391,22 @@ packages:
 
   /@leichtgewicht/ip-codec/2.0.4:
     resolution: {integrity: sha512-Hcv+nVC0kZnQ3tD9GVu5xSMR4VVYOteQIr/hwFPVEvPdlXqgGEuRjiheChHgdM+JyqdgNcmzZOX/tnl0JOiI7A==}
+    dev: false
+
+  /@libp2p/bootstrap/8.0.0:
+    resolution: {integrity: sha512-xbaJ+ybx1FGsi8FeGl9g1Wk6P2zf5/Thdk9Fe1qXV0O0xIW0xRWrefOYG5Dvt+BV54C/zlnQ4CG+Xs+Rr7wsbA==}
+    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
+    dependencies:
+      '@libp2p/interface-peer-discovery': 2.0.0
+      '@libp2p/interface-peer-info': 1.0.10
+      '@libp2p/interface-peer-store': 2.0.3
+      '@libp2p/interfaces': 3.3.2
+      '@libp2p/logger': 2.0.7
+      '@libp2p/peer-id': 2.0.3
+      '@multiformats/mafmt': 12.1.3
+      '@multiformats/multiaddr': 12.1.3
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /@libp2p/crypto/1.0.17:
@@ -4556,6 +4576,10 @@ packages:
       get-intrinsic: 1.2.1
     dev: false
 
+  /get-them-args/1.3.2:
+    resolution: {integrity: sha512-LRn8Jlk+DwZE4GTlDbT3Hikd1wSHgLMme/+7ddlqKd7ldwR6LjJgTVWzBnR01wnYGe4KgrXjg287RaI22UHmAw==}
+    dev: false
+
   /glob-parent/5.1.2:
     resolution: {integrity: sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==}
     engines: {node: '>= 6'}
@@ -5756,6 +5780,14 @@ packages:
 
   /just-debounce-it/3.2.0:
     resolution: {integrity: sha512-WXzwLL0745uNuedrCsCs3rpmfD6DBaf7uuVwaq98/8dafURfgQaBsSpjiPp5+CW6Vjltwy9cOGI6qE71b3T8iQ==}
+    dev: false
+
+  /kill-port/2.0.1:
+    resolution: {integrity: sha512-e0SVOV5jFo0mx8r7bS29maVWp17qGqLBZ5ricNSajON6//kmb7qqqNnml4twNE8Dtj97UQD+gNFOaipS/q1zzQ==}
+    hasBin: true
+    dependencies:
+      get-them-args: 1.3.2
+      shell-exec: 1.0.2
     dev: false
 
   /kleur/3.0.3:
@@ -7445,6 +7477,10 @@ packages:
   /shebang-regex/3.0.0:
     resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
     engines: {node: '>=8'}
+    dev: false
+
+  /shell-exec/1.0.2:
+    resolution: {integrity: sha512-jyVd+kU2X+mWKMmGhx4fpWbPsjvD53k9ivqetutVW/BQ+WIZoDoP4d8vUMGezV6saZsiNoW2f9GIhg9Dondohg==}
     dev: false
 
   /side-channel/1.0.4:

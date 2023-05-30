@@ -54,7 +54,7 @@ export class NodeCollect {
     let activeCount = 0;
     let inDBAccountCount = 0;
     const peers = await this.network.network.node.peerStore.all();
-    // message.info('peers.length', peers.length);
+    message.info('peers.length', peers.length);
 
     if (peers.length > 0) {
       for (let i = 0; i < peers.length; i++) {
@@ -88,6 +88,7 @@ export class NodeCollect {
       // force stop
       return;
     }
+    // message.info('activeNodeCount', this.nodeCount, this.activeNodeRate);
     if (this.activeNodeCount === 0) {
       return;
     }
