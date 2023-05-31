@@ -22,6 +22,7 @@ export interface SKChainOption {
   datastorePath: string;
   tcpPort: number;
   wsPort: number;
+  bootstrap: string[];
 }
 
 export interface SKChainRunOpts {
@@ -43,6 +44,7 @@ export class SKChain {
     this.network = new SkNetwork({
       tcpPort: initOption.tcpPort,
       wsPort: initOption.wsPort,
+      bootstrap: initOption.bootstrap,
     });
     this.blockService = initOption.blockService;
 

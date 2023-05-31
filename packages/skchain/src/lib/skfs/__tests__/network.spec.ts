@@ -47,32 +47,12 @@ describe('Sknetwork', () => {
         testAccounts[1],
       );
       const addr2 = n2.network.node.getMultiaddrs();
-      const sig1 = new AbortController();
-      const timeout1 = setTimeout(() => {
-        sig1.abort();
-      }, 10000);
-      const ping1 = await n1.network.node.services.ping.ping(addr2, {
-        signal: sig1.signal,
-      });
-      clearTimeout(timeout1);
+      const ping1 = await n1.ping(addr2, 10000);
       expect(ping1).toBeLessThan(5000);
+      expect(ping1).toBeGreaterThan(0);
       await c2();
-      await wait(1000);
-      let conn2Error = false;
-      const sig2 = new AbortController();
-      const timeout2 = setTimeout(() => {
-        sig2.abort();
-      }, 10000);
-      try {
-        await n1.network.node.services.ping.ping(addr2, {
-          signal: sig2.signal,
-        });
-      } catch (error) {
-        // console.log(error);
-        conn2Error = true;
-      }
-      clearTimeout(timeout2);
-      expect(conn2Error).toBeTruthy();
+      const ping2 = await n1.ping(addr2, 10000);
+      expect(ping2).toBeLessThan(0);
       await c1();
     }, 30000);
   });

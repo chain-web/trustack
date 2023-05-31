@@ -5,6 +5,9 @@ import { chain } from '../skchain.mjs';
 import { publicProcedure, router } from './rpc.index.mjs';
 
 export const chainRouter = router({
+  ping: publicProcedure.query(async () => {
+    return 'pong';
+  }),
   getBalance: publicProcedure.input(z.string()).query(async ({ input }) => {
     const account = await chain.getAccount(input);
     return {
@@ -43,6 +46,12 @@ export const chainRouter = router({
         hex: '',
       };
     }),
+  getNetworkStatus: publicProcedure.query(async () => {
+    const status = await chain.network.getNetWorkStatus();
+    return {
+      status,
+    };
+  }),
 });
 
 export type ChainRouter = typeof chainRouter;

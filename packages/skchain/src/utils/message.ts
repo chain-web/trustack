@@ -84,7 +84,11 @@ export class SKMessage {
       this.init();
       this.inited = true;
     }
-    writeToFile(chainState.name, log, false);
+    const process = globalThis.process;
+    if (process?.argv[2] === 'child') {
+      process?.send?.({ type: 'log', data: log });
+    }
+    writeToFile(chainState.name, log + '\n\n', false);
   };
   readFile = async (): Promise<string | undefined> => {
     return readFile(chainState.name);

@@ -34,6 +34,7 @@ export const createTestConsensus = async (opts?: {
   const network = new SkNetwork({
     tcpPort: opts?.tcpPort || 6688,
     wsPort: opts?.wsPort || 6689,
+    bootstrap: [],
   });
   await bs?.init();
   await network.init(opts?.did || testAccounts[0], db.datastore);

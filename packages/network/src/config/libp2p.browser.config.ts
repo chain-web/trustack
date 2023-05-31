@@ -9,9 +9,12 @@ import { webRTC } from '@libp2p/webrtc';
 import { circuitRelayTransport } from 'libp2p/circuit-relay';
 import { identifyService } from 'libp2p/identify';
 import { pingService } from 'libp2p/ping';
+import { bootstrap } from '@libp2p/bootstrap';
 import type { IServiceMap } from '../netwoek.js';
 
-export const createConfig = (): Libp2pOptions<IServiceMap> => {
+export const createConfig = (opts?: {
+  bootstrap?: string[];
+}): Libp2pOptions<IServiceMap> => {
   return {
     streamMuxers: [mplex()],
     connectionEncryption: [noise()],
@@ -26,9 +29,14 @@ export const createConfig = (): Libp2pOptions<IServiceMap> => {
       pubsub: gossipsub({ allowPublishToZeroPeers: true }),
       dht: kadDHT({
         allowQueryWithZeroPeers: true,
+        clientMode: true,
+        protocolPrefix: '/sk/1.0',
       }),
       identify: identifyService(),
       ping: pingService(),
     },
+    peerDiscovery: [
+      opts?.bootstrap?.length ? bootstrap({ list: opts.bootstrap }) : undefined,
+    ].filter(Boolean),
   };
 };

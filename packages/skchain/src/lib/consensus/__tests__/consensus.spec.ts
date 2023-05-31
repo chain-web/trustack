@@ -20,6 +20,6 @@ describe('chainState', () => {
       const action2 = await consensus.processNewBlock(headerBlock, headerBlock);
       expect(action2).toEqual(NewBlockActions.INVALID_BLOCK);
       await close();
-    }, 10000);
+    });
   });
 });

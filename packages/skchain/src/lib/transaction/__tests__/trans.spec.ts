@@ -50,6 +50,6 @@ describe('transcation', () => {
         expect(status.status).toEqual(TransStatus.waiting);
       }
       await close();
-    }, 20000);
+    });
   });
 });
