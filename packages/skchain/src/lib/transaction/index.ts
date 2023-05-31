@@ -124,6 +124,7 @@ export class TransactionAction {
 
   private async doTransTask(): Promise<void> {
     // 执行打包任务
+    message.info('doTransTask');
     const cArr: { contribute: bigint; did: string }[] = [];
     for (const did of this.waitTransMap.keys()) {
       let account = await this.blockService.getAccount(did);

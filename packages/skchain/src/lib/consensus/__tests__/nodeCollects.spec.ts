@@ -1,5 +1,6 @@
 import { wait } from '@trustack/common';
 import { NETWORK_GET_NODE_COUNT_INTERVAL } from '../../../config/index.js';
+import { genetateDid } from '../../p2p/did.js';
 import type { NodeCollect } from '../nodeCollect.js';
 import { createTestNodeCollect } from './consensusTest.util.js';
 
@@ -11,11 +12,11 @@ describe('Sknetwork', () => {
       await wait(NETWORK_GET_NODE_COUNT_INTERVAL * 2.1);
       await close();
     }, 100000);
-    // TODO fix this test
+    // TODO: fix this test
     // it(
     //   'should nodeCollects - multi node ok',
     //   async () => {
-    //     const count = 4;
+    //     const count = 6;
     //     const nodeCollects: NodeCollect[] = [];
     //     const closes = [];
     //     const accounts = [];
@@ -32,7 +33,7 @@ describe('Sknetwork', () => {
     //       // message.info(`NodeCollect ${i} init ok`);
     //     }
 
-    //     await sleep(NETWORK_GET_NODE_COUNT_INTERVAL * 3.1);
+    //     await wait(NETWORK_GET_NODE_COUNT_INTERVAL * 3.1);
 
     //     const countSum = nodeCollects.reduce((sum, nc) => {
     //       return sum + nc.activeNodeCount;
@@ -47,7 +48,7 @@ describe('Sknetwork', () => {
     //       nodeCollects.pop();
     //       await c?.();
     //     }
-    //     await sleep(NETWORK_GET_NODE_COUNT_INTERVAL * 3.1);
+    //     await wait(NETWORK_GET_NODE_COUNT_INTERVAL * 3.1);
     //     const countSum2 = nodeCollects.reduce(
     //       (sum, nc) => sum + nc.activeNodeCount,
     //       0,
@@ -56,9 +57,9 @@ describe('Sknetwork', () => {
     //     expect(countSum2).toBeGreaterThan(
     //       (nodeCollects.length - 1) * nodeCollects.length * 0.7,
     //     );
-    //     // expect(countSum2).toBeLessThanOrEqual(
-    //     //   (nodeCollects.length - 1) * nodeCollects.length,
-    //     // );
+    //     expect(countSum2).toBeLessThanOrEqual(
+    //       (nodeCollects.length - 1) * nodeCollects.length,
+    //     );
 
     //     // close all
     //     for (let i = 0; i < closes.length; i++) {
