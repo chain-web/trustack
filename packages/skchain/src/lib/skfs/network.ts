@@ -14,13 +14,15 @@ export enum PubsubTopic {
 }
 
 export class SkNetwork {
-  constructor(opts: { tcpPort: number; wsPort: number }) {
+  constructor(opts: { tcpPort: number; wsPort: number; bootstrap: string[] }) {
     this.tcpPort = opts.tcpPort;
     this.wsPort = opts.wsPort;
+    this.bootstrap = opts.bootstrap;
   }
 
   private tcpPort: number;
   private wsPort: number;
+  private bootstrap: string[];
   private _network!: Network;
   get network(): Network {
     if (!this._network) {
@@ -43,8 +45,13 @@ export class SkNetwork {
     });
 
     await this.network.init(
-      createConfig({ tcpPort: this.tcpPort, wsPort: this.wsPort }),
+      createConfig({
+        tcpPort: this.tcpPort,
+        wsPort: this.wsPort,
+        bootstrap: this.bootstrap,
+      }),
     );
+
     await this.network.start();
     this.network.node.services.pubsub.addEventListener(
       'message',
@@ -81,9 +88,17 @@ export class SkNetwork {
       ping = await this.network.node.services.ping.ping(peerId, {
         signal: abortController.signal,
       });
-    } catch (_error) {}
+      // message.info(`ping ${peerId.toString()} ${ping}ms`);
+    } catch (error) {
+      // message.info(`ping ${peerId.toString()} error ${error}`);
+    }
     clearTimeout(pingTimer);
     return ping;
+  }
+
+  async getNetWorkStatus(): Promise<{ peerCount: number }> {
+    const peerCount = (await this.network.node.peerStore.all()).length;
+    return { peerCount };
   }
 
   async stop(): Promise<void> {

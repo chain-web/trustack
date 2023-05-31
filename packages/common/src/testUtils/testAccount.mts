@@ -61,17 +61,24 @@ export const testAccounts: DidJson[] = [
   },
 ];
 
-export const testRelayAccounts: DidJson[] = [
+export const testRelayAccounts: ({
+  tcpPort: number;
+  wsPort: number;
+} & DidJson)[] = [
   {
     id: '12D3KooWNGzeLjNkY2JCVbU9C8NnyKSpoqXVXiLsYUsZ5QxVSbaK',
     privKey:
       'CAESQGMEqbZ+N95KgXKmHvhTxw9tBZ9+CCEiRukL+l4o8ESLuR6WZKxGoLr8EaG8OKXtG2ObrsjnFWmTpSLsOVaDGRw=',
     pubKey: 'CAESILkelmSsRqC6/BGhvDil7Rtjm67I5xVpk6Ui7DlWgxkc',
+    tcpPort: 8689,
+    wsPort: 8690,
   },
   {
     id: '12D3KooWLptEML9ro4hsTDrPFoiZVqiERCXkSRV2gPqTwabZDhM5',
     privKey:
       'CAESQPunI5eCrrcTq/mXygrSme1cjNifVB4qqy3eGEALnpldo5KMMGzARMrhGw+1xZDxcj+axe+VdRbFYBOJhcjV7Iw=',
     pubKey: 'CAESIKOSjDBswETK4RsPtcWQ8XI/msXvlXUWxWATiYXI1eyM',
+    tcpPort: 9689,
+    wsPort: 9690,
   },
 ];

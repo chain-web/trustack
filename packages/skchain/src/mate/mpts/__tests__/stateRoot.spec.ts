@@ -26,6 +26,6 @@ describe('stateRoot', () => {
       expect(size).toBeGreaterThan(count * 0.95);
       expect(size).toBeLessThan(count * 1.05);
       await stateRoot.close();
-    }, 20000);
+    });
   });
 });

@@ -15,6 +15,7 @@ export const genInitOption = (
     tcpPort: option?.tcpPort || 4003,
     wsPort: option?.wsPort || 6004,
     genesis: option?.genesis || genesis,
+    bootstrap: option?.bootstrap || [],
   };
   return initOption;
 };
