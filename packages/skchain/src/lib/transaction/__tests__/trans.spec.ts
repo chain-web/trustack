@@ -43,7 +43,6 @@ describe('transcation', () => {
         payload: bytes.fromString(testCoinContract),
       });
       expect(trans).not.toEqual(undefined);
-      await wait(8000);
       if (!trans) {
         throw new Error('no trans');
       } else {
