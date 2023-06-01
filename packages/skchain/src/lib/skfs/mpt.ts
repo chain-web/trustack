@@ -23,6 +23,7 @@ export class Mpt {
   }
 
   private db: MptDb;
+  closed = false;
   private _trie?: Trie;
 
   get trie(): Trie {
@@ -58,6 +59,7 @@ export class Mpt {
 
   close = async (): Promise<void> => {
     await this.db.close();
+    this.closed = true;
   };
 
   // getKey = async (key: string): Promise<string | undefined> => {

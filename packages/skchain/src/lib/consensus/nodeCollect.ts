@@ -23,6 +23,7 @@ export class NodeCollect {
   public activeNodeRate = 0;
   private pubActiveNodeRateTimeout!: NodeJS.Timeout;
   private updateActiveNodeRateTimeout!: NodeJS.Timeout;
+  private updatingActiveNodeCount = false;
 
   public get activeNodeCount(): number {
     return this.nodeCount * this.activeNodeRate;
@@ -51,6 +52,7 @@ export class NodeCollect {
       // force stop
       return;
     }
+    this.updatingActiveNodeCount = true;
     let activeCount = 0;
     let inDBAccountCount = 0;
     const peers = await this.network.network.node.peerStore.all();
@@ -77,10 +79,17 @@ export class NodeCollect {
       this.activeNodeRate = activeCount / peers.length;
       this.nodeCount = Math.round(peers.length / inDBAccountRate);
     }
+    this.updatingActiveNodeCount = false;
 
     this.updateActiveNodeRateTimeout = setTimeout(() => {
       this.updateActiveNodeCount();
     }, NETWORK_GET_NODE_COUNT_INTERVAL);
+  }
+
+  private async waitUpdateActiveNodeCount(): Promise<void> {
+    while (this.updatingActiveNodeCount) {
+      await wait(200);
+    }
   }
 
   private async pubActiveNodeCount(): Promise<void> {
@@ -125,5 +134,6 @@ export class NodeCollect {
     clearTimeout(this.updateActiveNodeRateTimeout);
     this.pubActiveNodeRateTimeout = undefined as unknown as NodeJS.Timeout;
     this.updateActiveNodeRateTimeout = undefined as unknown as NodeJS.Timeout;
+    await this.waitUpdateActiveNodeCount();
   }
 }

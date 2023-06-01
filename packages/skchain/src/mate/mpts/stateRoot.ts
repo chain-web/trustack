@@ -15,17 +15,23 @@ export class StateRoot {
 
   async size(): Promise<number> {
     let count = 0;
-    // cost lots of time, bad performance
-    await this.mpt.trie.walkTrie(
-      this.mpt.root,
-      async (_, node, keyProgress, walkController) => {
-        if (node instanceof BranchNode || node instanceof ExtensionNode) {
-          walkController.allChildren(node, keyProgress);
-        } else if (node instanceof LeafNode) {
-          count++;
-        }
-      },
-    );
+    try {
+      // TODO: cost lots of time, bad performance
+      await this.mpt.trie.walkTrie(
+        this.mpt.root,
+        async (_, node, keyProgress, walkController) => {
+          if (this.mpt.closed) {
+            throw new Error('mpt closed');
+          }
+          if (node instanceof BranchNode || node instanceof ExtensionNode) {
+            walkController.allChildren(node, keyProgress);
+          } else if (node instanceof LeafNode) {
+            count++;
+          }
+        },
+      );
+    } catch (_) {}
+
     // TODO: why 1.1? why count not equal to size?
     return Math.round(count * 1.1);
   }
