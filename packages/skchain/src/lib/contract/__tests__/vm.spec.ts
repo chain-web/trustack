@@ -12,7 +12,7 @@ describe('vm', () => {
       };
       const res = await evalFunction(simpleAdd.toString());
       expect(res.funcResult).toEqual('2');
-      expect(res.cuCost.reduce((acc, cur) => acc + Number(cur), 0)).toEqual(28);
+      expect(res.cuCost.reduce((acc, cur) => acc + Number(cur), 0)).toEqual(31);
     });
     it('should simple class ok', async () => {
       const codeStr = `
