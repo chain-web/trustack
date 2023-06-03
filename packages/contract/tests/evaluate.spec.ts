@@ -22,7 +22,7 @@ describe('contract evaluate', () => {
         storage: bytes.fromString(''),
       });
       expect(res.funcResult).toEqual('2');
-      expect(res.cuCost).toEqual(['6', '22']);
+      expect(res.cuCost).toEqual(['9', '22']);
     });
   });
 });

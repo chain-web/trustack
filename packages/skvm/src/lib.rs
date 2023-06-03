@@ -103,7 +103,7 @@ pub fn evaluate(src: Array, cu_limit: u64, storage: Uint8Array) -> Result<Uint8A
         }
         let code = code_list.remove(0);
         // js_console_log(&format!("code: {:?}", &code));
-        let step_result = ctx.eval_script(Source::from_bytes(code.as_bytes()));
+        let step_result = ctx.eval(Source::from_bytes(code.as_bytes()));
         // let step_res = match step_result.clone() {
         //     Ok(v) => {
         //         v.display().to_string()
