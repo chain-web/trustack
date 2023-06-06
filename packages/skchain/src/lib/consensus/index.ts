@@ -1,8 +1,8 @@
 import { CID, bytes } from 'multiformats';
+import { LifecycleStap } from '@trustack/common';
 import { Block } from '../../mate/block.js';
 import type { BlockService } from '../ipld/blockService/blockService.js';
 import { chainState } from '../state/index.js';
-import { LifecycleStap } from '../state/lifecycle.js';
 import type { SkNetwork } from '../skfs/network.js';
 import { PubsubTopic } from '../skfs/network.js';
 import { message } from '../../utils/message.js';

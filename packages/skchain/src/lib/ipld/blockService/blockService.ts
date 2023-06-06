@@ -1,7 +1,7 @@
+import { LifecycleStap } from '@trustack/common';
 import type { BlockMeta } from '../../../mate/block.js';
 import { Block } from '../../../mate/block.js';
 import { skCacheKeys } from '../../skfs/key.js';
-import { LifecycleStap } from '../../state/lifecycle.js';
 import { StateRoot } from '../../../mate/mpts/stateRoot.js';
 import type { Skfs } from '../../skfs/index.js';
 import { chainState } from '../../state/index.js';

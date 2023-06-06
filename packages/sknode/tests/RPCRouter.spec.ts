@@ -7,7 +7,7 @@ describe('sknode multi node', () => {
   describe('simple multi node test', () => {
     it('should transaction ok', async () => {
       const { kill, client } = await createSubProcessNode({
-        port: '3322',
+        port: 3322,
         userIndex: 0,
       });
       const { hex } = await client.transaction.query({

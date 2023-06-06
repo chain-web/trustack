@@ -1,10 +1,10 @@
+import { LifecycleStap } from '@trustack/common';
 import type { GenesisConfig } from '../../config/types.js';
 import type { Account } from '../../mate/account.js';
 import { newAccount } from '../../mate/account.js';
 import { createEmptyStorageRoot } from '../../mate/utils.js';
 import type { BlockService } from '../ipld/blockService/blockService.js';
 import { chainState } from '../state/index.js';
-import { LifecycleStap } from '../state/lifecycle.js';
 import { createGenesisBlock } from './genesis.util.js';
 export class Genesis {
   constructor(blockService: BlockService) {

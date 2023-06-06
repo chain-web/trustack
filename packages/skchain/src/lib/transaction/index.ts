@@ -1,11 +1,11 @@
 import { BUILDER_NAMES } from '@trustack/contract';
-import type { Transaction } from '../../mate/transaction.js';
+import { LifecycleStap } from '@trustack/common';
+import { Transaction } from '../../mate/transaction.js';
 import { genetateDid, verifyById } from '../p2p/did.js';
 import { message } from '../../utils/message.js';
 import { transDemoFn } from '../contracts/transaction_demo.js';
 import type { BlockHeaderData } from '../../mate/block.js';
 import { chainState } from '../state/index.js';
-import { LifecycleStap } from '../state/lifecycle.js';
 import {
   BLOCK_INTERVAL_TIME_LIMIT,
   MAX_TRANS_LIMIT,
@@ -92,33 +92,36 @@ export class TransactionAction {
     chainState.lifecycleChange(LifecycleStap.initedTransaction);
   }
 
+  private async checkDoTransTask(): Promise<boolean> {
+    if (!this.consensus.isReady()) {
+      // 节点未同步完成
+      return false;
+    }
+    if (this.waitTransMap.size === 0) {
+      // 无交易
+      return false;
+    }
+    const headerBlock = await this.blockService.getHeaderBlock();
+    // TODO 这里用Date.now()是否会有问题？
+    if (
+      headerBlock &&
+      headerBlock.header.ts + BLOCK_INTERVAL_TIME_LIMIT > Date.now()
+    ) {
+      // 当前块还未到达下一个块的时间
+      return false;
+    }
+    return true;
+  }
+
   private async startTransTask(): Promise<void> {
     // 检查是否要执行打包任务
-    this.transTaskInterval = setInterval(async () => {
-      if (!this.consensus.isReady()) {
-        // 节点未同步完成
-        return;
+    this.transTaskInterval = setTimeout(async () => {
+      if (await this.checkDoTransTask()) {
+        this.taskInProgress = true;
+        await this.doTransTask();
+        this.taskInProgress = false;
       }
-      if (this.taskInProgress) {
-        // 正在打包
-        return;
-      }
-      if (this.waitTransMap.size === 0) {
-        // 无交易
-        return;
-      }
-      const headerBlock = await this.blockService.getHeaderBlock();
-      // TODO 这里用Date.now()是否会有问题？
-      if (
-        headerBlock &&
-        headerBlock.header.ts + BLOCK_INTERVAL_TIME_LIMIT > Date.now()
-      ) {
-        // 当前块还未到达下一个块的时间
-        return;
-      }
-      this.taskInProgress = true;
-      await this.doTransTask();
-      this.taskInProgress = false;
+      await this.startTransTask();
     }, 1000);
   }
 
@@ -325,8 +328,9 @@ export class TransactionAction {
 
   private async receiveTransaction(data: Uint8Array) {
     // 接收p2p网络里的交易，并塞到交易列表
-    const trans = await takeBlockValue<Transaction>(data);
-    message.info('receive trans from network', trans.hash);
+    const trans = await Transaction.fromBinary(data);
+    await trans.genHash();
+    message.info('receive trans from network');
     // verify signature
     const signature = trans.signature;
     if (
@@ -340,7 +344,7 @@ export class TransactionAction {
       // 交易签名验证通过
       await this.handelTransaction(trans);
     } else {
-      message.info('trans unlow');
+      message.info('receive trans illegal');
     }
   }
 

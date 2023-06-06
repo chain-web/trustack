@@ -10,9 +10,9 @@ import type { MultihashHasher } from 'multiformats';
 import { CID } from 'multiformats';
 import { sha256, sha512 } from 'multiformats/hashes/sha2';
 import { identity } from 'multiformats/hashes/identity';
+import { LifecycleStap } from '@trustack/common';
 import type { DefaultBlockType, RawBlockType } from '../../mate/utils.js';
 import { chainState } from '../state/index.js';
-import { LifecycleStap } from '../state/lifecycle.js';
 import type { SkNetwork } from './network.js';
 
 export interface SkfsOptions {

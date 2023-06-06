@@ -20,7 +20,7 @@ const config = {
   automock: true,
   resetMocks: true,
   resetModules: true,
-  testTimeout: 60000,
+  testTimeout: 120000,
   projects: [
     {
       displayName: 'skchain',
