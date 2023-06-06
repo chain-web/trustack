@@ -1,11 +1,11 @@
 import type { EvalResult } from '@trustack/contract';
 import { BUILDER_NAMES, evaluate, init } from '@trustack/contract';
 import { bytes } from 'multiformats';
+import { LifecycleStap } from '@trustack/common';
 import { LOAD_CONTRACT_DATA_FUNC } from '../../config/index.js';
 import type { Address } from '../../mate/address.js';
 import { message } from '../../utils/message.js';
 import { chainState } from '../state/index.js';
-import { LifecycleStap } from '../state/lifecycle.js';
 import { generateBaseContractCode } from './codeSnippet.js';
 import { writeCodeToFile } from './__tests__/utils.js';
 

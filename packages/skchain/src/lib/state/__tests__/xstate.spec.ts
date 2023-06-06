@@ -1,5 +1,5 @@
+import { LifecycleStap } from '@trustack/common';
 import { chainState } from '../index.js';
-import { LifecycleStap } from '../lifecycle.js';
 
 describe('chainState', () => {
   describe('test', () => {

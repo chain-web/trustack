@@ -1,7 +1,7 @@
 import { assign, createMachine, interpret } from 'xstate';
+import type { LifecycleStap } from '@trustack/common';
 import type { SKChainOption } from '../../skChain.js';
 import { message } from '../../utils/message.js';
-import type { LifecycleStap } from './lifecycle.js';
 
 export type ChainEvents = SimpleEvent | InitEvent;
 
@@ -107,6 +107,10 @@ class ChainState {
   name = 'skchain';
 
   lifecycleChange(step: LifecycleStap, data?: string[]) {
+    const process = globalThis.process;
+    if (process?.argv[2] === 'child') {
+      process?.send?.({ type: 'lifecycleChange', data: [step, data] });
+    }
     this.state.send({ type: 'CHANGE', event: step, data });
   }
 

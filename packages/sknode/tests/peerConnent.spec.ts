@@ -9,7 +9,7 @@ describe('SkChain p2p', () => {
       const nodes = [];
       const kills = [];
       for (let i = 0; i < count; i++) {
-        const port = `${3322 + i * 10}`;
+        const port = 3322 + i * 10;
         const { kill, client } = await createSubProcessNode({
           port,
           clearDB: true,

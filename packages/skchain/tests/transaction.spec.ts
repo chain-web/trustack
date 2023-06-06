@@ -1,7 +1,6 @@
-import { testAccounts } from '@trustack/common';
+import { LifecycleStap, testAccounts } from '@trustack/common';
 import { bytes } from 'multiformats';
 import { testCoinContract } from '../src/lib/contract/__tests__/contractTest.util.js';
-import { LifecycleStap } from '../src/lib/state/lifecycle.js';
 import { TransStatus } from '../src/lib/transaction/index.js';
 import { Address } from '../src/mate/address.js';
 import { performanceCollecter } from '../src/utils/performance.js';

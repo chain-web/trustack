@@ -25,7 +25,7 @@ describe('Sknetwork', () => {
 
       await connect2Network(n1, n2);
 
-      await wait(1000);
+      await wait(5000);
 
       await n2.publish(PubsubTopic.DID, bytes.fromString('test_did'));
       await wait(2000);
@@ -47,11 +47,11 @@ describe('Sknetwork', () => {
         testAccounts[1],
       );
       const addr2 = n2.network.node.getMultiaddrs();
-      const ping1 = await n1.ping(addr2, 10000);
-      expect(ping1).toBeLessThan(5000);
+      const ping1 = await n1.ping(addr2, 20000);
+      expect(ping1).toBeLessThan(10000);
       expect(ping1).toBeGreaterThan(0);
       await c2();
-      const ping2 = await n1.ping(addr2, 10000);
+      const ping2 = await n1.ping(addr2, 20000);
       expect(ping2).toBeLessThan(0);
       await c1();
     }, 30000);

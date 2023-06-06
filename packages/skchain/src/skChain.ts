@@ -1,5 +1,5 @@
 import type { DidJson } from '@trustack/common';
-import { LifecycleStap } from './lib/state/lifecycle.js';
+import { LifecycleStap } from '@trustack/common';
 import type { GenesisConfig } from './config/types.js';
 import { chainState } from './lib/state/index.js';
 import { version } from './config/index.js';

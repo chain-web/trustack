@@ -22,6 +22,9 @@ export default async function setup() {
 
   let isReady = false;
   child.on('message', (msg) => {
+    if (msg.type !== 'log') {
+      return;
+    }
     if (msg.data?.match('init error')) {
       console.log(msg);
       throw new Error('init error');

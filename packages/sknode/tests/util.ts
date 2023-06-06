@@ -4,16 +4,18 @@ import { fork } from 'child_process';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { $ } from 'execa';
-import { wait } from '@trustack/common';
+import type { ChildProcessMessage } from '@trustack/common';
+import { LifecycleStap, wait } from '@trustack/common';
 import { createRPCClient } from '../dist/rpc/client.mjs';
 const __filename = fileURLToPath(import.meta.url);
 export const createSubProcessNode = async (opts: {
-  port: string;
+  port: number;
   clearDB?: boolean;
   userIndex?: number; // default is generate a new user
 }): Promise<{
   kill: () => void;
   client: ReturnType<typeof createRPCClient>;
+  awaitForBlock: (n: number) => Promise<boolean>;
 }> => {
   const { port, clearDB } = opts;
   if (clearDB) {
@@ -25,9 +27,9 @@ export const createSubProcessNode = async (opts: {
   const path = join(__dirname, '../dist', 'index.mjs');
   const child = fork(path, ['child'], {
     env: {
-      RPC_PORT: port,
-      TCP_PORT: port + 1,
-      WS_PORT: port + 2,
+      RPC_PORT: port.toString(),
+      TCP_PORT: (port + 1).toString(),
+      WS_PORT: (port + 2).toString(),
       USER_INDEX: opts.userIndex?.toString(),
     },
     execArgv: ['--experimental-wasm-modules'],
@@ -35,8 +37,9 @@ export const createSubProcessNode = async (opts: {
   });
 
   let isReady = false;
-  child.on('message', (msg: { type: string; data?: string }) => {
-    if (!isReady && msg.data?.match('rpc server start')) {
+  child.on('message', (msg: ChildProcessMessage) => {
+    // check node if ready
+    if (!isReady && msg.type === 'log' && msg.data?.match('rpc server start')) {
       isReady = true;
     }
   });
@@ -46,6 +49,7 @@ export const createSubProcessNode = async (opts: {
   }
 
   const client = await createRPCClient(port);
+  await client.ping.query();
 
   const safeKill = () => {
     try {
@@ -55,5 +59,22 @@ export const createSubProcessNode = async (opts: {
     }
   };
 
-  return { kill: safeKill, client };
+  const awaitForBlock = (n: number): Promise<boolean> => {
+    return new Promise((resolve) => {
+      let count = 0;
+      child.on('message', (msg: ChildProcessMessage) => {
+        if (msg?.type === 'lifecycleChange') {
+          const [step, data] = msg.data;
+          if (step === LifecycleStap.newBlock) {
+            count++;
+            if (count >= n) {
+              resolve(true);
+            }
+          }
+        }
+      });
+    });
+  };
+
+  return { kill: safeKill, client, awaitForBlock };
 };
