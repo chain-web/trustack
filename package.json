@@ -21,6 +21,7 @@
   "bugs": {
     "url": "https://github.com/chain-web/trustack/issues"
   },
+  "type": "module",
   "homepage": "https://github.com/chain-web/trustack#readme",
   "dependencies": {
     "@types/jest": "^29.5.2",

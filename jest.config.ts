@@ -50,6 +50,19 @@ const config = {
       ],
       modulePathIgnorePatterns,
     },
+    {
+      displayName: 'common',
+      preset: 'ts-jest/presets/default-esm',
+      moduleNameMapper: {
+        '^(\\.{1,2}/.*)\\.js$': '$1',
+      },
+      transform,
+      testMatch: [
+        '<rootDir>/packages/common/tests/**/?(*.)+(spec|test).[jt]s?(x)',
+        '<rootDir>/packages/common/src/**/__tests__/**/?(*.)+(spec|test).[jt]s?(x)',
+      ],
+      modulePathIgnorePatterns,
+    },
   ],
 };
 
