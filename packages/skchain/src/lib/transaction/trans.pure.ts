@@ -1,6 +1,6 @@
+import { peerid } from '@trustack/common';
 import { Transaction } from '../../mate/transaction.js';
 import { message } from '../../utils/message.js';
-import { signById } from '../p2p/did.js';
 import { chainState } from '../state/index.js';
 import { Address } from './../../mate/address.js';
 
@@ -32,7 +32,7 @@ export const genTransactionClass = async (
     amount,
     ts: Date.now(),
   });
-  trans.signature = await signById(priv, await trans.getSignatureData());
+  trans.signature = await peerid.signById(priv, await trans.getSignatureData());
   await trans.genHash();
   return trans;
 };

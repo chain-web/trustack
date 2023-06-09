@@ -1,7 +1,5 @@
 import { wait } from '@trustack/common';
 import { NETWORK_GET_NODE_COUNT_INTERVAL } from '../../../config/index.js';
-import { genetateDid } from '../../p2p/did.js';
-import type { NodeCollect } from '../nodeCollect.js';
 import { createTestNodeCollect } from './consensusTest.util.js';
 
 describe('Sknetwork', () => {

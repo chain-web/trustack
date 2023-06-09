@@ -24,6 +24,7 @@ export class NodeCollect {
   private pubActiveNodeRateTimeout!: NodeJS.Timeout;
   private updateActiveNodeRateTimeout!: NodeJS.Timeout;
   private updatingActiveNodeCount = false;
+  private publishingActiveNodeCount = false;
 
   public get activeNodeCount(): number {
     return this.nodeCount * this.activeNodeRate;
@@ -31,7 +32,8 @@ export class NodeCollect {
 
   async init(): Promise<void> {
     await this.subActiveNodeCount();
-    await this.startUpdateActiveNodeCount();
+    // TODO fix this
+    // await this.startUpdateActiveNodeCount();
   }
 
   private async startUpdateActiveNodeCount(): Promise<void> {
@@ -86,8 +88,8 @@ export class NodeCollect {
     }, NETWORK_GET_NODE_COUNT_INTERVAL);
   }
 
-  private async waitUpdateActiveNodeCount(): Promise<void> {
-    while (this.updatingActiveNodeCount) {
+  private async waitForTimeout(): Promise<void> {
+    while (this.updatingActiveNodeCount || this.publishingActiveNodeCount) {
       await wait(200);
     }
   }
@@ -98,14 +100,13 @@ export class NodeCollect {
       return;
     }
     // message.info('activeNodeCount', this.nodeCount, this.activeNodeRate);
-    if (this.activeNodeCount === 0) {
-      return;
-    }
-    await this.network.publish(
-      PubsubTopic.ACTIVENODE,
-      bytes.fromString(JSON.stringify([this.nodeCount, this.activeNodeRate])),
-    );
-
+    this.publishingActiveNodeCount = true;
+    this.activeNodeCount > 0 &&
+      (await this.network.publish(
+        PubsubTopic.ACTIVENODE,
+        bytes.fromString(JSON.stringify([this.nodeCount, this.activeNodeRate])),
+      ));
+    this.publishingActiveNodeCount = false;
     this.pubActiveNodeRateTimeout = setTimeout(() => {
       this.pubActiveNodeCount();
     }, NETWORK_PUB_NODE_COUNT_INTERVAL);
@@ -134,6 +135,6 @@ export class NodeCollect {
     clearTimeout(this.updateActiveNodeRateTimeout);
     this.pubActiveNodeRateTimeout = undefined as unknown as NodeJS.Timeout;
     this.updateActiveNodeRateTimeout = undefined as unknown as NodeJS.Timeout;
-    await this.waitUpdateActiveNodeCount();
+    await this.waitForTimeout();
   }
 }

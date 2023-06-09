@@ -1,12 +1,11 @@
 import type { DidJson } from '@trustack/common';
-import { LifecycleStap } from '@trustack/common';
+import { LifecycleStap, peerid } from '@trustack/common';
 import type { GenesisConfig } from './config/types.js';
 import { chainState } from './lib/state/index.js';
 import { version } from './config/index.js';
 import { TransactionAction } from './lib/transaction/index.js';
 import { message } from './utils/message.js';
 import { skCacheKeys } from './lib/skfs/key.js';
-import { genetateDid } from './lib/p2p/did.js';
 import { Consensus } from './lib/consensus/index.js';
 import { logClassPerformance } from './utils/performance.js';
 import { SkNetwork } from './lib/skfs/network.js';
@@ -86,7 +85,7 @@ export class SKChain {
   async run(opts?: SKChainRunOpts): Promise<void> {
     this.chainState.send('START');
     this.chainState.lifecycleChange(LifecycleStap.startCreateSKChain);
-    const user = opts?.user || (await genetateDid());
+    const user = opts?.user || (await peerid.genetateDid());
     await this.db.cachePut(skCacheKeys.accountId, user.id);
     await this.db.cachePut(skCacheKeys.accountPrivKey, user.privKey);
     this.did = user.id;

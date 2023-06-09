@@ -4,7 +4,7 @@ import {
   genetateDid,
   signById,
   verifyById,
-} from '../did.js';
+} from '../../../dist/crypto/peerid.mjs';
 
 describe('peer id', () => {
   describe('test', () => {

@@ -1,7 +1,6 @@
 import { BUILDER_NAMES } from '@trustack/contract';
-import { LifecycleStap } from '@trustack/common';
+import { LifecycleStap, peerid } from '@trustack/common';
 import { Transaction } from '../../mate/transaction.js';
-import { genetateDid, verifyById } from '../p2p/did.js';
 import { message } from '../../utils/message.js';
 import { transDemoFn } from '../contracts/transaction_demo.js';
 import type { BlockHeaderData } from '../../mate/block.js';
@@ -134,7 +133,7 @@ export class TransactionAction {
       if (!account) {
         // create new account
         account = newAccount(
-          (await genetateDid()).id,
+          (await peerid.genetateDid()).id,
           await createEmptyStorageRoot(),
         );
         await this.blockService.addAccount(account);
@@ -335,7 +334,7 @@ export class TransactionAction {
     const signature = trans.signature;
     if (
       signature &&
-      (await verifyById(
+      (await peerid.verifyById(
         trans.from.did,
         signature,
         await trans.getSignatureData(),
@@ -426,7 +425,7 @@ export class TransactionAction {
     payload: Uint8Array;
   }): Promise<ReturnType<TransactionAction['transaction']>> {
     // TODO 要不要加update code 的接口
-    const newDid = await genetateDid();
+    const newDid = await peerid.genetateDid();
     const storageRoot = await createEmptyStorageRoot();
     const codeRawBlock = await createRawBlock(meta.payload);
     await this.blockService.db.putRawBlock(codeRawBlock);

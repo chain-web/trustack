@@ -1,7 +1,6 @@
-import { testAccounts } from '@trustack/common';
+import { peerid, testAccounts } from '@trustack/common';
 import { genesis } from '../../config/testnet.config.js';
 import { BloomFilter } from '../../lib/ipld/logsBloom/bloomFilter.js';
-import { signById } from '../../lib/p2p/did.js';
 import type { Account } from '../account.js';
 import { newAccount } from '../account.js';
 import { Address } from '../address.js';
@@ -27,7 +26,7 @@ export const createTestTranscation = async (): Promise<Transaction> => {
     ts: Date.now(),
   });
 
-  const signature = await signById(
+  const signature = await peerid.signById(
     testAccounts[0].privKey,
     await trans.getSignatureData(),
   );
