@@ -1,26 +1,15 @@
 import {
   createEd25519PeerId,
   createFromPrivKey,
-  createFromPubKey,
 } from '@libp2p/peer-id-factory';
 import { unmarshalPrivateKey, unmarshalPublicKey } from '@libp2p/crypto/keys';
 import type { PeerId } from '@libp2p/interface-peer-id';
 
 import { toString } from 'uint8arrays/to-string';
 import { bytes } from 'multiformats';
-import * as nacl from 'tweetnacl';
 import { base58btc } from 'multiformats/bases/base58';
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string';
-import * as lsm from 'libsodium-wrappers-sumo';
-const { randomBytes, secretbox } = nacl;
-import type { DidJson } from '@trustack/common';
-
-// https://libsodium.gitbook.io/doc/advanced/ed25519-curve25519
-// https://github.com/paulmillr/noble-ed25519#getsharedsecretprivatekey-publickey
-
-// const prefix_SKw3 = new Uint8Array([193, 149, 185, 110]);
-// const prefix_D7 = new Uint8Array([9, 60]);
-// const prefix_peerId = new Uint8Array([0, 36, 8, 1, 18, 32]);
+import type { DidJson } from '../interface/did.mjs';
 
 // 生成 libp2p de did
 export const genetateDid = async (): Promise<DidJson> => {
@@ -61,13 +50,13 @@ export const verifyById = async (
   return verifyed;
 };
 
-export const createPeerIdFromDidString = async (
-  did: string,
-): Promise<PeerId> => {
-  const PUK = unmarshalPublicKey(uint8ArrayFromString(`${did}`, 'base58btc'));
-  const peerId = await createFromPubKey(PUK);
-  return peerId;
-};
+// export const createPeerIdFromDidString = async (
+//   did: string,
+// ): Promise<PeerId> => {
+//   const PUK = unmarshalPublicKey(uint8ArrayFromString(`${did}`, 'base58btc'));
+//   const peerId = await createFromPubKey(PUK);
+//   return peerId;
+// };
 
 export const createPeerIdFromDidJson = async (
   didJson: DidJson,
@@ -85,43 +74,6 @@ export const privKeyToEdPriv = (priv: string): Uint8Array => {
   const byte = uint8ArrayFromString(priv, 'base64pad');
   return byte.slice(4);
 };
-
-// 解析出nacl public key
-export const parseBoxPubKey = (did: string): Uint8Array => {
-  const byte = base58btc.decode(`z${did}`);
-  const pku8 = byte.slice(6);
-  const xpk = lsm.crypto_sign_ed25519_pk_to_curve25519(pku8);
-  return xpk;
-};
-
-// 从ed priv 解析出nacl priv key
-export const parseBoxPrivKey = (edPriv: Uint8Array): Uint8Array => {
-  const xsk = lsm.crypto_sign_ed25519_sk_to_curve25519(edPriv);
-  return xsk;
-};
-
-export const newNonce = (): Uint8Array => randomBytes(secretbox.nonceLength);
-(async () => {
-  // await lsm.ready;
-  // // 生成did
-  // const did = await genetateDid();
-  // const did2 = await genetateDid();
-  // const priv = privKeyToEdPriv(did.privKey);
-  // const priv2 = privKeyToEdPriv(did2.privKey);
-  // // 计算x25519 pk sk
-  // const xsk = parseBoxPrivKey(priv);
-  // const xsk2 = parseBoxPrivKey(priv2);
-  // const xpk = parseBoxPubKey(did.id);
-  // const xpk2 = parseBoxPubKey(did2.id);
-  // // 加密、解密
-  // const msg = 'test-msg'
-  // const nc = newNonce();
-  // const box = lsm.crypto_box_easy(msg, nc, xpk2, xsk);
-  // const unboxed = lsm.crypto_box_open_easy(box, nc, xpk, xsk2);
-  // console.log('encode-decode succ: ', bytes.toString(unboxed) === msg);
-})();
-
-// genetateDid();
 
 // const testDid = async () => {
 //   // 验证一下did生成的每一位的随机性，确实是随机的

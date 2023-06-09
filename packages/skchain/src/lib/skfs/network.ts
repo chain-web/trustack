@@ -1,10 +1,10 @@
+import type { PeerId } from '@trustack/network';
 import { Network, createConfig } from '@trustack/network';
 import type { LevelDatastore } from 'datastore-level';
 import type { Message } from '@libp2p/interface-pubsub';
 import type { DidJson } from '@trustack/common';
-import type { PeerId } from '@libp2p/interface-peer-id';
 import type { Multiaddr } from '@multiformats/multiaddr';
-import { createPeerIdFromDidJson } from '../p2p/did.js';
+import { peerid } from '@trustack/common';
 
 export enum PubsubTopic {
   DID = 'did',
@@ -38,7 +38,7 @@ export class SkNetwork {
   >();
 
   async init(did: DidJson, datastore: LevelDatastore): Promise<void> {
-    const peerId = await createPeerIdFromDidJson(did);
+    const peerId = await peerid.createPeerIdFromDidJson(did);
     this._network = new Network({
       peerId,
       datastore,

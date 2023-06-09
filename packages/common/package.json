@@ -16,7 +16,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@libp2p/crypto": "^1.0.17",
+    "@libp2p/interface-peer-id": "^2.0.2",
+    "@libp2p/peer-id-factory": "^2.0.3",
     "bls-eth-wasm": "^1.0.6",
-    "multiformats": "^11.0.2"
+    "multiformats": "^11.0.2",
+    "uint8arrays": "^4.0.3"
   }
 }

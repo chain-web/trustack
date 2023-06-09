@@ -1,6 +1,5 @@
 import type { DidJson } from '@trustack/common';
-import { testAccounts } from '@trustack/common';
-import { genetateDid } from 'skchain';
+import { peerid, testAccounts } from '@trustack/common';
 
 export const rpcPort = +(process.env.RPC_PORT || 3666);
 export const wsPort = +(process.env.WS_PORT || 3667);
@@ -12,5 +11,5 @@ export const getUser = async (): Promise<DidJson> => {
       return user;
     }
   }
-  return await genetateDid();
+  return await peerid.genetateDid();
 };

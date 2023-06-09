@@ -3,7 +3,7 @@ import './index.scss';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'antd';
 import type { DidJson } from 'skchain';
-import { genetateDid, localCache, skCacheKeys } from 'skchain';
+import { localCache, peerid, skCacheKeys } from 'skchain';
 import { lanKeys } from './index.i18n';
 
 enum LoginType {
@@ -53,7 +53,7 @@ export default function Login() {
         <Button
           onClick={async () => {
             setLoginType(LoginType.CreateDID);
-            const didData = await genetateDid();
+            const didData = await peerid.genetateDid();
             setdid(didData.id);
             setprivKey(didData.privKey);
           }}
