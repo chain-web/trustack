@@ -43,7 +43,12 @@ importers:
       typescript: 5.1.3
 
   packages/common:
-    specifiers: {}
+    specifiers:
+      bls-eth-wasm: ^1.0.6
+      multiformats: ^11.0.2
+    dependencies:
+      bls-eth-wasm: 1.0.6
+      multiformats: 11.0.2
 
   packages/contract:
     specifiers:
@@ -3252,6 +3257,10 @@ packages:
       interface-store: 5.1.0
       level: 8.0.0
       multiformats: 11.0.2
+    dev: false
+
+  /bls-eth-wasm/1.0.6:
+    resolution: {integrity: sha512-XDXNaxd6CGHLLprfhbr2Yb1ctylIalDvfO28Tepk+Fa/cTEYqNAJq51hdV55PY34u9R1UX/f4RHQJAj/CPG3NA==}
     dev: false
 
   /brace-expansion/1.1.11:

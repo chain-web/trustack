@@ -12,7 +12,7 @@ const createRPCServer = async () => {
   if (port !== rpcPort) {
     throw new Error('rpc server listen failed');
   }
-  // eslint-disable-next-line no-console
+
   chain.message.info(`-------rpc server start at ${rpcPort}`);
 };
 
