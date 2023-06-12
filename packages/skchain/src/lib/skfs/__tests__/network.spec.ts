@@ -28,7 +28,10 @@ describe('Sknetwork', () => {
       await wait(5000);
 
       await n2.publish(PubsubTopic.DID, bytes.fromString('test_did'));
-      await wait(2000);
+
+      while (msg1 === '') {
+        await wait(1000);
+      }
 
       expect(msg1).toBe('test_did');
 

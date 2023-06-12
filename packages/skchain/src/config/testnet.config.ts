@@ -6,7 +6,7 @@ export const genesis: GenesisConfig = {
   hash: '0000000000000000000000000000000000000000000000',
   parent: '0000000000000000000000000000000000000000000000',
   logsBloom: '0',
-  difficulty: 10n,
+  difficulty: 10000n, // default 10s
   number: 0n,
   cuLimit: 1000n,
   timestamp: 1636461884881,
