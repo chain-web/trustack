@@ -15,7 +15,7 @@ export interface BlockHeaderData {
   transactionsRoot: string; // 当前块的交易树根节点hash
   receiptsRoot: string; // 当前块的收据树根节点hash
   logsBloom: BloomFilter; // 当前块交易接收者的bloom，用于快速查找
-  difficulty: bigint; // 难度，用来调整出块时间，由于不挖矿，具体实现待定
+  difficulty: bigint; // 难度，用来调整出块时间，由等待打包的交易计算得到
   number: bigint; // 当前块序号
   cuLimit: bigint; // 当前块，计算量上限
   cuUsed: bigint; // 当前块消耗的计算量

@@ -40,5 +40,4 @@ export const NETWORK_PUB_NODE_COUNT_INTERVAL =
 export const NETWORK_MAX_NODE_COUNT_Buffer = 10;
 
 export const CONSENSUS_TIME_WINDOW_BASE = 1n; // ms
-export const CONSENSUS_NODE_PERCENT = 60; // ms
 export const DO_CONSENSUS_INTERVAL = 600; // ms
