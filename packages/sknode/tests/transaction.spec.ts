@@ -3,8 +3,8 @@ import { createSubProcessNode } from './util.js';
 
 describe('SkChain transaction', () => {
   describe('multi node test', () => {
-    it('should 2 node simple transaction ok', async () => {
-      const count = 2;
+    it('should 4 node simple transaction ok', async () => {
+      const count = 4;
       // create nodes
       const nodes = [];
       const kills = [];
@@ -41,16 +41,7 @@ describe('SkChain transaction', () => {
       // wait for 1 block
       await Promise.all(awaitForBlocks.map((f) => f(1)));
       for (let i = 0; i < count; i++) {
-        console.log('get balance: ', i);
-        const ac = new AbortController();
-        const timer = setTimeout(() => {
-          ac.abort();
-        }, 5000);
-        const { balance } = await nodes[i].getBalance.query(
-          testAccounts[3].id,
-          { signal: ac.signal },
-        );
-        clearTimeout(timer);
+        const { balance } = await nodes[i].getBalance.query(testAccounts[3].id);
         expect(balance).toEqual('1000');
       }
 
