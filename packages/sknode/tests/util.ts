@@ -20,7 +20,6 @@ export const createSubProcessNode = async (opts: {
   const { port, clearDB } = opts;
   if (clearDB) {
     await $`rm -rf ./.leveldb/${port}`;
-    console.log(`clear db: `, port);
   }
 
   const __dirname = dirname(__filename);
@@ -49,7 +48,20 @@ export const createSubProcessNode = async (opts: {
   }
 
   const client = await createRPCClient(port);
-  await client.ping.query();
+  let rpcReady = false;
+  while (!rpcReady) {
+    try {
+      const ac = new AbortController();
+      const timer = setTimeout(() => {
+        ac.abort();
+      }, 1000);
+      await client.ping.query(undefined, { signal: ac.signal });
+      rpcReady = true;
+      clearTimeout(timer);
+    } catch (error) {
+      await wait(500);
+    }
+  }
 
   const safeKill = () => {
     try {
@@ -75,6 +87,7 @@ export const createSubProcessNode = async (opts: {
       });
     });
   };
+  console.log(`created: `, port);
 
   return { kill: safeKill, client, awaitForBlock };
 };
