@@ -1,7 +1,6 @@
 import { bytes } from 'multiformats';
-import { testAccounts, wait } from '@trustack/common';
+import { testAccounts, testContracts } from '@trustack/common';
 import { Address } from '../../../mate/address.js';
-import { testCoinContract } from '../../contract/__tests__/contractTest.util.js';
 import { TransStatus } from '../index.js';
 import { createTestTransAction } from './transTest.util.js';
 
@@ -40,7 +39,7 @@ describe('transcation', () => {
       );
 
       const { trans } = await transAction.deploy({
-        payload: bytes.fromString(testCoinContract),
+        payload: bytes.fromString(testContracts.tokenContract.code),
       });
       expect(trans).not.toEqual(undefined);
       if (!trans) {

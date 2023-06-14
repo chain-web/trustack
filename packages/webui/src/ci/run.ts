@@ -1,10 +1,5 @@
-import {
-  Address,
-  LifecycleStap,
-  TransStatus,
-  evalFunction,
-  tests,
-} from 'skchain';
+import { Address, LifecycleStap, TransStatus, evalFunction } from 'skchain';
+import { testContracts } from '@trustack/common';
 import { bytes } from 'multiformats';
 import { accounts } from '../page/test/accounts';
 import { createTestSkChain } from './util';
@@ -30,7 +25,7 @@ export const runContractTest = async (): Promise<boolean> => {
   const chain = await createTestSkChain(accounts[2]);
 
   const { trans } = await chain.deploy({
-    payload: bytes.fromString(tests.testCoinContract),
+    payload: bytes.fromString(testContracts.tokenContract.code),
   });
 
   if (!trans) {

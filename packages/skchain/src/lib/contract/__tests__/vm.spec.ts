@@ -1,8 +1,7 @@
-import { testAccounts } from '@trustack/common';
+import { testAccounts, testContracts } from '@trustack/common';
 import { Address } from '../../../mate/address.js';
 import { generateBaseContractCode } from '../codeSnippet.js';
 import { evalClass, evalFunction } from '../vm.js';
-import { testCoinContract, testCoinContractDid } from './contractTest.util.js';
 
 describe('vm', () => {
   describe('test', () => {
@@ -17,10 +16,10 @@ describe('vm', () => {
     it('should simple class ok', async () => {
       const codeStr = `
         ${generateBaseContractCode(new Address(testAccounts[0].id))}
-        ${testCoinContract}
+        ${testContracts.tokenContract.code}
       `;
       const res = await evalClass(codeStr, 'getBalance', [
-        `{did: '${testCoinContractDid}'}`,
+        `{did: '${testContracts.tokenContract.testDid}'}`,
       ]);
       expect(res.funcResult).toEqual('10000n');
     });

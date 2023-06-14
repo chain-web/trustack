@@ -12,5 +12,3 @@ export { LifecycleStap, peerid } from '@trustack/common';
 
 export { BaseContract } from './contractHelper.js';
 export const localCache = new Cache('sk-common-cache');
-
-export { tests } from './tests.js';

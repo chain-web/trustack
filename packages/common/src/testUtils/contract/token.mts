@@ -1,7 +1,6 @@
-export const testCoinContractDid =
-  '12D3KooWHdhPrGCqsjD8j6yiHfumdzxfRxyYNPxJKN99RfgtoRuq';
+export const testDid = '12D3KooWHdhPrGCqsjD8j6yiHfumdzxfRxyYNPxJKN99RfgtoRuq';
 
-export const testCoinContract = `
+export const code = `
 class __contract_class_name__ extends BaseContract {
   constructor(){
       super();
