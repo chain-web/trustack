@@ -1,9 +1,8 @@
 import { BUILDER_NAMES } from '@trustack/contract';
 import { bytes } from 'multiformats';
-import { testAccounts } from '@trustack/common';
+import { testAccounts, testContracts } from '@trustack/common';
 import { Address } from '../../../mate/address.js';
 import { Contract } from '../index.js';
-import { testCoinContract } from './contractTest.util.js';
 
 describe('contract', () => {
   describe('test', () => {
@@ -12,7 +11,7 @@ describe('contract', () => {
       await contract.init();
 
       const res = await contract.runContract(
-        bytes.fromString(testCoinContract),
+        bytes.fromString(testContracts.tokenContract.code),
         {
           cuLimit: 10000n,
           storage: bytes.fromString(''),
@@ -28,7 +27,7 @@ describe('contract', () => {
       let msg = '';
       try {
         const res = await contract.runContract(
-          bytes.fromString(testCoinContract),
+          bytes.fromString(testContracts.tokenContract.code),
           {
             cuLimit: 10n,
             storage: bytes.fromString(''),
@@ -47,7 +46,7 @@ describe('contract', () => {
       await contract.init();
 
       const res = await contract.runContract(
-        bytes.fromString(testCoinContract),
+        bytes.fromString(testContracts.tokenContract.code),
         {
           cuLimit: 10000n,
           storage: bytes.fromString('{"balances":{"test-did":1000n}}'),

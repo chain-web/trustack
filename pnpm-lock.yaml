@@ -222,6 +222,7 @@ importers:
       '@esbuild-plugins/node-globals-polyfill': ^0.2.3
       '@playwright/test': ^1.34.3
       '@rollup/plugin-inject': ^5.0.3
+      '@trustack/common': workspace:^1.0.0
       '@trustack/node-modules-polyfill': ^0.2.5
       '@trustack/rollup-plugin-node-polyfills': ^0.2.2
       '@types/react': ^18.2.8
@@ -246,6 +247,7 @@ importers:
       xstate: ^4.37.2
     dependencies:
       '@esbuild-plugins/node-globals-polyfill': 0.2.3_esbuild@0.17.19
+      '@trustack/common': link:../common
       '@trustack/node-modules-polyfill': 0.2.5_esbuild@0.17.19
       '@trustack/rollup-plugin-node-polyfills': 0.2.2
       '@xstate/react': 3.2.2_2ahhlc4gros4qbfh6llqiazj5i

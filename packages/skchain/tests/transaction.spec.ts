@@ -1,9 +1,7 @@
-import { LifecycleStap, testAccounts } from '@trustack/common';
+import { LifecycleStap, testAccounts, testContracts } from '@trustack/common';
 import { bytes } from 'multiformats';
-import { testCoinContract } from '../src/lib/contract/__tests__/contractTest.util.js';
 import { TransStatus } from '../src/lib/transaction/index.js';
 import { Address } from '../src/mate/address.js';
-import { performanceCollecter } from '../src/utils/performance.js';
 import { createTestSkChain } from './skchainTest.util.js';
 
 describe('SkChain transaction', () => {
@@ -38,7 +36,7 @@ describe('SkChain transaction', () => {
       await chain.run({ user: testAccounts[2] });
 
       const { trans } = await chain.deploy({
-        payload: bytes.fromString(testCoinContract),
+        payload: bytes.fromString(testContracts.tokenContract.code),
       });
 
       if (!trans) {
@@ -97,7 +95,7 @@ describe('SkChain transaction', () => {
       await chain.run({ user: testAccounts[2] });
 
       const { trans } = await chain.deploy({
-        payload: bytes.fromString(testCoinContract),
+        payload: bytes.fromString(testContracts.tokenContract.code),
       });
 
       if (!trans) {
