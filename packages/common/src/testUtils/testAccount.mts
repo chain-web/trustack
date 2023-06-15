@@ -53,12 +53,6 @@ export const testAccounts: DidJson[] = [
       'CAESQJlrmye7ZErZfeugomhCfWDRk3IJQHjh0AodwO0nNCoc9/pqOznzDdQvGdPc0vLHH0Tul95AXpzklc7NvnSIA1Y=',
     pubKey: 'CAESIPf6ajs58w3ULxnT3NLyxx9E7pfeQF6c5JXOzb50iANW',
   },
-  {
-    id: '12D3KooWNgrDJDVXRgmYa3wksK3PFYd1EF2v8NV7c5M7vfcVGqaA',
-    privKey:
-      'CAESQJ+bYcPsY9FGds42a1ECyzarNxgJ1b847OTFHuURTZFivzr+ODGm7cuaTF8oI4wCNYWefnZLMMc8rZGVEgFhWTs=',
-    pubKey: 'CAESIL86/jgxpu3LmkxfKCOMAjWFnn52SzDHPK2RlRIBYVk7',
-  },
 ];
 
 export const testRelayAccounts: ({

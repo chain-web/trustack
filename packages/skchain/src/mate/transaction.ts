@@ -18,6 +18,12 @@ export interface TransactionOption {
 
 export type TransactionBinaryMeta = string[];
 
+export type TransactionPayload = {
+  method: 'constructor' | string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  args: any[];
+};
+
 // 交易，基础数据
 export class Transaction {
   constructor(opt: TransactionOption) {
@@ -42,11 +48,7 @@ export class Transaction {
   signature?: string;
   recipient: Address;
   amount: bigint;
-  payload?: {
-    method: 'constructor' | string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    args: any[];
-  };
+  payload?: TransactionPayload;
   hash!: string;
   ts: number;
 

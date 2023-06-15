@@ -1,4 +1,7 @@
-import { testAccounts, wait } from '@trustack/common';
+import type { DidJson } from '@trustack/common';
+import { testAccounts, testContracts, wait } from '@trustack/common';
+import { bytes } from 'multiformats';
+import { Address, Transaction } from 'skchain';
 import { createSubProcessNode } from './util.js';
 
 describe('SkChain transaction', () => {
@@ -14,7 +17,7 @@ describe('SkChain transaction', () => {
         const { kill, client, awaitForBlock } = await createSubProcessNode({
           port,
           clearDB: true,
-          userIndex: i,
+          user: testAccounts[i],
         });
         kills.push(kill);
         nodes.push(client);
@@ -44,6 +47,80 @@ describe('SkChain transaction', () => {
         const { balance } = await nodes[i].getBalance.query(testAccounts[3].id);
         expect(balance).toEqual('1000');
       }
+
+      // kill nodes
+      for (let i = 0; i < count; i++) {
+        kills[i]();
+      }
+    });
+    it('should 2 node contract call ok', async () => {
+      // TODO
+      return;
+      const count = 2;
+      // create nodes
+      const nodes = [];
+      const kills = [];
+      const awaitForBlocks = [];
+      for (let i = 0; i < count; i++) {
+        const port = 3322 + i * 10;
+        let user: DidJson = testAccounts[i];
+        if (i === 0) {
+          user = testContracts.tokenContract.testAccount;
+        }
+        const { kill, client, awaitForBlock } = await createSubProcessNode({
+          port,
+          clearDB: true,
+          user,
+        });
+        kills.push(kill);
+        nodes.push(client);
+        awaitForBlocks.push(awaitForBlock);
+      }
+
+      // wait for peer connect
+      let peerCount = 0;
+      while (peerCount < count) {
+        // every node connect to each other, and connect to relay node, so peerCount should eqal to count
+        await wait(1000);
+        const {
+          status: { peerCount: pc },
+        } = await nodes[0].getNetworkStatus.query();
+        peerCount = pc;
+      }
+
+      // deploy contract
+      const { hex: transHex } = await nodes[0].deployContract.query(
+        testContracts.tokenContract.code,
+      );
+
+      const trans = await Transaction.fromBinary(bytes.fromHex(transHex));
+
+      // call contract
+      await nodes[0].callContract.query({
+        amount: '0',
+        contract: trans.recipient.did,
+        method: 'send',
+        args: [new Address(testAccounts[2].id).toParam(), '1000n'],
+      });
+
+      // send random trans
+
+      // wait for 1 block
+      await Promise.all(awaitForBlocks.map((f) => f(1)));
+      // for (let i = 0; i < count; i++) {
+      //   const { hex } = await nodes[i].callContract.query({
+      //     amount: '0',
+      //     contract: trans.recipient.did,
+      //     method: 'getBalance',
+      //     args: [testAccounts[3].id],
+      //   });
+      //   const { hex: transHex } = await nodes[0].deployContract.query(
+      //     testContracts.tokenContract.code,
+      //   );
+      //   //
+      //   const transi = await Transaction.fromBinary(bytes.fromHex(transHex));
+      //   // expect(balance).toEqual('1000');
+      // }
 
       // kill nodes
       for (let i = 0; i < count; i++) {

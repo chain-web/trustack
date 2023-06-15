@@ -1,5 +1,5 @@
 import { SKChain } from 'skchain';
-import { getUser, rpcPort, tcpPort, wsPort } from './config.mjs';
+import { getUser, rpcPort, tcpPort, wsPort } from '../config.mjs';
 
 const createChain = async () => {
   const chain = new SKChain({

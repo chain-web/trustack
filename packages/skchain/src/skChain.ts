@@ -55,6 +55,7 @@ export class SKChain {
     // 对外暴露的一些方法
     this.transaction = this.transAction.transaction.bind(this.transAction);
     this.deploy = this.transAction.deploy.bind(this.transAction);
+    this.callContract = this.transAction.callContract.bind(this.transAction);
     this.getAccount = this.blockService.getAccount.bind(this.blockService);
   }
 
@@ -78,6 +79,7 @@ export class SKChain {
   // // public methods
   transaction;
   deploy;
+  callContract;
   getAccount;
 
   chainState = chainState;

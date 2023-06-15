@@ -33,6 +33,7 @@ describe('transcation', () => {
       await close();
     });
     it('should deploy contract ok', async () => {
+      // this test can not stack block
       const { transAction, close } = await createTestTransAction(
         'trans_create_contract',
         testAccounts[0],

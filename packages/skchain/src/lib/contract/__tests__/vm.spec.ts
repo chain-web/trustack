@@ -19,7 +19,7 @@ describe('vm', () => {
         ${testContracts.tokenContract.code}
       `;
       const res = await evalClass(codeStr, 'getBalance', [
-        `{did: '${testContracts.tokenContract.testDid}'}`,
+        `{did: '${testContracts.tokenContract.testAccount.id}'}`,
       ]);
       expect(res.funcResult).toEqual('10000n');
     });

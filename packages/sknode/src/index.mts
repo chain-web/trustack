@@ -1,7 +1,7 @@
 import { createHTTPServer } from '@trpc/server/adapters/standalone';
 import { rpcPort } from './config.mjs';
 import { chainRouter } from './rpc/router.mjs';
-import { chain } from './skchain.mjs';
+import { chain } from './chain/skchain.mjs';
 
 const createRPCServer = async () => {
   const server = createHTTPServer({

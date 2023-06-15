@@ -60,7 +60,7 @@ export class Contract {
     }
 
     const initClassCode = `
-    const __run__class__ = new ${BUILDER_NAMES.CONTRACT_CLASS_NAME}()
+    const __run__class__ = new ${BUILDER_NAMES.CONTRACT_CLASS_NAME}();
   `;
     const loadDataCode = `
       const ${LOAD_CONTRACT_DATA_FUNC} = () => {
@@ -69,8 +69,8 @@ export class Contract {
         Object.keys(data).map(item => {
           __run__class__[item] = data[item]
         })
-      }
-      ${LOAD_CONTRACT_DATA_FUNC}()
+      };
+      ${LOAD_CONTRACT_DATA_FUNC}();
     `;
 
     const funcCallCode = `
@@ -83,7 +83,7 @@ export class Contract {
         if (prop !== 'msg') {
           storage[prop] = __run__class__[prop];
         }
-      })
+      });
       __sk_utils__.save_storage(JSON.stringify(storage));
     `;
     const allCode = [
@@ -109,6 +109,8 @@ export class Contract {
         codeString: allCode.toString(),
         cuLimit: opts.cuLimit,
         storage: opts.storage,
+        error,
+        opts,
       });
       throw new Error(error as string);
     }
