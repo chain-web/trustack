@@ -47,13 +47,13 @@ describe('SkChain transaction', () => {
       const status = await chain.transAction.transStatus(trans.hash);
       expect(status.status).toEqual(TransStatus.transed);
       // call contract
-      const { result } = await chain.callContract({
+      const res = await chain.callContract({
         amount: 0n,
         contract: trans.recipient,
         method: 'send',
         args: [new Address(testAccounts[0].id).toParam(), 100n],
       });
-      expect(result).toEqual(true);
+      expect(res.result).toEqual(true);
       // wait to stack
       await chain.chainState.waitForLifecycle(LifecycleStap.newBlock);
       const { result: getBalanceRes } = await chain.callContract({
@@ -67,7 +67,7 @@ describe('SkChain transaction', () => {
     });
     it('should deploy and call contract at one block ok', async () => {
       const chain = await createTestSkChain('contract_1');
-      await chain.run({ user: testAccounts[2] });
+      await chain.run({ user: testContracts.tokenContract.testAccount });
 
       const { trans } = await chain.deploy({
         payload: bytes.fromString(testContracts.tokenContract.code),
@@ -76,23 +76,13 @@ describe('SkChain transaction', () => {
       if (!trans) {
         throw new Error('no trans');
       }
-      // TODO: can deploy and call contract at one block
-      // const { result } = await chain.callContract({
-      //   amount: 0n,
-      //   contract: trans.recipient,
-      //   method: 'send',
-      //   args: [new Address(testAccounts[0].id).toParam(), 100n],
-      // });
-      // expect(result).toEqual(true);
-      // // wait to stack
-      // await chain.chainState.waitForLifecycle(LifecycleStap.newBlock);
-      // const { result: getBalanceRes } = await chain.callContract({
-      //   amount: 0n,
-      //   contract: trans.recipient,
-      //   method: 'getBalance',
-      //   args: [new Address(testAccounts[0].id).toParam()],
-      // });
-      // expect(getBalanceRes).toEqual('100n');
+      const { error } = await chain.callContract({
+        amount: 0n,
+        contract: trans.recipient,
+        method: 'send',
+        args: [new Address(testAccounts[0].id).toParam(), 100n],
+      });
+      expect(error).not.toEqual(undefined);
       await chain.stop();
     });
   });

@@ -56,27 +56,29 @@ export const chainRouter = router({
     const tx = await chain.deploy({ payload: bytes.fromString(input) });
     return await processTrans(tx.trans);
   }),
-  // TDOD: fix
-  // callContract: publicProcedure
-  //   .input(
-  //     z.object({
-  //       amount: z.string(),
-  //       contract: z.string(),
-  //       cuLimit: z.string().optional(),
-  //       method: z.string(),
-  //       args: z.array(z.any()),
-  //     }),
-  //   )
-  //   .query(async ({ input }) => {
-  //     const tx = await chain.callContract({
-  //       amount: BigInt(input.amount),
-  //       contract: new Address(input.contract),
-  //       cuLimit: input.cuLimit ? BigInt(input.cuLimit) : undefined,
-  //       method: input.method,
-  //       args: input.args,
-  //     });
-  //     return await processTrans(tx.transaction);
-  //   }),
+  callContract: publicProcedure
+    .input(
+      z.object({
+        amount: z.string(),
+        contract: z.string(),
+        cuLimit: z.string().optional(),
+        method: z.string(),
+        args: z.array(z.any()),
+      }),
+    )
+    .query(async ({ input }) => {
+      const res = await chain.callContract({
+        amount: BigInt(input.amount),
+        contract: new Address(input.contract),
+        cuLimit: input.cuLimit ? BigInt(input.cuLimit) : undefined,
+        method: input.method,
+        args: input.args,
+      });
+      return {
+        ...res,
+        transaction: await processTrans(res.transaction),
+      };
+    }),
 
   getNetworkStatus: publicProcedure.query(async () => {
     const status = await chain.network.getNetWorkStatus();

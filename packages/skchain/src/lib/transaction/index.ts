@@ -1,5 +1,5 @@
 import { BUILDER_NAMES } from '@trustack/contract';
-import { LifecycleStap, peerid } from '@trustack/common';
+import { LifecycleStap, peerid, wait } from '@trustack/common';
 import type { TransactionPayload } from '../../mate/transaction.js';
 import { Transaction } from '../../mate/transaction.js';
 import { message } from '../../utils/message.js';
@@ -345,11 +345,6 @@ export class TransactionAction {
     }
   }
 
-  async stop(): Promise<void> {
-    clearInterval(this.transTaskInterval);
-    //  unbindTransactionListen
-  }
-
   async transaction(
     transMeta: TransactionOption,
   ): Promise<{ trans?: Transaction | undefined }> {
@@ -452,10 +447,24 @@ export class TransactionAction {
     args?: TransactionPayload['args'];
     cuLimit?: bigint;
   }): Promise<{
-    result: string | object;
-    cuCost: bigint;
-    transaction: Awaited<ReturnType<TransactionAction['transaction']>>['trans'];
+    result?: string | object;
+    cuCost?: bigint;
+    transaction?: Awaited<
+      ReturnType<TransactionAction['transaction']>
+    >['trans'];
+    error?: string;
   }> {
+    const account = await this.blockService.getExistAccount(
+      params.contract.did,
+    );
+    const storage = await this.blockService.db.get(
+      account.storageRoot.toString(),
+    );
+    if (!storage) {
+      return {
+        error: 'storage not found, please check contract address',
+      };
+    }
     const { trans } = await this.transaction({
       amount: params.amount,
       recipient: params.contract,
@@ -465,9 +474,7 @@ export class TransactionAction {
         args: params.args || [],
       },
     });
-    const account = await this.blockService.getExistAccount(
-      params.contract.did,
-    );
+
     const res = await this.runContractWidthStorage({
       caller: new Address(
         await this.blockService.db.cacheGetExist(skCacheKeys.accountId),
@@ -476,14 +483,19 @@ export class TransactionAction {
       contract: params.contract,
       method: params.method,
       args: params.args,
-      storage:
-        (await this.blockService.db.get(account.storageRoot.toString())) ||
-        new Uint8Array(),
+      storage,
     });
     return {
       transaction: trans,
       cuCost: res.cuCost,
       result: res.result,
     };
+  }
+  async stop(): Promise<void> {
+    while (this.taskInProgress) {
+      await wait(100);
+    }
+    clearInterval(this.transTaskInterval);
+    //  unbindTransactionListen
   }
 }
