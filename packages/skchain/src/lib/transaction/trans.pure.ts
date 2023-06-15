@@ -9,6 +9,7 @@ export const genTransactionClass = async (
   recipient: Transaction['recipient'],
   did: string,
   priv: string,
+  cuLimit: Transaction['cuLimit'],
   payload: Transaction['payload'],
 ): Promise<Transaction | undefined> => {
   // 只是做交易检查和预处理
@@ -25,7 +26,7 @@ export const genTransactionClass = async (
   const trans = new Transaction({
     from: new Address(did),
     cu: BigInt(1000), // TODO
-    cuLimit: BigInt(10000), // TODO
+    cuLimit,
     payload,
     recipient,
     accountNonce: BigInt(0), // TODO

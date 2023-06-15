@@ -1,5 +1,6 @@
 import { BUILDER_NAMES } from '@trustack/contract';
 import { LifecycleStap, peerid } from '@trustack/common';
+import type { TransactionPayload } from '../../mate/transaction.js';
 import { Transaction } from '../../mate/transaction.js';
 import { message } from '../../utils/message.js';
 import { transDemoFn } from '../contracts/transaction_demo.js';
@@ -7,19 +8,16 @@ import type { BlockHeaderData } from '../../mate/block.js';
 import { chainState } from '../state/index.js';
 import {
   BLOCK_INTERVAL_TIME_LIMIT,
+  DEFAULT_CU_LIMIT,
   MAX_TRANS_LIMIT,
   WAIT_TIME_LIMIT,
 } from '../../config/index.js';
 import type { BlockService } from '../ipld/blockService/blockService.js';
 import type { Consensus } from '../consensus/index.js';
 import { skCacheKeys } from '../skfs/key.js';
-import {
-  createEmptyStorageRoot,
-  createRawBlock,
-  takeBlockValue,
-} from '../../mate/utils.js';
+import { createEmptyStorageRoot, createRawBlock } from '../../mate/utils.js';
 import { newAccount } from '../../mate/account.js';
-import type { Address } from '../../mate/address.js';
+import { Address } from '../../mate/address.js';
 import { Contract } from '../contract/index.js';
 import { tryParseJson } from '../../utils/utils.js';
 import { accountOpCodes } from '../contract/code.js';
@@ -33,7 +31,7 @@ import { genTransactionClass } from './trans.pure.js';
 export interface TransactionOption {
   amount: Transaction['amount'];
   recipient: Transaction['recipient'];
-
+  cuLimit?: Transaction['cuLimit'];
   payload?: Transaction['payload'];
 }
 
@@ -184,10 +182,10 @@ export class TransactionAction {
           trans.recipient.did,
         );
 
-        const res = await this.callContract({
+        const res = await this.runContractWidthStorage({
           caller: trans.from,
           contract: account.address,
-          mothed: trans.payload.method,
+          method: trans.payload.method,
           args: trans.payload.args,
           cuLimit: trans.cuLimit,
           storage:
@@ -361,6 +359,7 @@ export class TransactionAction {
       transMeta.recipient,
       await this.blockService.db.cacheGetExist(skCacheKeys.accountId),
       await this.blockService.db.cacheGetExist(skCacheKeys.accountPrivKey),
+      transMeta.cuLimit || DEFAULT_CU_LIMIT,
       transMeta.payload,
     );
 
@@ -392,10 +391,10 @@ export class TransactionAction {
     return contractCode;
   }
 
-  async callContract(params: {
+  private async runContractWidthStorage(params: {
     caller: Address;
     contract: Address;
-    mothed: string;
+    method: string;
     args?: string[];
     cuLimit: bigint;
     storage: Uint8Array;
@@ -407,7 +406,7 @@ export class TransactionAction {
     const contractCode = await this.getContractCode(params.contract.did);
     const result = await this.contract.runContract(contractCode, {
       cuLimit: params.cuLimit,
-      method: params.mothed,
+      method: params.method,
       storage: params.storage,
       args: params.args,
       sender: params.caller,
@@ -444,5 +443,47 @@ export class TransactionAction {
         args: [meta.payload],
       },
     });
+  }
+
+  async callContract(params: {
+    contract: Address;
+    amount: bigint;
+    method: string;
+    args?: TransactionPayload['args'];
+    cuLimit?: bigint;
+  }): Promise<{
+    result: string | object;
+    cuCost: bigint;
+    transaction: Awaited<ReturnType<TransactionAction['transaction']>>['trans'];
+  }> {
+    const { trans } = await this.transaction({
+      amount: params.amount,
+      recipient: params.contract,
+      cuLimit: params.cuLimit,
+      payload: {
+        method: params.method,
+        args: params.args || [],
+      },
+    });
+    const account = await this.blockService.getExistAccount(
+      params.contract.did,
+    );
+    const res = await this.runContractWidthStorage({
+      caller: new Address(
+        await this.blockService.db.cacheGetExist(skCacheKeys.accountId),
+      ),
+      cuLimit: params.cuLimit || DEFAULT_CU_LIMIT,
+      contract: params.contract,
+      method: params.method,
+      args: params.args,
+      storage:
+        (await this.blockService.db.get(account.storageRoot.toString())) ||
+        new Uint8Array(),
+    });
+    return {
+      transaction: trans,
+      cuCost: res.cuCost,
+      result: res.result,
+    };
   }
 }

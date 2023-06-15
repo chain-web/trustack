@@ -22,7 +22,9 @@ export const runSkvmTest = async (): Promise<boolean> => {
 };
 
 export const runContractTest = async (): Promise<boolean> => {
-  const chain = await createTestSkChain(accounts[2]);
+  const chain = await createTestSkChain(
+    testContracts.tokenContract.testAccount,
+  );
 
   const { trans } = await chain.deploy({
     payload: bytes.fromString(testContracts.tokenContract.code),

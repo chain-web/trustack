@@ -4,14 +4,14 @@ import { fork } from 'child_process';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { $ } from 'execa';
-import type { ChildProcessMessage } from '@trustack/common';
-import { LifecycleStap, wait } from '@trustack/common';
+import type { ChildProcessMessage, DidJson } from '@trustack/common';
+import { LifecycleStap, peerid, wait } from '@trustack/common';
 import { createRPCClient } from '../dist/rpc/client.mjs';
 const __filename = fileURLToPath(import.meta.url);
 export const createSubProcessNode = async (opts: {
   port: number;
   clearDB?: boolean;
-  userIndex?: number; // default is generate a new user
+  user?: DidJson; // default is generate a new user
 }): Promise<{
   kill: () => void;
   client: ReturnType<typeof createRPCClient>;
@@ -24,12 +24,15 @@ export const createSubProcessNode = async (opts: {
 
   const __dirname = dirname(__filename);
   const path = join(__dirname, '../dist', 'index.mjs');
+  const user = opts.user || (await peerid.genetateDid());
   const child = fork(path, ['child'], {
     env: {
       RPC_PORT: port.toString(),
       TCP_PORT: (port + 1).toString(),
       WS_PORT: (port + 2).toString(),
-      USER_INDEX: opts.userIndex?.toString(),
+      DID_PK: user.pubKey,
+      DID_SK: user.privKey,
+      DID_ID: user.id,
     },
     execArgv: ['--experimental-wasm-modules'],
     stdio: 'ignore',

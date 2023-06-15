@@ -41,3 +41,5 @@ export const NETWORK_MAX_NODE_COUNT_Buffer = 10;
 
 export const CONSENSUS_TIME_WINDOW_BASE = 1n; // ms
 export const DO_CONSENSUS_INTERVAL = 600; // ms
+
+export const DEFAULT_CU_LIMIT = 10000n;
