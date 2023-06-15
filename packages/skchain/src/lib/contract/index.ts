@@ -108,9 +108,11 @@ export class Contract {
       message.info({
         codeString: allCode.toString(),
         cuLimit: opts.cuLimit,
-        storage: opts.storage,
+        storage: bytes.toString(opts.storage),
+        sender: opts.sender,
+        method: opts.method,
+        args: opts.args,
         error,
-        opts,
       });
       throw new Error(error as string);
     }
