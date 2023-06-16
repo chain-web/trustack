@@ -54,8 +54,6 @@ describe('SkChain transaction', () => {
       }
     });
     it('should 2 node contract call ok', async () => {
-      // TODO
-      return;
       const count = 2;
       // create nodes
       const nodes = [];
@@ -107,6 +105,7 @@ describe('SkChain transaction', () => {
 
       // wait for 1 block
       await Promise.all(awaitForBlocks.map((f) => f(1)));
+      // TODO add getBalance method to contract
       // for (let i = 0; i < count; i++) {
       //   const { hex } = await nodes[i].callContract.query({
       //     amount: '0',

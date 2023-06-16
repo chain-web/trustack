@@ -1,6 +1,10 @@
 import { BUILDER_NAMES } from '@trustack/contract';
 import { LifecycleStap, peerid, wait } from '@trustack/common';
-import type { TransactionPayload } from '../../mate/transaction.js';
+import { bytes } from 'multiformats';
+import type {
+  ContractTransaction,
+  TransactionPayload,
+} from '../../mate/transaction.js';
 import { Transaction } from '../../mate/transaction.js';
 import { message } from '../../utils/message.js';
 import { transDemoFn } from '../contracts/transaction_demo.js';
@@ -16,6 +20,7 @@ import type { BlockService } from '../ipld/blockService/blockService.js';
 import type { Consensus } from '../consensus/index.js';
 import { skCacheKeys } from '../skfs/key.js';
 import { createEmptyStorageRoot, createRawBlock } from '../../mate/utils.js';
+import type { Account } from '../../mate/account.js';
 import { newAccount } from '../../mate/account.js';
 import { Address } from '../../mate/address.js';
 import { Contract } from '../contract/index.js';
@@ -144,7 +149,7 @@ export class TransactionAction {
     const sortedArr = cArr.sort((a, b) =>
       a.contribute < b.contribute ? -1 : 1,
     );
-    // console.log(sortedArr);
+    // message.info('sortedArr', sortedArr);
     // 在 sortedArr 按发起交易者的 contribute 来排序，加到当前块打包队列中
     sortedArr.forEach((ele) => {
       if (this.transingArr.length < MAX_TRANS_LIMIT) {
@@ -172,14 +177,14 @@ export class TransactionAction {
       // 如果没有可打包的交易，退出
       return;
     }
-    // console.log(this.transingArr);
+    // message.info('transingArr', this.transingArr);
     for (let index = 0; index < this.transingArr.length; index++) {
       const trans = this.transingArr[index];
       // 依次执行交易的合约
       if (trans.payload) {
         // 调用合约
-        const account = await this.blockService.getExistAccount(
-          trans.recipient.did,
+        const account = await this.getContractAccountByTrans(
+          trans as ContractTransaction,
         );
 
         const res = await this.runContractWidthStorage({
@@ -247,6 +252,29 @@ export class TransactionAction {
     await this.consensus.pubNewBlock(nextBlock);
     // 初始化下一个区块的ipld
     await this.blockService.goToNextBlock();
+  }
+
+  private async getContractAccountByTrans(
+    trans: ContractTransaction,
+  ): Promise<Account> {
+    if (trans.payload.method === BUILDER_NAMES.CONSTRUCTOR_METHOD) {
+      const storageRoot = await createEmptyStorageRoot();
+      const codeArg = trans.payload.args[0];
+      const codeRawBlock = await createRawBlock(bytes.fromHex(codeArg));
+      await this.blockService.db.putRawBlock(codeRawBlock);
+      const account = newAccount(
+        trans.recipient.did,
+        storageRoot,
+        codeRawBlock.cid,
+        trans.from.did,
+      );
+      await this.blockService.addAccount(account);
+      return account;
+    }
+    const account = await this.blockService.getExistAccount(
+      trans.recipient.did,
+    );
+    return account;
   }
 
   private async add(trans: Transaction) {
@@ -420,22 +448,13 @@ export class TransactionAction {
   }): Promise<ReturnType<TransactionAction['transaction']>> {
     // TODO 要不要加update code 的接口
     const newDid = await peerid.genetateDid();
-    const storageRoot = await createEmptyStorageRoot();
-    const codeRawBlock = await createRawBlock(meta.payload);
-    await this.blockService.db.putRawBlock(codeRawBlock);
-    const account = newAccount(
-      newDid.id,
-      storageRoot,
-      codeRawBlock.cid,
-      await this.blockService.db.cacheGetExist(skCacheKeys.accountId),
-    );
-    await this.blockService.addAccount(account);
+
     return await this.transaction({
       amount: BigInt(0),
-      recipient: account.address,
+      recipient: new Address(newDid.id),
       payload: {
         method: BUILDER_NAMES.CONSTRUCTOR_METHOD,
-        args: [meta.payload],
+        args: [bytes.toHex(meta.payload)],
       },
     });
   }
@@ -454,9 +473,13 @@ export class TransactionAction {
     >['trans'];
     error?: string;
   }> {
-    const account = await this.blockService.getExistAccount(
-      params.contract.did,
-    );
+    const account = await this.blockService.getAccount(params.contract.did);
+    if (!account) {
+      return {
+        error:
+          'account not found, please check contract address, and deploy at last 1 pre block it first',
+      };
+    }
     const storage = await this.blockService.db.get(
       account.storageRoot.toString(),
     );
