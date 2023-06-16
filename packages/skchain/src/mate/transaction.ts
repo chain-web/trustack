@@ -24,6 +24,10 @@ export type TransactionPayload = {
   args: any[];
 };
 
+export type ContractTransaction = Transaction & {
+  payload: TransactionPayload;
+};
+
 // 交易，基础数据
 export class Transaction {
   constructor(opt: TransactionOption) {

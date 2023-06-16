@@ -35,7 +35,7 @@ export const createSubProcessNode = async (opts: {
       DID_ID: user.id,
     },
     execArgv: ['--experimental-wasm-modules'],
-    stdio: 'ignore',
+    silent: true,
   });
 
   let isReady = false;
@@ -44,6 +44,10 @@ export const createSubProcessNode = async (opts: {
     if (!isReady && msg.type === 'log' && msg.data?.match('rpc server start')) {
       isReady = true;
     }
+  });
+
+  child.stderr?.on('data', (data) => {
+    console.log(port, `:stderr: ${data}`);
   });
 
   while (!isReady) {
