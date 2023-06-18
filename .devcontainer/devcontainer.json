@@ -34,7 +34,8 @@
     "ms-playwright.playwright",
     // "rust-lang.rust-analyzer",
     "bungcip.better-toml",
-    "GitHub.copilot"
+    "GitHub.copilot",
+    "zxh404.vscode-proto3"
   ],
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
