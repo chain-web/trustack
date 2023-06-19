@@ -105,20 +105,15 @@ describe('SkChain transaction', () => {
 
       // wait for 1 block
       await Promise.all(awaitForBlocks.map((f) => f(1)));
-      // TODO add getBalance method to contract
+      // TODO
       // for (let i = 0; i < count; i++) {
-      //   const { hex } = await nodes[i].callContract.query({
+      //   const { result } = await nodes[i].callContract.query({
       //     amount: '0',
       //     contract: trans.recipient.did,
       //     method: 'getBalance',
-      //     args: [testAccounts[3].id],
+      //     args: [testAccounts[2].id],
       //   });
-      //   const { hex: transHex } = await nodes[0].deployContract.query(
-      //     testContracts.tokenContract.code,
-      //   );
-      //   //
-      //   const transi = await Transaction.fromBinary(bytes.fromHex(transHex));
-      //   // expect(balance).toEqual('1000');
+      //   expect(result).toEqual('1000');
       // }
 
       // kill nodes

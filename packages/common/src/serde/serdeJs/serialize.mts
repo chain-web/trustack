@@ -1,7 +1,8 @@
-import type { SerdeItem, SerdeObject } from '../../proto_ts/json.js';
-import type { SerdeValueTypes } from './interface.mjs';
+import type { SerdeItem } from '../../proto_ts/json.js';
+import { SerdeObject } from '../../proto_ts/json.js';
+import type { SerdeJsValueTypes } from './interface.mjs';
 
-const serializeItem = (key: string, value: SerdeValueTypes): SerdeItem => {
+const serializeItem = (key: string, value: SerdeJsValueTypes): SerdeItem => {
   const type = typeof value;
   switch (type) {
     case 'string':
@@ -82,7 +83,7 @@ const serializeItem = (key: string, value: SerdeValueTypes): SerdeItem => {
   }
 };
 
-const serializeArray = (key: string, value: SerdeValueTypes[]): SerdeItem => {
+const serializeArray = (key: string, value: SerdeJsValueTypes[]): SerdeItem => {
   return {
     key,
     value: {
@@ -92,7 +93,7 @@ const serializeArray = (key: string, value: SerdeValueTypes[]): SerdeItem => {
   } as SerdeItem;
 };
 
-export const serialize = (object: object): SerdeObject => {
+export const serialize = (object: object): Uint8Array => {
   const serdeJson: SerdeObject = { fields: [] };
   if (Array.isArray(object)) {
     throw new Error('Arrays are not supported, use serializeArray instead');
@@ -102,5 +103,5 @@ export const serialize = (object: object): SerdeObject => {
       serdeJson.fields.push(serializeItem(key, value));
     }
   }
-  return serdeJson;
+  return SerdeObject.toBinary(serdeJson);
 };
