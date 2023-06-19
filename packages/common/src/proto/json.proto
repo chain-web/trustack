@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+message SerdeItem {
+  string key = 1;
+  oneof value {
+    string string_value = 2;
+    bool bool_value = 3;
+    double double_value = 4;
+    string bigint_value = 5;
+    bytes bytes_value = 6;
+    SerdeArray array_value = 7;
+    SerdeObject object_value = 8;
+    bool null_value = 9;
+  };
+}
+
+message SerdeObject {
+  repeated SerdeItem fields = 1;
+}
+
+message SerdeArray {
+  repeated SerdeItem items = 1;
+}

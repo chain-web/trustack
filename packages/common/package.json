@@ -6,6 +6,7 @@
   "types": "src/index.mts",
   "scripts": {
     "dev-build": "tsc -w -p ./tsconfig.build.json",
+    "gen-proto": "protoc --ts_out ./src/proto_ts --proto_path ./src/proto ./src/proto/*.proto",
     "build": "tsc -p ./tsconfig.build.json"
   },
   "engines": {
@@ -19,8 +20,13 @@
     "@libp2p/crypto": "^1.0.17",
     "@libp2p/interface-peer-id": "^2.0.2",
     "@libp2p/peer-id-factory": "^2.0.3",
+    "@protobuf-ts/runtime": "^2.9.0",
     "bls-eth-wasm": "^1.0.6",
     "multiformats": "^11.0.2",
     "uint8arrays": "^4.0.3"
+  },
+  "devDependencies": {
+    "@protobuf-ts/plugin": "^2.9.0",
+    "@protobuf-ts/protoc": "^2.9.0"
   }
 }
