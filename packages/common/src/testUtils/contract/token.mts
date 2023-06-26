@@ -22,7 +22,7 @@ class __contract_class_name__ extends BaseContract {
       return true;
   };
   getBalance = (address)=>{
-      return this.balances[address.did];
+      return this.balances[address.did] || 0n;
   };
   __constructor__ = ()=>{
       this.balances = {

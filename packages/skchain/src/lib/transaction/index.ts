@@ -47,6 +47,13 @@ export enum TransStatus {
   'err_tx' = 'err_tx',
 }
 
+export interface callContractResult {
+  result?: string | object;
+  cuCost?: bigint;
+  transaction?: Awaited<ReturnType<TransactionAction['transaction']>>['trans'];
+  error?: string;
+}
+
 // 处理交易活动
 @logClassPerformance()
 export class TransactionAction {
@@ -465,14 +472,7 @@ export class TransactionAction {
     method: string;
     args?: TransactionPayload['args'];
     cuLimit?: bigint;
-  }): Promise<{
-    result?: string | object;
-    cuCost?: bigint;
-    transaction?: Awaited<
-      ReturnType<TransactionAction['transaction']>
-    >['trans'];
-    error?: string;
-  }> {
+  }): Promise<callContractResult> {
     const account = await this.blockService.getAccount(params.contract.did);
     if (!account) {
       return {
