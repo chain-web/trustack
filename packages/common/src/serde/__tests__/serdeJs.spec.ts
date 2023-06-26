@@ -1,9 +1,8 @@
 import assert from 'node:assert';
 import { bytes } from 'multiformats';
-import { SerdeObject } from '../../../dist/proto_ts/json.js';
-import { serialize } from '../../../dist/serde/serdeJson/serialize.mjs';
-import { deserialize } from '../../../dist/serde/serdeJson/deserialize.mjs';
-import { randomJson } from './json.data.js';
+import { serialize } from '../../../dist/serde/serdeJs/serialize.mjs';
+import { deserialize } from '../../../dist/serde/serdeJs/deserialize.mjs';
+import { randomJson } from '../../../dist/testUtils/randomObject.mjs';
 
 describe('serde json', () => {
   describe('test', () => {
@@ -21,7 +20,7 @@ describe('serde json', () => {
         const json = randomJson(20);
         jsonBinaryLen += bytes.fromString(JSON.stringify(json)).length;
         const serdeJson = serialize(json);
-        serdeJsonLen += SerdeObject.toBinary(serdeJson).length;
+        serdeJsonLen += serdeJson.length;
         const back = deserialize(serdeJson);
         assert.deepEqual(back, json);
       }

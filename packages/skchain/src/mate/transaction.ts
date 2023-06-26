@@ -1,3 +1,4 @@
+import { serdeJs } from '@trustack/common';
 import type { BlockHeaderData } from './block.js';
 import { Address } from './address.js';
 import type { DefaultBlockType } from './utils.js';
@@ -15,8 +16,6 @@ export interface TransactionOption {
   ts: Transaction['ts'];
   hash?: Transaction['hash'];
 }
-
-export type TransactionBinaryMeta = string[];
 
 export type TransactionPayload = {
   method: 'constructor' | string;
@@ -57,16 +56,17 @@ export class Transaction {
   ts: number;
 
   getSignatureData = async (): Promise<Uint8Array> => {
-    const cborBlock = await createCborBlock<TransactionBinaryMeta>([
-      this.accountNonce.toString(),
-      this.amount.toString(),
-      this.cu.toString(),
-      this.cuLimit.toString(),
+    const metaData = [
+      this.accountNonce,
+      this.amount,
+      this.cu,
+      this.cuLimit,
       this.from.did,
-      JSON.stringify(this.payload || ''),
+      this.payload,
       this.recipient.did,
-    ]);
-    return cborBlock.bytes;
+    ];
+    const binary = serdeJs.serialize({ c: metaData });
+    return binary;
   };
 
   genHash = async (): Promise<void> => {
@@ -84,44 +84,50 @@ export class Transaction {
   };
 
   static fromBinary = async (binary: Uint8Array): Promise<Transaction> => {
-    const transData = await takeBlockValue<TransactionBinaryMeta>(binary);
+    const transData = (await takeBlockValue<[Uint8Array]>(binary))[0];
+    const metaData = serdeJs.deserialize(transData).c as any;
 
     return new Transaction({
-      accountNonce: BigInt(transData[0]),
-      amount: BigInt(transData[1]),
-      cu: BigInt(transData[2]),
-      cuLimit: BigInt(transData[3]),
-      from: new Address(transData[4]),
-      hash: transData[5],
-      payload: JSON.parse(transData[6]) || undefined,
-      recipient: new Address(transData[7]),
-      signature: transData[8],
-      ts: Number(transData[9]),
+      accountNonce: metaData[0],
+      amount: metaData[1],
+      cu: metaData[2],
+      cuLimit: metaData[3],
+      from: new Address(metaData[4]),
+      hash: metaData[5],
+      payload: metaData[6] || undefined,
+      recipient: new Address(metaData[7]),
+      signature: metaData[8],
+      ts: metaData[9],
     });
   };
 
   /**
    * 将区块数据保存，落文件
    */
-  toCborBlock = async (): Promise<DefaultBlockType<TransactionBinaryMeta>> => {
+  toCborBlock = async (): Promise<DefaultBlockType<[Uint8Array]>> => {
     if (!this.hash) {
       await this.genHash();
     }
     if (!this.signature) {
       throw new Error('Transaction signature is empty');
     }
-    const cborBlock = await createCborBlock<TransactionBinaryMeta>([
-      this.accountNonce.toString(),
-      this.amount.toString(),
-      this.cu.toString(),
-      this.cuLimit.toString(),
+
+    const metaData = [
+      this.accountNonce,
+      this.amount,
+      this.cu,
+      this.cuLimit,
       this.from.did,
       this.hash,
-      JSON.stringify(this.payload || ''),
+      this.payload,
       this.recipient.did,
       this.signature,
-      this.ts.toString(),
-    ]);
+      this.ts,
+    ];
+
+    const binary = serdeJs.serialize({ c: metaData });
+
+    const cborBlock = await createCborBlock<[Uint8Array]>([binary]);
 
     return cborBlock;
   };

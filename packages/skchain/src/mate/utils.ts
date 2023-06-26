@@ -3,6 +3,8 @@ import * as Block from 'multiformats/block';
 import * as codec from '@ipld/dag-cbor';
 import { sha256 as hasher } from 'multiformats/hashes/sha2';
 import * as rawCodec from 'multiformats/codecs/raw';
+import type { SerdeJsObjectType } from '@trustack/common';
+import { serdeJsCodec } from '@trustack/common';
 
 // 113 = codec of @ipld/dag-cbor
 // 18 = sha256 hasher code
@@ -19,6 +21,14 @@ export type RawBlockCodec = 85;
 export type RawBlockType = BlockView<
   Uint8Array,
   RawBlockCodec,
+  DefaultBlockHasher,
+  1
+>;
+
+export type SerdeJsCodec = 88;
+export type SerdeJsBlockType<T> = BlockView<
+  T,
+  SerdeJsCodec,
   DefaultBlockHasher,
   1
 >;
@@ -59,6 +69,18 @@ export const createRawBlock = async (
   >({
     value,
     codec: rawCodec,
+    hasher,
+  });
+
+  return block;
+};
+
+export const createSerdeJsBlock = async <T extends SerdeJsObjectType>(
+  content: T,
+): Promise<SerdeJsBlockType<T>> => {
+  const block = await Block.encode<T, SerdeJsCodec, DefaultBlockHasher>({
+    value: content,
+    codec: serdeJsCodec,
     hasher,
   });
 
