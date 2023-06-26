@@ -19,12 +19,12 @@
   "devDependencies": {
     "@types/libsodium-wrappers-sumo": "^0.7.5",
     "@types/lodash": "^4.14.195",
-    "@types/node": "^20.2.5"
+    "@types/node": "^20.3.1"
   },
   "dependencies": {
-    "@ethereumjs/trie": "^5.0.5",
-    "@ipld/dag-cbor": "^9.0.1",
-    "@ipld/dag-pb": "^4.0.3",
+    "@ethereumjs/trie": "^5.1.0",
+    "@ipld/dag-cbor": "^9.0.3",
+    "@ipld/dag-pb": "^4.0.4",
     "@libp2p/interface-pubsub": "^4.0.1",
     "@multiformats/multiaddr": "^12.1.3",
     "@trustack/common": "workspace:^1.0.0",
@@ -32,12 +32,12 @@
     "@trustack/network": "workspace:^1.0.0",
     "abstract-level": "^1.0.3",
     "bitset": "^5.1.1",
-    "blockstore-level": "^1.1.0",
+    "blockstore-level": "^1.1.1",
     "cac": "^6.7.14",
     "chalk": "^5.2.0",
-    "datastore-core": "^9.1.1",
-    "datastore-level": "^10.1.1",
-    "interface-datastore": "^8.2.0",
+    "datastore-core": "^9.2.0",
+    "datastore-level": "^10.1.2",
+    "interface-datastore": "^8.2.3",
     "ipfs-bitswap": "^18.0.1",
     "level": "^8.0.0",
     "libsodium-wrappers-sumo": "^0.7.11",
@@ -47,6 +47,6 @@
     "ts-node": "^10.9.1",
     "tweetnacl": "^1.0.3",
     "typescript": "^5.1.3",
-    "xstate": "^4.37.2"
+    "xstate": "^4.38.0"
   }
 }
