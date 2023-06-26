@@ -92,29 +92,33 @@ describe('SkChain transaction', () => {
       );
 
       const trans = await Transaction.fromBinary(bytes.fromHex(transHex));
+      await Promise.all(awaitForBlocks.map((f) => f(1)));
 
       // call contract
-      await nodes[0].callContract.query({
+      const { error } = await nodes[0].callContract.query({
         amount: '0',
         contract: trans.recipient.did,
         method: 'send',
         args: [new Address(testAccounts[2].id).toParam(), '1000n'],
       });
 
+      expect(error).toBeUndefined();
+
       // send random trans
 
       // wait for 1 block
       await Promise.all(awaitForBlocks.map((f) => f(1)));
       // TODO
-      // for (let i = 0; i < count; i++) {
-      //   const { result } = await nodes[i].callContract.query({
-      //     amount: '0',
-      //     contract: trans.recipient.did,
-      //     method: 'getBalance',
-      //     args: [testAccounts[2].id],
-      //   });
-      //   expect(result).toEqual('1000');
-      // }
+      for (let i = 0; i < count; i++) {
+        const { result } = await nodes[i].callContract.query({
+          amount: '0',
+          contract: trans.recipient.did,
+          method: 'getBalance',
+          args: [new Address(testAccounts[2].id).toParam()],
+        });
+        console.log('result: ', i);
+        expect(result).toEqual('1000n');
+      }
 
       // kill nodes
       for (let i = 0; i < count; i++) {

@@ -102,6 +102,15 @@ export class Contract {
         cuLimit: opts.cuLimit,
         storage: opts.storage,
       });
+      message.info({
+        codeString: allCode.toString(),
+        cuLimit: opts.cuLimit,
+        storage: bytes.toString(opts.storage),
+        sender: opts.sender,
+        method: opts.method,
+        args: opts.args,
+        result,
+      });
       return result;
     } catch (error) {
       await writeCodeToFile(allCode.toString());
