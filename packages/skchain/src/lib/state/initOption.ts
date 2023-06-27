@@ -16,6 +16,14 @@ export const genInitOption = (
     wsPort: option?.wsPort || 6004,
     genesis: option?.genesis || genesis,
     bootstrap: option?.bootstrap || [],
+    moduleConfig: {
+      consensus: {
+        blockProduction:
+          option?.moduleConfig?.consensus?.blockProduction === undefined
+            ? true
+            : option?.moduleConfig?.consensus?.blockProduction,
+      },
+    },
   };
   return initOption;
 };
