@@ -97,7 +97,10 @@ export class TransactionAction {
     chainState.lifecycleChange(LifecycleStap.initingTransaction);
     await this.initTransactionListen();
     await this.contract.init();
-    await this.startTransTask();
+    // start block production if config is true
+    chainState.getInitOption().moduleConfig.consensus!.blockProduction &&
+      (await this.startTransTask());
+
     chainState.lifecycleChange(LifecycleStap.initedTransaction);
   }
 

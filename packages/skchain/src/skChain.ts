@@ -22,6 +22,11 @@ export interface SKChainOption {
   tcpPort: number;
   wsPort: number;
   bootstrap: string[];
+  moduleConfig: {
+    consensus?: {
+      blockProduction?: boolean;
+    };
+  };
 }
 
 export interface SKChainRunOpts {
