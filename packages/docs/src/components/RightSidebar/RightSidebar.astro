@@ -1,0 +1,39 @@
+---
+import type { MarkdownHeading } from 'astro';
+import TableOfContents from './TableOfContents';
+import { getLanguageFromURL } from '../../languages';
+
+type Props = {
+	headings: MarkdownHeading[];
+	githubEditUrl: string;
+	currentPage: string;
+};
+
+const { headings, githubEditUrl, currentPage } = Astro.props;
+const lang = getLanguageFromURL(currentPage);
+---
+
+<nav class="sidebar-nav" aria-labelledby="grid-right">
+	<div class="sidebar-nav-inner">
+		<TableOfContents
+			lang={lang}
+			client:media="(min-width: 50em)"
+			headings={headings}
+		/>
+	</div>
+</nav>
+
+<style>
+	.sidebar-nav {
+		width: 100%;
+		position: sticky;
+		top: 0;
+	}
+
+	.sidebar-nav-inner {
+		height: 100%;
+		padding: 0;
+		padding-top: var(--doc-padding);
+		overflow: auto;
+	}
+</style>
