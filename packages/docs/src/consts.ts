@@ -24,11 +24,15 @@ export type Sidebar = Record<
   Record<string, { text: string; link: string }[]>
 >;
 
+export const linkPrefix = 'trustack';
+
 export const SIDEBAR: Sidebar = {
   en: {
-    Nav: [{ text: 'Introduction', link: 'en/intro/introduction' }],
+    Nav: [
+      { text: 'Introduction', link: `${linkPrefix}/en/intro/introduction` },
+    ],
   },
   'zh-cn': {
-    导航: [{ text: '导航', link: 'zh-cn/intro/introduction' }],
+    导航: [{ text: '导航', link: `${linkPrefix}/zh-cn/intro/introduction` }],
   },
 };

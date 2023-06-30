@@ -17,5 +17,6 @@ export default defineConfig({
       },
     }),
   ],
-  site: `trustack`,
+  site: `https://chain-web.github.io`,
+  base: '/trustack/',
 });
