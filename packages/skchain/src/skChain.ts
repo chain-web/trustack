@@ -18,7 +18,7 @@ export interface SKChainOption {
   genesis: GenesisConfig;
   db: Skfs;
   blockService: BlockService;
-  datastorePath: string;
+  datastorePath: string; // TODO no implement
   tcpPort: number;
   wsPort: number;
   bootstrap: string[];
