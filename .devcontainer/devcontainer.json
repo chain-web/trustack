@@ -35,7 +35,8 @@
     // "rust-lang.rust-analyzer",
     "bungcip.better-toml",
     "GitHub.copilot",
-    "zxh404.vscode-proto3"
+    "zxh404.vscode-proto3",
+    "shd101wyy.markdown-preview-enhanced"
   ],
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
