@@ -31,6 +31,15 @@ export const SIDEBAR: Sidebar = {
     Nav: [
       { text: 'Introduction', link: `${linkPrefix}/en/intro/introduction` },
     ],
+    Build: [
+      { text: 'Run Trustack node', link: `${linkPrefix}/en/build/run_node` },
+    ],
+    Reference: [
+      {
+        text: 'Configuration',
+        link: `${linkPrefix}/en/reference/configuration_reference`,
+      },
+    ],
   },
   'zh-cn': {
     导航: [{ text: '导航', link: `${linkPrefix}/zh-cn/intro/introduction` }],

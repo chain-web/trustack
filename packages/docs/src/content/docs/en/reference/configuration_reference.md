@@ -3,8 +3,6 @@ title: 'Configuration Reference'
 description: 'Configuration Reference'
 ---
 
-### Configuration Reference
-
 ## Reference
 
 ### `blockService` \[BlockService]
