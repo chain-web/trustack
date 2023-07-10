@@ -18,8 +18,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@trpc/client": "^10.32.0",
-    "@trpc/server": "^10.32.0",
+    "@trpc/client": "^10.34.0",
+    "@trpc/server": "^10.34.0",
     "@trustack/common": "workspace:^1.0.0",
     "execa": "^7.1.1",
     "kill-port": "^2.0.1",
