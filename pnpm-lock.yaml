@@ -133,6 +133,65 @@ importers:
       '@types/html-escaper': 3.0.0
       html-escaper: 3.0.3
 
+  packages/land_app:
+    specifiers:
+      '@esbuild-plugins/node-globals-polyfill': ^0.2.3
+      '@playwright/test': ^1.35.1
+      '@rollup/plugin-inject': ^5.0.3
+      '@trustack/common': workspace:^1.0.0
+      '@trustack/node-modules-polyfill': ^0.2.5
+      '@trustack/rollup-plugin-node-polyfills': ^0.2.2
+      '@types/react': ^18.2.14
+      '@types/react-dom': ^18.2.6
+      '@vitejs/plugin-react-swc': ^3.3.2
+      '@xstate/react': ^3.2.2
+      antd: ^5.6.4
+      buffer: ^6.0.3
+      esbuild: ^0.17.19
+      i18next: ^22.5.1
+      i18next-browser-languagedetector: ^7.1.0
+      mime-types: ^2.1.35
+      multiformats: ^11.0.2
+      react: ^18.2.0
+      react-dom: ^18.2.0
+      react-i18next: ^12.3.1
+      react-router: ^6.14.1
+      react-router-dom: ^6.14.1
+      sass: ^1.63.6
+      skchain: workspace:^1.0.0
+      typescript: ^5.1.6
+      vite: ^4.4.2
+      xstate: ^4.38.0
+    dependencies:
+      '@esbuild-plugins/node-globals-polyfill': 0.2.3_esbuild@0.17.19
+      '@trustack/common': link:../common
+      '@trustack/node-modules-polyfill': 0.2.5_esbuild@0.17.19
+      '@trustack/rollup-plugin-node-polyfills': 0.2.2
+      '@xstate/react': 3.2.2_pw3jtckrkofreyhdypv366cqwu
+      antd: 5.6.4_biqbaboplfbrettd7655fr4n2y
+      buffer: 6.0.3
+      esbuild: 0.17.19
+      i18next: 22.5.1
+      i18next-browser-languagedetector: 7.1.0
+      mime-types: 2.1.35
+      multiformats: 11.0.2
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      react-i18next: 12.3.1_spyi3zqm3bqfobczid2f6jym6y
+      react-router: 6.14.1_react@18.2.0
+      react-router-dom: 6.14.1_biqbaboplfbrettd7655fr4n2y
+      skchain: link:../skchain
+      xstate: 4.38.0
+    devDependencies:
+      '@playwright/test': 1.35.1
+      '@rollup/plugin-inject': 5.0.3
+      '@types/react': 18.2.14
+      '@types/react-dom': 18.2.6
+      '@vitejs/plugin-react-swc': 3.3.2_vite@4.4.2
+      sass: 1.63.6
+      typescript: 5.1.6
+      vite: 4.4.2_sass@1.63.6
+
   packages/network:
     specifiers:
       '@chainsafe/libp2p-gossipsub': ^8.0.1
@@ -270,13 +329,10 @@ importers:
       antd: ^5.6.4
       buffer: ^6.0.3
       esbuild: ^0.17.19
-      i18next: ^22.5.1
-      i18next-browser-languagedetector: ^7.1.0
       mime-types: ^2.1.35
       multiformats: ^11.0.2
       react: ^18.2.0
       react-dom: ^18.2.0
-      react-i18next: ^12.3.1
       react-router: ^6.14.1
       react-router-dom: ^6.14.1
       sass: ^1.63.6
@@ -293,13 +349,10 @@ importers:
       antd: 5.6.4_biqbaboplfbrettd7655fr4n2y
       buffer: 6.0.3
       esbuild: 0.17.19
-      i18next: 22.5.1
-      i18next-browser-languagedetector: 7.1.0
       mime-types: 2.1.35
       multiformats: 11.0.2
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-      react-i18next: 12.3.1_spyi3zqm3bqfobczid2f6jym6y
       react-router: 6.14.1_react@18.2.0
       react-router-dom: 6.14.1_biqbaboplfbrettd7655fr4n2y
       skchain: link:../skchain
