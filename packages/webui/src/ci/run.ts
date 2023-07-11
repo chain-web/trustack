@@ -1,14 +1,13 @@
 import { Address, LifecycleStap, TransStatus, evalFunction } from 'skchain';
-import { testContracts } from '@trustack/common';
+import { testAccounts, testContracts } from '@trustack/common';
 import { bytes } from 'multiformats';
-import { accounts } from '../page/test/accounts';
 import { createTestSkChain } from './util';
 
 export const runTest = async (): Promise<boolean> => {
-  const chain = await createTestSkChain(accounts[0]);
+  const chain = await createTestSkChain(testAccounts[0]);
   await chain.transaction({
     amount: 10n,
-    recipient: new Address(accounts[4].id),
+    recipient: new Address(testAccounts[4].id),
   });
   return true;
 };
@@ -38,7 +37,7 @@ export const runContractTest = async (): Promise<boolean> => {
     recipient: trans.recipient,
     payload: {
       method: 'send',
-      args: [new Address(accounts[0].id).toParam(), 100n],
+      args: [new Address(testAccounts[0].id).toParam(), 100n],
     },
   });
   if (!trans2) {
@@ -63,5 +62,7 @@ export const runContractTest = async (): Promise<boolean> => {
   if (status2.status !== TransStatus.transed) {
     return false;
   }
-  return Boolean(bytes.toString(storage2).match(`"${accounts[0].id}":100n`));
+  return Boolean(
+    bytes.toString(storage2).match(`"${testAccounts[0].id}":100n`),
+  );
 };
