@@ -1,21 +1,16 @@
-import { Button } from 'antd';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import ChangeI18n from '../../config/i18n/i18nSelect';
-import { lanKeys } from './index.i18n';
-import { Timeline } from './timelineComp';
+import { useEffect } from 'react';
+// import ChangeI18n from '../../config/i18n/i18nSelect';
+import Tabbar from './components/Tabbar';
+import { mapAction } from './map';
 
 export function MainWindow() {
-  const [t] = useTranslation();
-  const [passed, setPass] = useState(false);
-  const [skvmPassed, setSkvmPass] = useState(false);
+  useEffect(() => {
+    console.log('MainWindow init');
+    mapAction.init();
+  }, []);
   return (
-    <div className="ci-box">
-      <ChangeI18n />
-      <Button type="default" loading={true}>
-        {t(lanKeys.start)}
-      </Button>
-      <Timeline />
+    <div className="main-box">
+      <Tabbar />
     </div>
   );
 }

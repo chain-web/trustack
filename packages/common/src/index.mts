@@ -12,3 +12,8 @@ export type {
   SerdeJsValueTypes,
   SerdeJsObjectType,
 } from './serde/serdeJs/interface.mjs';
+
+export type PrivateConfigs = {
+  mapboxToken: string;
+  mapboxStyle: string;
+};

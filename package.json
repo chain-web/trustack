@@ -61,6 +61,58 @@
         "dependencies": {
           "it-drain": "*"
         }
+      },
+      "@deck.gl/mapbox": {
+        "dependencies": {
+          "@math.gl/web-mercator": "*"
+        }
+      },
+      "@loaders.gl/3d-tiles": {
+        "dependencies": {
+          "@math.gl/culling": "*",
+          "@babel/runtime": "*"
+        }
+      },
+      "@deck.gl/layers": {
+        "dependencies": {
+          "@luma.gl/core": "*"
+        }
+      },
+      "@deck.gl+geo/layers": {
+        "dependencies": {
+          "@deck.gl/mesh-layers": "*"
+        }
+      },
+      "@loaders.gl/gltf": {
+        "dependencies": {
+          "@babel/runtime": "*"
+        }
+      },
+      "@loaders.gl/schema": {
+        "dependencies": {
+          "@babel/runtime": "*"
+        }
+      },
+      "@loaders.gl/tiles": {
+        "dependencies": {
+          "@babel/runtime": "*"
+        }
+      },
+      "@loaders.gl/mvt": {
+        "dependencies": {
+          "@babel/runtime": "*"
+        }
+      },
+      "@deck.gl/mesh-layers": {
+        "dependencies": {
+          "@luma.gl/webgl": "*",
+          "@loaders.gl/schema": "*"
+        }
+      },
+      "@math.gl/polygon": {
+        "dependencies": {
+          "@babel/runtime": "*"
+        }
       }
     }
   },

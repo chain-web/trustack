@@ -141,6 +141,10 @@ class ChainState {
   getInitOption() {
     return this.getSnapshot().context.initOptions;
   }
+
+  get started() {
+    return this.getSnapshot().matches('active');
+  }
 }
 
 export const chainState = new ChainState();

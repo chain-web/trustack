@@ -1,6 +1,9 @@
 import React from 'react';
+import { ConfigProvider, theme } from 'antd';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import 'antd/dist/reset.css';
 import './polyfill';
 import App from './App';
 import './index.css';
@@ -14,7 +17,13 @@ import './index.css';
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <BrowserRouter>
-      <App />
+      <ConfigProvider
+        theme={{
+          algorithm: theme.darkAlgorithm,
+        }}
+      >
+        <App />
+      </ConfigProvider>
     </BrowserRouter>
   </React.StrictMode>,
 );
