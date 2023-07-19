@@ -39,7 +39,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
+      - uses: LuisEnMarroquin/setup-ssh-action@v2.0.0
+        with:
+          SSHKEY: ${{ secrets.CC_GA }} # ----- BEGIN RSA PRIVATE KEY----- ...
+      - run: ssh -T git@github.com || true
+      - run: git submodule update --init --recursive
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2

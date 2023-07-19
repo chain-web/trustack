@@ -10,6 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: LuisEnMarroquin/setup-ssh-action@v2.0.0
+        with:
+          SSHKEY: ${{ secrets.CC_GA }} # ----- BEGIN RSA PRIVATE KEY----- ...
+      - run: ssh -T git@github.com || true
+      - run: git submodule update --init --recursive
       - name: Install pnpm
         uses: pnpm/action-setup@v2.2.4
 
@@ -37,32 +42,37 @@ jobs:
           retention-days: 30
 
   test-landapp:
-  timeout-minutes: 60
-  runs-on: ubuntu-latest
-  steps:
-    - uses: actions/checkout@v3
-    - name: Install pnpm
-      uses: pnpm/action-setup@v2.2.4
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: LuisEnMarroquin/setup-ssh-action@v2.0.0
+        with:
+          SSHKEY: ${{ secrets.CC_GA }} # ----- BEGIN RSA PRIVATE KEY----- ...
+      - run: ssh -T git@github.com || true
+      - run: git submodule update --init --recursive
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2.2.4
 
-    - name: Set node version to 18
-      uses: actions/setup-node@v3
-      with:
-        node-version: 18
-        cache: "pnpm"
+      - name: Set node version to 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: "pnpm"
 
-    - name: Install dependencies
-      run: pnpm install
-    - name: build packages
-      run: pnpm run -r build
-    - name: Install Playwright Browsers
-      run: cd packages/land_app && pnpm exec playwright install --with-deps
-    - name: Build fe
-      run: cd packages/land_app && npm run build
-    - name: Run Playwright tests
-      run: cd packages/land_app && pnpm exec playwright test
-    - uses: actions/upload-artifact@v3
-      if: always()
-      with:
-        name: playwright-report
-        path: packages/land_app/playwright-report/
-        retention-days: 30
+      - name: Install dependencies
+        run: pnpm install
+      - name: build packages
+        run: pnpm run -r build
+      - name: Install Playwright Browsers
+        run: cd packages/land_app && pnpm exec playwright install --with-deps
+      - name: Build fe
+        run: cd packages/land_app && npm run build
+      - name: Run Playwright tests
+        run: cd packages/land_app && pnpm exec playwright test
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-report
+          path: packages/land_app/playwright-report/
+          retention-days: 30

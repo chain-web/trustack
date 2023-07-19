@@ -1,3 +1,7 @@
 [submodule "packages/skboa"]
 	path = packages/skvm/skboa
 	url = git@github.com:chain-web/boa.git
+
+[submodule "configs"]
+	path = packages/private_configs
+	url = git@github.com:chain-web/private_configs.git

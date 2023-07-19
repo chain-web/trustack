@@ -1,3 +1,5 @@
+/* eslint-disable import/no-nodejs-modules */
+import { readFileSync } from 'fs';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 // yarn add --dev @esbuild-plugins/node-globals-polyfill
@@ -45,6 +47,7 @@ export default defineConfig({
   },
   define: {
     global: 'globalThis',
+    __privateConfigs__: readFileSync('../private_configs/config.json', 'utf-8'),
   },
   build: {
     target: 'es2020',
