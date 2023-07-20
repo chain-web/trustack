@@ -6,6 +6,7 @@ importers:
 
   .:
     specifiers:
+      '@trustack/contract': workspace:^1.0.0
       '@types/jest': ^29.5.2
       '@types/node': ^20.4.1
       '@typescript-eslint/eslint-plugin': ^5.61.0
@@ -41,6 +42,8 @@ importers:
       simple-git-hooks: 2.8.1
       ts-jest: 29.1.1_i6gtp52dwlhvyn32a6bohskwlu
       typescript: 5.1.6
+    devDependencies:
+      '@trustack/contract': link:packages/contract
 
   packages/common:
     specifiers:
@@ -156,6 +159,7 @@ importers:
       '@playwright/test': ^1.35.1
       '@rollup/plugin-inject': ^5.0.3
       '@trustack/common': workspace:^1.0.0
+      '@trustack/contract': workspace:^1.0.0
       '@trustack/node-modules-polyfill': ^0.2.5
       '@trustack/rollup-plugin-node-polyfills': ^0.2.2
       '@types/mapbox-gl': ^2.7.11
@@ -204,6 +208,7 @@ importers:
       '@math.gl/core': 3.6.3
       '@math.gl/web-mercator': 3.6.3
       '@trustack/common': link:../common
+      '@trustack/contract': link:../contract
       '@trustack/node-modules-polyfill': 0.2.5_esbuild@0.17.19
       '@trustack/rollup-plugin-node-polyfills': 0.2.2
       '@xstate/react': 3.2.2_pw3jtckrkofreyhdypv366cqwu
@@ -334,6 +339,7 @@ importers:
       '@trpc/client': ^10.34.0
       '@trpc/server': ^10.34.0
       '@trustack/common': workspace:^1.0.0
+      '@trustack/contract': workspace:^1.0.0
       execa: ^7.1.1
       kill-port: ^2.0.1
       multiformats: ^11.0.2
@@ -343,6 +349,7 @@ importers:
       '@trpc/client': 10.34.0_@trpc+server@10.34.0
       '@trpc/server': 10.34.0
       '@trustack/common': link:../common
+      '@trustack/contract': link:../contract
       execa: 7.1.1
       kill-port: 2.0.1
       multiformats: 11.0.2
@@ -364,6 +371,7 @@ importers:
       '@playwright/test': ^1.35.1
       '@rollup/plugin-inject': ^5.0.3
       '@trustack/common': workspace:^1.0.0
+      '@trustack/contract': workspace:^1.0.0
       '@trustack/node-modules-polyfill': ^0.2.5
       '@trustack/rollup-plugin-node-polyfills': ^0.2.2
       '@types/react': ^18.2.14
@@ -387,6 +395,7 @@ importers:
     dependencies:
       '@esbuild-plugins/node-globals-polyfill': 0.2.3_esbuild@0.17.19
       '@trustack/common': link:../common
+      '@trustack/contract': link:../contract
       '@trustack/node-modules-polyfill': 0.2.5_esbuild@0.17.19
       '@trustack/rollup-plugin-node-polyfills': 0.2.2
       '@xstate/react': 3.2.2_pw3jtckrkofreyhdypv366cqwu

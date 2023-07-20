@@ -39,8 +39,8 @@ export class MapAction {
     });
     this.map = map;
     await Promise.all([this.mapLoad(), preLoadMapSource(this.map)]);
-    const deck = new MapboxOverlay({ id: 'deckgl' });
-    this.map.addControl(deck);
+    this.deckMap = new MapboxOverlay({ id: 'deckgl' });
+    this.map.addControl(this.deckMap);
     this.inited = true;
     this.center = this.map.getCenter();
     // this.getinggGridList = true;
@@ -87,7 +87,7 @@ export class MapAction {
           ],
         },
       });
-      this.deckLayers.push(layer);
+      this.deckLayers = [layer];
       this.deckMap.setProps({ layers: this.deckLayers });
       // mapStateService.send(MapEventType.UPDATE_GRID, {
       //   data: { showGridDetail: true, activeHex: hex },

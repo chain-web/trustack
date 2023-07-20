@@ -1,4 +1,5 @@
 export * from '@trustack/contract_builder';
+export * as constractHelper from './contractHelper.mjs';
 
 import { evaluate as evalFn } from '@trustack/vm';
 import { EvalResult } from './proto_ts/eval_result.js';

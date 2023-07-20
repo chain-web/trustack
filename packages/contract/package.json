@@ -10,6 +10,9 @@
     "gen-proto": "protoc --ts_out ./src/proto_ts --proto_path ../skvm/proto ../skvm/proto/*.proto",
     "build": "tsc -p ./tsconfig.build.json"
   },
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
