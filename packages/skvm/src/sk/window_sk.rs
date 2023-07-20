@@ -5,9 +5,27 @@ use boa_engine::{
 };
 use js_sys::Uint8Array;
 use wasm_bindgen_test::__rt::js_console_log;
+use cid::multihash::{Code, MultihashDigest};
+use cid::Cid;
 
 use crate::SAVED_STORAGE;
 // use wasm_bindgen::prelude::*;
+
+const RAW: u64 = 0x55;
+
+// generate cid hash for string
+pub(crate) fn gen_cid_raw(_: &JsValue, args: &[JsValue], context: &mut Context<'_>) -> JsResult<JsValue> {
+  let text = args[0]
+    .to_string(context)
+    .expect("gen_hash: get arg error")
+    .to_std_string()
+    .unwrap();
+  let h = Code::Sha2_256.digest(text.as_bytes());
+
+  let cid = Cid::new_v1(RAW, h);
+  let cid_string = cid.to_string();
+  Ok(JsValue::from(cid_string))
+}
 
 pub(crate) fn log(_: &JsValue, args: &[JsValue], context: &mut Context<'_>) -> JsResult<JsValue> {
     let text = args[0]
@@ -55,6 +73,11 @@ pub(crate) fn init_sk(context: &mut Context<'_>, storage: Uint8Array) -> Result<
         .function(
             NativeFunction::from_fn_ptr(save_storage),
             FunctionBinding::from("save_storage"),
+            1,
+        )
+        .function(
+            NativeFunction::from_fn_ptr(gen_cid_raw),
+            FunctionBinding::from("gen_cid"),
             1,
         )
         .build();

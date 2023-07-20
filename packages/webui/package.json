@@ -16,6 +16,7 @@
   "dependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@trustack/common": "workspace:^1.0.0",
+    "@trustack/contract": "workspace:^1.0.0",
     "@trustack/node-modules-polyfill": "^0.2.5",
     "@trustack/rollup-plugin-node-polyfills": "^0.2.2",
     "@xstate/react": "^3.2.2",

@@ -17,6 +17,7 @@ boa_engine = { path = "./skboa/boa_engine" }
 wasm-bindgen-test = "0.3.13"
 js-sys = "0.3.61"
 protobuf = "3.2.0"
+cid = '0.10'
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires

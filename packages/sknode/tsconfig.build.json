@@ -13,7 +13,7 @@
     "declaration": true,
     "isolatedModules": false,
     "esModuleInterop": true,
-    "types": ["node", "jest"],
+    "types": ["node", "jest", "@trustack/contract/src/contract"],
     "lib": ["ESNext", "DOM"],
     "outDir": "./dist",
     "baseUrl": "./src"
