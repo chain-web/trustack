@@ -5,7 +5,7 @@ import type {
   ExportDeclaration,
   Expression,
   ExpressionStatement,
-  Module,
+  Program,
   Span,
 } from '@swc/core';
 
@@ -15,7 +15,7 @@ export const BUILDER_NAMES = {
   CONTRACT_CLASS_NAME: '__contract_class_name__',
 };
 
-export const walkTop = (ast: Module): Module => {
+export const walkTop = (ast: Program): Program => {
   // 处理import
   while (ast.body[0].type === 'ImportDeclaration') {
     const node = ast.body[0];
