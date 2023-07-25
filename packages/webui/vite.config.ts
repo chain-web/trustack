@@ -42,6 +42,7 @@ export default defineConfig({
       target: 'es2020',
       supported: { bigint: true },
     },
+    exclude: ['@swc/wasm-web'],
   },
   define: {
     global: 'globalThis',
