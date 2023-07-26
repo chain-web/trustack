@@ -14,9 +14,15 @@ name: "CodeQL"
 on:
   push:
     branches: ["master"]
+    paths-ignore:
+      - "skboa"
+      - "node_modules"
   pull_request:
     # The branches below must be a subset of the branches above
     branches: ["master"]
+    paths-ignore:
+      - "skboa"
+      - "node_modules"
   schedule:
     - cron: "39 13 * * 0"
 
@@ -32,7 +38,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: ["javascript", "TypeScript"]
+        language: ["javascript"]
         # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby' ]
         # Learn more about CodeQL language support at https://aka.ms/codeql-docs/language-support
 
