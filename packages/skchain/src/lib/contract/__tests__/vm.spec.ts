@@ -11,7 +11,7 @@ describe('vm', () => {
       };
       const res = await evalFunction(simpleAdd.toString());
       expect(res.funcResult).toEqual('2');
-      expect(res.cuCost.reduce((acc, cur) => acc + Number(cur), 0)).toEqual(31);
+      expect(res.cuCost.reduce((acc, cur) => acc + Number(cur), 0)).toEqual(38);
     });
     it('should simple class ok', async () => {
       const codeStr = `
