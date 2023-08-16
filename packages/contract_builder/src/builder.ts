@@ -1,5 +1,18 @@
 import { walkTop } from './ast.utils.js';
-import type { Output, Program, Options, ParseOptions } from '@swc/core';
+import {
+  Output,
+  Program,
+  Options,
+  ParseOptions,
+  parseSync,
+  bundle,
+} from '@swc/core';
+import { rollup } from 'rollup';
+import terser from '@rollup/plugin-terser';
+import typescript from 'rollup-plugin-typescript2';
+import commonjs from '@rollup/plugin-commonjs';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import { wasm } from '@rollup/plugin-wasm';
 
 export const buildCodeString = (
   code: string,
@@ -8,11 +21,7 @@ export const buildCodeString = (
     transformSync: (ast: Program, opt: Options) => Output;
   },
 ): Output => {
-  const opt = buildConfig.parseSync(code, {
-    syntax: 'typescript',
-    target: 'es2022',
-  });
-  const contractAst = walkTop(opt);
+  const contractAst = parseAndProcessCode(code);
   // const codeOpt = printSync(contractAst, {});
   // console.log(opt);
   // console.log(codeOpt);
@@ -26,4 +35,36 @@ export const buildCodeString = (
   });
 
   return contractCode;
+};
+
+export const parseAndProcessCode = (code: string) => {
+  const opt = parseSync(code, {
+    syntax: 'typescript',
+    target: 'es2022',
+  });
+  const contractAst = walkTop(opt);
+
+  return contractAst;
+};
+export const boundleContract = async (entry: string) => {
+  const bundle = await rollup({
+    input: entry,
+    plugins: [
+      (typescript as any)({
+        check: false,
+      }),
+      (commonjs as any)(),
+      wasm(),
+      (terser as any)({
+        ecma: 2020,
+        keep_classnames: true,
+      }),
+      nodeResolve(),
+    ],
+  });
+  const res = await bundle.generate({
+    format: 'esm',
+    sourcemap: false,
+  });
+  return res.output[0].code;
 };

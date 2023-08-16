@@ -17,23 +17,28 @@ export const BUILDER_NAMES = {
 
 export const walkTop = (ast: Program): Program => {
   // 处理import
-  while (ast.body[0].type === 'ImportDeclaration') {
-    const node = ast.body[0];
-    if (node.source.value === BUILDER_NAMES.MAIN_PACKAGE) {
-      ast.body.shift();
+  ast.body.forEach((topNode, i) => {
+    if (topNode.type === 'ImportDeclaration') {
+      if (topNode.source.value === BUILDER_NAMES.MAIN_PACKAGE) {
+        // remove import
+        ast.body[i] = {
+          type: 'EmptyStatement',
+          span: topNode.span,
+        };
+      }
     }
-  }
+  });
 
   // remove export
-  ast.body = ast.body.map((topNode, i) => {
-    if (
-      ['ExportDeclaration', 'ExportDefaultDeclaration'].includes(topNode.type)
-    ) {
-      // remove export
-      return (topNode as ExportDeclaration).declaration;
-    }
-    return topNode;
-  });
+  // ast.body = ast.body.map((topNode, i) => {
+  //   if (
+  //     ['ExportDeclaration', 'ExportDefaultDeclaration'].includes(topNode.type)
+  //   ) {
+  //     // remove export
+  //     return (topNode as ExportDeclaration).declaration;
+  //   }
+  //   return topNode;
+  // });
 
   // 除super之外的constructor逻辑
   const constructorExpressionStatements: ExpressionStatement[] = [];

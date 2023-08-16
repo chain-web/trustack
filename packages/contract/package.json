@@ -13,6 +13,20 @@
   "engines": {
     "node": ">=16.0.0"
   },
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.mts"
+    },
+    "./contractHelper": {
+      "import": "./dist/contractHelper.mjs",
+      "types": "./dist/contractHelper.d.mts"
+    },
+    "./contract": {
+      "import": "./dist/contract.mjs",
+      "types": "./src/contract.d.ts"
+    }
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

@@ -3,15 +3,15 @@
 /* eslint-disable no-console */
 /* eslint-disable node/shebang */
 
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync, rmSync, writeFileSync } from 'fs';
 import { resolve } from 'path';
 import { cac } from 'cac';
 import chalk from 'chalk';
-import { parseSync, transformSync } from '@swc/core';
+import { printSync } from '@swc/core';
 
 import { bytes } from 'multiformats';
 import pkg from '../package.json' assert { type: 'json' };
-import { buildCodeString } from './builder.js';
+import { boundleContract, parseAndProcessCode } from './builder.js';
 const version = pkg.version;
 const cli = cac('sk-contract-builder');
 
@@ -24,27 +24,30 @@ const builder = async (input: string, opts: BuildOption) => {
   try {
     console.log(chalk.green('starting build contract...'));
     input = resolve(input, './');
-    // console.log(codeSnippet);
+    let fileName: any = input.split('/').pop()?.split('.');
+    fileName?.pop();
+    fileName = fileName?.join('.');
     const code = readFileSync(input).toString();
     // console.log(code);
-    const res = buildCodeString(code, {
-      parseSync,
-      transformSync,
-    });
-    // console.log(contractCode);
-    const resultUint8 = bytes.fromString(res.code);
-    // const resultU8String = `export default new Uint8Array([${resultUint8.toString()}]);`;
-    // console.log(resultUint8);
-    writeFileSync(
-      resolve(input, '../index.contract.bin'),
-      resultUint8.toString(),
-      {
-        flag: 'w+',
-      },
-    );
-    writeFileSync(resolve(input, '../index.contract.js'), res.code, {
+    const ast = parseAndProcessCode(code);
+    const tsCode = printSync(ast, {});
+    const tsFile = resolve(input, `../${fileName}.processed.ts`);
+    writeFileSync(tsFile, tsCode.code, {
       flag: 'w+',
     });
+    const boundleCode = await boundleContract(tsFile);
+    // const boundleCodeFile = resolve(input, '../index.contract.boundle.js');
+    // writeFileSync(boundleCodeFile, boundleCode, {
+    //   flag: 'w+',
+    // });
+
+    const resultUint8 = bytes.fromString(boundleCode);
+    const resultU8String = `export default new Uint8Array([${resultUint8.toString()}]);`;
+    // console.log(resultUint8);
+    writeFileSync(resolve(input, `../${fileName}.js`), resultU8String, {
+      flag: 'w+',
+    });
+    rmSync(tsFile);
     console.log(chalk.green('contract build success'));
   } catch (error) {
     console.log(error);
