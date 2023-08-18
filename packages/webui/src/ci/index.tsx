@@ -1,6 +1,6 @@
 import { Button } from 'antd';
 import { useState } from 'react';
-import { runBuildContractTest } from './contract/test';
+import { runBuildContractTest } from './contract/testRunner';
 import { runContractTest, runSkvmTest, runTest } from './run';
 
 export default function CiPage() {

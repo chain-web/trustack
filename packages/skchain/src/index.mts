@@ -1,5 +1,4 @@
 export type { DidJson } from '@trustack/common';
-export { evalFunction } from './lib/contract/vm.js';
 
 export { SKChain } from './skChain.js';
 export { Address } from './mate/address.js';

@@ -1,6 +1,7 @@
-import { Address, LifecycleStap, TransStatus, evalFunction } from 'skchain';
+import { Address, LifecycleStap, TransStatus } from 'skchain';
 import { testAccounts, testContracts } from '@trustack/common';
 import { bytes } from 'multiformats';
+import { evalFunction } from '@trustack/contract';
 import { createTestSkChain } from './util';
 
 export const runTest = async (): Promise<boolean> => {

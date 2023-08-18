@@ -1,12 +1,5 @@
 import { walkTop } from './ast.utils.js';
-import {
-  Output,
-  Program,
-  Options,
-  ParseOptions,
-  parseSync,
-  bundle,
-} from '@swc/core';
+import { Output, Program, Options, ParseOptions, parseSync } from '@swc/core';
 import { rollup } from 'rollup';
 import terser from '@rollup/plugin-terser';
 import typescript from 'rollup-plugin-typescript2';
@@ -66,5 +59,6 @@ export const boundleContract = async (entry: string) => {
     format: 'esm',
     sourcemap: false,
   });
-  return res.output[0].code;
+  const code = res.output[0].code.replace(/export{.+};/g, '');
+  return code;
 };

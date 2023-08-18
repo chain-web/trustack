@@ -405,6 +405,7 @@ importers:
       esbuild: ^0.17.19
       lodash: ^4.17.21
       mime-types: ^2.1.35
+      monaco-editor: ^0.41.0
       multiformats: ^11.0.2
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -428,6 +429,7 @@ importers:
       esbuild: 0.17.19
       lodash: 4.17.21
       mime-types: 2.1.35
+      monaco-editor: 0.41.0
       multiformats: 11.0.2
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -8533,6 +8535,10 @@ packages:
   /module-error/1.0.2:
     resolution: {integrity: sha512-0yuvsqSCv8LbaOKhnsQ/T5JhyFlCYLPXK3U2sgV10zoKQwzs/MyfuQUOZQ1V/6OCOJsK/TRgNVrPuPDqtdMFtA==}
     engines: {node: '>=10'}
+    dev: false
+
+  /monaco-editor/0.41.0:
+    resolution: {integrity: sha512-1o4olnZJsiLmv5pwLEAmzHTE/5geLKQ07BrGxlF4Ri/AXAc2yyDGZwHjiTqD8D/ROKUZmwMA28A+yEowLNOEcA==}
     dev: false
 
   /mortice/3.0.1:
