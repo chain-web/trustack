@@ -8,6 +8,7 @@
   "scripts": {
     "test": "tsc -p ./tsconfig.build.json && node ./dist/src/cli.js build ./examples/coin/index.ts && rm -rf ./dist",
     "gen-proto": "protoc --ts_out ./src/proto_ts --proto_path ../skvm/proto ../skvm/proto/*.proto",
+    "dev-build": "tsc -w -p ./tsconfig.build.json",
     "build": "tsc -p ./tsconfig.build.json"
   },
   "engines": {

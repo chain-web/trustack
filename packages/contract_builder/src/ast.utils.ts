@@ -3,6 +3,7 @@ import type {
   CallExpression,
   ClassProperty,
   ExportDeclaration,
+  ExportDefaultDeclaration,
   Expression,
   ExpressionStatement,
   Program,
@@ -29,82 +30,81 @@ export const walkTop = (ast: Program): Program => {
     }
   });
 
-  // remove export
-  // ast.body = ast.body.map((topNode, i) => {
-  //   if (
-  //     ['ExportDeclaration', 'ExportDefaultDeclaration'].includes(topNode.type)
-  //   ) {
-  //     // remove export
-  //     return (topNode as ExportDeclaration).declaration;
-  //   }
-  //   return topNode;
-  // });
-
   // 除super之外的constructor逻辑
   const constructorExpressionStatements: ExpressionStatement[] = [];
-  ast.body = ast.body.map((topNode, i) => {
-    if (topNode.type === 'ClassDeclaration') {
-      topNode.identifier.value = BUILDER_NAMES.CONTRACT_CLASS_NAME;
-      topNode.body = topNode.body.map((classNode) => {
-        if (classNode.type === 'Constructor') {
-          // chnage constructor to __constructor
-          // 将super()与其他逻辑分离
-          while (
-            classNode.body?.stmts.length &&
-            classNode.body?.stmts.length > 1
-          ) {
-            if (
-              classNode.body.stmts[classNode.body.stmts.length - 1].type ===
-              'ExpressionStatement'
+  ast.body = ast.body.map((topTopNode, i) => {
+    if (
+      ['ExportDeclaration', 'ExportDefaultDeclaration'].includes(
+        topTopNode.type,
+      )
+    ) {
+      const topNode =
+        (topTopNode as ExportDeclaration).declaration ||
+        (topTopNode as ExportDefaultDeclaration).decl;
+
+      if (topNode.type === 'ClassDeclaration') {
+        topNode.identifier.value = BUILDER_NAMES.CONTRACT_CLASS_NAME;
+        topNode.body = topNode.body.map((classNode) => {
+          if (classNode.type === 'Constructor') {
+            // chnage constructor to __constructor
+            // 将super()与其他逻辑分离
+            while (
+              classNode.body?.stmts.length &&
+              classNode.body?.stmts.length > 1
             ) {
-              if (!isSuperBlock(classNode.body)) {
-                const exp = classNode.body.stmts.pop();
-                if (exp) {
-                  // must use unshift,保证代码顺序
-                  constructorExpressionStatements.unshift(
-                    exp as ExpressionStatement,
-                  );
+              if (
+                classNode.body.stmts[classNode.body.stmts.length - 1].type ===
+                'ExpressionStatement'
+              ) {
+                if (!isSuperBlock(classNode.body)) {
+                  const exp = classNode.body.stmts.pop();
+                  if (exp) {
+                    // must use unshift,保证代码顺序
+                    constructorExpressionStatements.unshift(
+                      exp as ExpressionStatement,
+                    );
+                  }
                 }
               }
             }
           }
-        }
-        return classNode;
-      });
-      const replacedConstructor: ClassProperty = {
-        type: 'ClassProperty',
-        key: {
-          type: 'Identifier',
-          span: emptySpan(),
-          value: BUILDER_NAMES.CONSTRUCTOR_METHOD,
-          optional: false,
-        },
-        value: {
-          type: 'ArrowFunctionExpression',
-          span: emptySpan(),
-          params: [],
-          body: {
-            type: 'BlockStatement',
+          return classNode;
+        });
+        const replacedConstructor: ClassProperty = {
+          type: 'ClassProperty',
+          key: {
+            type: 'Identifier',
             span: emptySpan(),
-            stmts: constructorExpressionStatements,
+            value: BUILDER_NAMES.CONSTRUCTOR_METHOD,
+            optional: false,
           },
-          async: false,
-          generator: false,
-        },
-        span: emptySpan(),
-        isStatic: false,
-        decorators: [],
-        accessibility: 'public',
-        isAbstract: false,
-        isOptional: false,
-        isOverride: false,
-        readonly: false,
-        declare: false,
-        definite: false,
-      };
-      topNode.body.push(replacedConstructor);
+          value: {
+            type: 'ArrowFunctionExpression',
+            span: emptySpan(),
+            params: [],
+            body: {
+              type: 'BlockStatement',
+              span: emptySpan(),
+              stmts: constructorExpressionStatements,
+            },
+            async: false,
+            generator: false,
+          },
+          span: emptySpan(),
+          isStatic: false,
+          decorators: [],
+          accessibility: 'public',
+          isAbstract: false,
+          isOptional: false,
+          isOverride: false,
+          readonly: false,
+          declare: false,
+          definite: false,
+        };
+        topNode.body.push(replacedConstructor);
+      }
     }
-    return topNode;
+    return topTopNode;
   });
   return ast;
 };

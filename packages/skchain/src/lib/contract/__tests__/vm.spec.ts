@@ -1,7 +1,7 @@
 import { testAccounts, testContracts } from '@trustack/common';
+import { evalClass, evalFunction } from '@trustack/contract';
 import { Address } from '../../../mate/address.js';
 import { generateBaseContractCode } from '../codeSnippet.js';
-import { evalClass, evalFunction } from '../vm.js';
 
 describe('vm', () => {
   describe('test', () => {

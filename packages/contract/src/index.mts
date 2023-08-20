@@ -6,6 +6,8 @@ import { EvalResult } from './proto_ts/eval_result.js';
 export { init } from '@trustack/vm';
 
 export { EvalResult } from './proto_ts/eval_result.js';
+
+export { evalClass, evalFunction, evalCode } from './vm.js';
 export interface EvaluateParams {
   codeString: string[];
   cuLimit: bigint;

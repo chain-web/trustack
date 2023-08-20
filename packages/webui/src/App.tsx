@@ -1,12 +1,12 @@
 import { useRoutes } from 'react-router-dom';
 import './App.css';
 import CiPage from './ci';
-import { VisPage } from './vis';
+import { VMPage } from './skvm';
 
 function App() {
   const element = useRoutes([
     { path: '/ci', element: <CiPage /> },
-    { path: 'vis', element: <VisPage /> },
+    { path: '/vm', element: <VMPage /> },
   ]);
   return element;
 }
