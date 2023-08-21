@@ -63,6 +63,7 @@ mod utils;
 
 use boa_engine::{Context, Source};
 use getrandom as _;
+use chrono as _;
 use js_sys::{Array, Uint8Array};
 use proto_rs::eval_result;
 use protobuf::{Message, SpecialFields};
