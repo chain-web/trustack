@@ -31,7 +31,7 @@ jobs:
       - name: Install Playwright Browsers
         run: cd packages/webui && pnpm exec playwright install --with-deps
       - name: Build fe
-        run: cd packages/webui && npm run build
+        run: cd packages/webui && npm run build && npm run build-contract
       - name: Run Playwright tests
         run: cd packages/webui && pnpm exec playwright test
       - uses: actions/upload-artifact@v3

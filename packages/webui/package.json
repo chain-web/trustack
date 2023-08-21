@@ -7,6 +7,7 @@
     "dev": "vite",
     "e2e": "playwright test",
     "build": "tsc && vite build",
+    "build-contract": "npx @trustack/contract_builder build ./src/ci/contract/test.contract.ts",
     "server": "node ./e2e/server.mjs",
     "preview": "vite preview"
   },

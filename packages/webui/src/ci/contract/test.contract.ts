@@ -1,10 +1,12 @@
-import { BaseContract } from 'skchain';
+import { random } from 'lodash';
+import { add } from './test_func';
 
-export class TestContract extends BaseContract {
+// TODO add extends BaseContract
+export class TestContract {
   constructor() {
-    super();
     this.data = {
       value: 10000000000000n,
+      random: BigInt(add(1, random(1, 100))),
     };
   }
 

@@ -35,13 +35,13 @@ const builder = async (input: string, opts: BuildOption) => {
     writeFileSync(tsFile, tsCode.code, {
       flag: 'w+',
     });
-    const boundleCode = await boundleContract(tsFile);
-    // const boundleCodeFile = resolve(input, '../index.contract.boundle.js');
-    // writeFileSync(boundleCodeFile, boundleCode, {
+    const bundleCode = await boundleContract(tsFile);
+    // const bundleCodeFile = resolve(input, '../index.contract.bundle.js');
+    // writeFileSync(bundleCodeFile, bundleCode, {
     //   flag: 'w+',
     // });
 
-    const resultUint8 = bytes.fromString(boundleCode);
+    const resultUint8 = bytes.fromString(bundleCode);
     const resultU8String = `export default new Uint8Array([${resultUint8.toString()}]);`;
     // console.log(resultUint8);
     writeFileSync(resolve(input, `../${fileName}.js`), resultU8String, {
