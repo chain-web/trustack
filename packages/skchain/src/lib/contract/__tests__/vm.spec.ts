@@ -13,6 +13,10 @@ describe('vm', () => {
       expect(res.funcResult).toEqual('2');
       expect(res.cuCost.reduce((acc, cur) => acc + Number(cur), 0)).toEqual(38);
     });
+    it('should Date fn ok', async () => {
+      const res = await evalFunction('() => Date.now()');
+      expect(res.funcResult.length).toEqual(13);
+    });
     it('should simple class ok', async () => {
       const codeStr = `
         ${generateBaseContractCode(new Address(testAccounts[0].id))}
