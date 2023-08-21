@@ -18,14 +18,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@trpc/client": "^10.36.0",
-    "@trpc/server": "^10.36.0",
+    "@trpc/client": "^10.37.1",
+    "@trpc/server": "^10.37.1",
     "@trustack/common": "workspace:^1.0.0",
     "@trustack/contract": "workspace:^1.0.0",
-    "execa": "^7.2.0",
+    "execa": "^8.0.1",
     "kill-port": "^2.0.1",
-    "multiformats": "^11.0.2",
+    "multiformats": "^12.0.1",
     "skchain": "workspace:^1.0.0",
-    "zod": "^3.21.4"
+    "zod": "^3.22.2"
   }
 }

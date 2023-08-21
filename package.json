@@ -25,19 +25,19 @@
   "homepage": "https://github.com/chain-web/trustack#readme",
   "dependencies": {
     "@types/jest": "^29.5.3",
-    "@types/node": "^20.4.5",
-    "@typescript-eslint/eslint-plugin": "^5.62.0",
-    "@typescript-eslint/parser": "^5.62.0",
-    "eslint": "^8.46.0",
-    "eslint-config-prettier": "^8.9.0",
-    "eslint-define-config": "^1.22.0",
-    "eslint-plugin-import": "^2.28.0",
+    "@types/node": "^20.5.1",
+    "@typescript-eslint/eslint-plugin": "^6.4.0",
+    "@typescript-eslint/parser": "^6.4.0",
+    "eslint": "^8.47.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-define-config": "^1.23.0",
+    "eslint-plugin-import": "^2.28.1",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-regexp": "^1.15.0",
     "jest": "^29.6.2",
-    "lint-staged": "^13.2.3",
-    "prettier": "^2.8.8",
+    "lint-staged": "^14.0.1",
+    "prettier": "^3.0.2",
     "simple-git-hooks": "^2.9.0",
     "ts-jest": "^29.1.1",
     "typescript": "^5.1.6"
@@ -60,6 +60,11 @@
       "ipfs-bitswap": {
         "dependencies": {
           "it-drain": "*"
+        }
+      },
+      "@libp2p/mplex": {
+        "dependencies": {
+          "it-pipe": "*"
         }
       },
       "@deck.gl/mapbox": {

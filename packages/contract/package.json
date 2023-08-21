@@ -32,13 +32,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@protobuf-ts/runtime": "^2.9.0",
+    "@protobuf-ts/runtime": "^2.9.1",
     "@trustack/contract_builder": "workspace:^1.0.0",
     "@trustack/vm": "workspace:^1.0.0",
-    "multiformats": "^11.0.2"
+    "multiformats": "^12.0.1"
   },
   "devDependencies": {
-    "@protobuf-ts/plugin": "^2.9.0",
-    "@protobuf-ts/protoc": "^2.9.0"
+    "@protobuf-ts/plugin": "^2.9.1",
+    "@protobuf-ts/protoc": "^2.9.1"
   }
 }

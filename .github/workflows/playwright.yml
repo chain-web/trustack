@@ -28,10 +28,14 @@ jobs:
         run: pnpm install
       - name: build packages
         run: pnpm run -r build
+      - name: Install dependencies for builded packages
+        run: pnpm install
+      - name: Build contract
+        run: cd packages/webui && npm run build-contract
       - name: Install Playwright Browsers
         run: cd packages/webui && pnpm exec playwright install --with-deps
       - name: Build fe
-        run: cd packages/webui && npm run build && npm run build-contract
+        run: cd packages/webui && npm run build
       - name: Run Playwright tests
         run: cd packages/webui && pnpm exec playwright test
       - uses: actions/upload-artifact@v3

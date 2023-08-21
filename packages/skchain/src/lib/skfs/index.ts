@@ -183,9 +183,12 @@ export class Skfs {
       return Promise.resolve(undefined);
     }
     const abortController = new AbortController();
-    setTimeout(() => {
-      abortController.abort();
-    }, opts?.timeout || 5000);
+    setTimeout(
+      () => {
+        abortController.abort();
+      },
+      opts?.timeout || 5000,
+    );
     return new Promise((resolve) => {
       this.#bitswap
         .want(cid, { signal: abortController.signal })
