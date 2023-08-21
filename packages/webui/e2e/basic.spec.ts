@@ -44,3 +44,14 @@ test('contract', async ({ page }) => {
   await page.waitForTimeout(6000);
   await expect(passed).toHaveText('true');
 });
+
+test('contract bundle', async ({ page }) => {
+  await page.goto('/ci');
+  await page.waitForTimeout(1000);
+  const startBtn = page.getByTestId('test_contract_bundle');
+  await startBtn.click();
+  await page.screenshot({ path: './playwright-report/contract.png' });
+  const passed = page.getByTestId('contract_bundle_passed');
+  await page.waitForTimeout(6000);
+  await expect(passed).toHaveText('true');
+});

@@ -1,13 +1,13 @@
 import { Button } from 'antd';
 import { useState } from 'react';
-import { runBuildContractTest } from './contract/testRunner';
+import { runContractBundleTest } from './contract/testRunner';
 import { runContractTest, runSkvmTest, runTest } from './run';
 
 export default function CiPage() {
   const [passed, setPass] = useState(false);
   const [skvmPassed, setSkvmPass] = useState(false);
   const [contractPassed, setContractPass] = useState(false);
-  const [contractBuildPassed, setContractBuildPass] = useState(false);
+  const [contractBundlePassed, setContractBundlePass] = useState(false);
   return (
     <div className="ci-box">
       <div>
@@ -54,17 +54,17 @@ export default function CiPage() {
 
       <div style={{ padding: 50 }}>
         <Button
-          data-testid="test_contract_build"
+          data-testid="test_contract_bundle"
           type="default"
           onClick={async () => {
-            const res = await runBuildContractTest();
-            setContractBuildPass(res);
+            const res = await runContractBundleTest();
+            setContractBundlePass(res);
           }}
         >
-          test_build_contract
+          test_bundle_contract
         </Button>
-        <span data-testid="contract_build_passed">
-          {contractBuildPassed.toString()}
+        <span data-testid="contract_bundle_passed">
+          {contractBundlePassed.toString()}
         </span>
       </div>
     </div>
