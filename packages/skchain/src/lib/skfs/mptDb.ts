@@ -1,29 +1,33 @@
 import { MemoryLevel } from 'memory-level';
 
-import type { BatchDBOp, DB } from '@ethereumjs/trie';
+import type { BatchDBOp, DB } from '@ethereumjs/util';
 import type { AbstractLevel } from 'abstract-level';
 
-const ENCODING_OPTS = { keyEncoding: 'buffer', valueEncoding: 'buffer' };
+const ENCODING_OPTS = { keyEncoding: 'utf8', valueEncoding: 'utf8' };
 
-export class MptDb implements DB {
+export class MptDb implements DB<string, string> {
   readonly _leveldb: AbstractLevel<
     string | Buffer | Uint8Array,
-    string | Buffer,
-    string | Buffer
+    string,
+    string
   >;
 
   constructor(
     leveldb?: AbstractLevel<
       string | Buffer | Uint8Array,
-      string | Buffer,
-      string | Buffer
+      string,
+      string
     > | null,
   ) {
     this._leveldb = leveldb ?? new MemoryLevel(ENCODING_OPTS);
   }
 
-  async get(key: Buffer): Promise<Buffer | null> {
-    let value: Buffer | null = null;
+  open(): Promise<void> {
+    return this._leveldb.open();
+  }
+
+  async get(key: string): Promise<string | undefined> {
+    let value: string | undefined = undefined;
     try {
       value = await this._leveldb.get(key, ENCODING_OPTS);
     } catch (error: any) {
@@ -37,19 +41,19 @@ export class MptDb implements DB {
     return value;
   }
 
-  async put(key: Buffer, val: Buffer): Promise<void> {
+  async put(key: string, val: string): Promise<void> {
     await this._leveldb.put(key, val, ENCODING_OPTS);
   }
 
-  async del(key: Buffer): Promise<void> {
+  async del(key: string): Promise<void> {
     await this._leveldb.del(key, ENCODING_OPTS);
   }
 
-  async batch(opStack: BatchDBOp[]): Promise<void> {
+  async batch(opStack: BatchDBOp<string, string>[]): Promise<void> {
     await this._leveldb.batch(opStack, ENCODING_OPTS);
   }
 
-  copy(): DB {
+  shallowCopy(): MptDb {
     return new MptDb(this._leveldb);
   }
   close = async (): Promise<void> => {

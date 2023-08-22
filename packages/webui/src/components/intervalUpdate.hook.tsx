@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 export function useIntervalUpdate(time: number) {
   const [now, setNow] = useState(Date.now());
-  const [id, setId] = useState<NodeJS.Timer>();
+  const [id, setId] = useState<NodeJS.Timeout>();
 
   useEffect(() => {
     setId(

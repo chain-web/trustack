@@ -1,8 +1,8 @@
 import type { Libp2p, Libp2pOptions } from 'libp2p';
+import type { PubSub } from '@libp2p/interface/pubsub';
+import type { PeerId } from '@libp2p/interface/peer-id';
 import { createLibp2p } from 'libp2p';
 import type { Datastore } from 'interface-datastore';
-import type { PeerId } from '@libp2p/interface-peer-id';
-import type { PubSub } from '@libp2p/interface-pubsub';
 import type { CircuitRelayService } from 'libp2p/circuit-relay';
 import type { DualKadDHT } from '@libp2p/kad-dht';
 import type { identifyService } from 'libp2p/identify';

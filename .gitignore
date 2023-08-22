@@ -10,6 +10,7 @@ thumbs.db
 .leveldb
 __contract_code__.js
 .logs
+/bin/
 
 .eslintcache
 

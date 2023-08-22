@@ -34,11 +34,11 @@ export class Mpt {
     }
   }
 
-  get root(): Buffer {
+  get root(): Uint8Array {
     return this.trie.root();
   }
 
-  set root(root: Buffer) {
+  set root(root: Uint8Array) {
     this.trie.root(root);
   }
 
@@ -50,11 +50,11 @@ export class Mpt {
 
   put = async (key: string, value: string | Uint8Array): Promise<void> => {
     value = typeof value === 'string' ? bytes.fromString(value) : value;
-    await this.trie.put(bytes.fromString(key) as Buffer, value as Buffer);
+    await this.trie.put(bytes.fromString(key), value);
   };
 
-  get = async (key: string): Promise<Buffer | null> => {
-    return await this.trie.get(bytes.fromString(key) as Buffer);
+  get = async (key: string): Promise<Uint8Array | null> => {
+    return await this.trie.get(bytes.fromString(key));
   };
 
   close = async (): Promise<void> => {
