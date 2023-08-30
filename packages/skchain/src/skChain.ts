@@ -92,7 +92,8 @@ export class SKChain {
   async run(opts?: SKChainRunOpts): Promise<void> {
     this.chainState.send('START');
     this.chainState.lifecycleChange(LifecycleStap.startCreateSKChain);
-    const user = opts?.user || (await peerid.genetateDid());
+    const user =
+      (opts?.user?.privKey && opts?.user) || (await peerid.genetateDid());
     await this.db.cachePut(skCacheKeys.accountId, user.id);
     await this.db.cachePut(skCacheKeys.accountPrivKey, user.privKey);
     this.did = user.id;
