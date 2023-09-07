@@ -148,7 +148,7 @@ function makeMutClosure(arg0, arg1, dtor, f) {
     return real;
 }
 function __wbg_adapter_28(arg0, arg1, arg2) {
-    wasm._dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h5451c65af4a43c91(arg0, arg1, addHeapObject(arg2));
+    wasm._dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__hd1b5b1c82a01ddc8(arg0, arg1, addHeapObject(arg2));
 }
 
 /**
@@ -274,11 +274,11 @@ export function __wbgtest_console_error(args) {
 }
 
 function __wbg_adapter_80(arg0, arg1, arg2, arg3, arg4) {
-    wasm.wasm_bindgen__convert__closures__invoke3_mut__h2315033f19a55d71(arg0, arg1, addHeapObject(arg2), arg3, addHeapObject(arg4));
+    wasm.wasm_bindgen__convert__closures__invoke3_mut__h0566f534820b3b92(arg0, arg1, addHeapObject(arg2), arg3, addHeapObject(arg4));
 }
 
 function __wbg_adapter_101(arg0, arg1, arg2, arg3) {
-    wasm.wasm_bindgen__convert__closures__invoke2_mut__h3541220db1e62064(arg0, arg1, addHeapObject(arg2), addHeapObject(arg3));
+    wasm.wasm_bindgen__convert__closures__invoke2_mut__h68f2d2b5c2fad2fe(arg0, arg1, addHeapObject(arg2), addHeapObject(arg3));
 }
 
 /**
@@ -371,14 +371,6 @@ export function __wbindgen_string_new(arg0, arg1) {
     return addHeapObject(ret);
 };
 
-export function __wbg_randomFillSync_e950366c42764a07() { return handleError(function (arg0, arg1) {
-    getObject(arg0).randomFillSync(takeObject(arg1));
-}, arguments) };
-
-export function __wbg_getRandomValues_3774744e221a22ad() { return handleError(function (arg0, arg1) {
-    getObject(arg0).getRandomValues(getObject(arg1));
-}, arguments) };
-
 export function __wbg_crypto_70a96de3b6b73dac(arg0) {
     const ret = getObject(arg0).crypto;
     return addHeapObject(ret);
@@ -420,6 +412,14 @@ export function __wbg_msCrypto_adbc770ec9eca9c7(arg0) {
     return addHeapObject(ret);
 };
 
+export function __wbg_randomFillSync_e950366c42764a07() { return handleError(function (arg0, arg1) {
+    getObject(arg0).randomFillSync(takeObject(arg1));
+}, arguments) };
+
+export function __wbg_getRandomValues_3774744e221a22ad() { return handleError(function (arg0, arg1) {
+    getObject(arg0).getRandomValues(getObject(arg1));
+}, arguments) };
+
 export function __wbg_log_06ce2db1f244c264(arg0, arg1) {
     console.log(getStringFromWasm0(arg0, arg1));
 };
@@ -435,6 +435,21 @@ export function __wbg_String_43e240bbca514dff(arg0, arg1) {
 export function __wbindgen_number_new(arg0) {
     const ret = arg0;
     return addHeapObject(ret);
+};
+
+export function __wbg_static_accessor_document_c0babe68ba1eebc2() {
+    const ret = document;
+    return addHeapObject(ret);
+};
+
+export function __wbg_self_ec4002dd45e47d74(arg0) {
+    const ret = getObject(arg0).self;
+    return addHeapObject(ret);
+};
+
+export function __wbindgen_jsval_eq(arg0, arg1) {
+    const ret = getObject(arg0) === getObject(arg1);
+    return ret;
 };
 
 export function __wbg_getElementById_21c1ba70eb74a26a(arg0, arg1, arg2) {
@@ -462,21 +477,6 @@ export function __wbindgen_object_clone_ref(arg0) {
 export function __wbg_stack_e72a6800a9172afa(arg0) {
     const ret = getObject(arg0).stack;
     return addHeapObject(ret);
-};
-
-export function __wbg_static_accessor_document_c0babe68ba1eebc2() {
-    const ret = document;
-    return addHeapObject(ret);
-};
-
-export function __wbg_self_ec4002dd45e47d74(arg0) {
-    const ret = getObject(arg0).self;
-    return addHeapObject(ret);
-};
-
-export function __wbindgen_jsval_eq(arg0, arg1) {
-    const ret = getObject(arg0) === getObject(arg1);
-    return ret;
 };
 
 export function __wbg_stack_67cc9e651682cbe5(arg0, arg1) {
@@ -692,8 +692,8 @@ export function __wbindgen_memory() {
     return addHeapObject(ret);
 };
 
-export function __wbindgen_closure_wrapper5105(arg0, arg1, arg2) {
-    const ret = makeMutClosure(arg0, arg1, 1333, __wbg_adapter_28);
+export function __wbindgen_closure_wrapper5032(arg0, arg1, arg2) {
+    const ret = makeMutClosure(arg0, arg1, 1280, __wbg_adapter_28);
     return addHeapObject(ret);
 };
 
