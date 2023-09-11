@@ -22,13 +22,13 @@
     "@trustack/node-modules-polyfill": "^0.2.5",
     "@trustack/rollup-plugin-node-polyfills": "^0.2.2",
     "@xstate/react": "^3.2.2",
-    "antd": "^5.8.4",
+    "antd": "^5.8.6",
     "buffer": "^6.0.3",
     "esbuild": "^0.19.2",
     "lodash": "^4.17.21",
     "mime-types": "^2.1.35",
     "monaco-editor": "^0.41.0",
-    "multiformats": "^12.0.1",
+    "multiformats": "^12.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router": "^6.15.0",
@@ -39,12 +39,12 @@
   "devDependencies": {
     "@playwright/test": "^1.37.1",
     "@rollup/plugin-inject": "^5.0.3",
-    "@types/lodash": "^4.14.197",
-    "@types/react": "^18.2.20",
+    "@types/lodash": "^4.14.198",
+    "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react-swc": "^3.3.2",
     "sass": "^1.66.1",
-    "typescript": "^5.1.6",
+    "typescript": "^5.2.2",
     "vite": "^4.4.9"
   }
 }
